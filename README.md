@@ -64,4 +64,4 @@ SmartPlanner 的设计初衷是为远程办公团队提供一个高效的工作�
 
 ## 📄 许可证
 
-本项目采用 [MIT 许可证](./LICENSE)
+本项目采用 [GNU General Public License v3.0](./LICENSE)
