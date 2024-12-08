@@ -148,7 +148,7 @@
     - color：显示颜色（继承自类别）
   - 计划属性
     - isFixedTime：是否固定时间（false表示AI可调整）
-    - defaultDuration：默认持续时长
+    - isReminderEnabled：是否启用提醒
     - reminderTime：提醒提前时间（分钟）
     - priority：优先级（用于AI调整时的参考）
     - difficulty：难度等级
@@ -157,7 +157,7 @@
     - createdAt：创建时间
     - updatedAt：更新时间
     - deletedAt：删除时间
-
+    
 - **操作按钮**
   - 保存按钮
     - 位置：表单底部
@@ -267,7 +267,7 @@
   - 工作效率分析
   - 休息时间建议
 
-### 1.6 类别
+### 1.7 类别
 - **基础信息**
   - id：类别唯一标识符
   - name：类别名称（如"英语"）

@@ -209,7 +209,7 @@
 - [ ] CoreData模型设计完成并可用
 - [ ] 基础服务功能测试通过
 - [ ] 工具类开发完成并测试通过
-- [ ] 基��UI框架可运行
+- [ ] 基础UI框架可运行
 - [ ] Git仓库配置完成
 - [ ] 开发规范文档完成
 
@@ -279,109 +279,74 @@
 
 #### CoreData数据模型详细设计
 
-##### 1. PlanningZone（计划区间）实体
+##### 1. PlanningZone（计划区间模板）实体
 ###### 基础属性
 - id: UUID (主键)
 - name: String (区间名称)
-- startTime: Date (开始时间)
-- endTime: Date (结束时间)
+- color: String (区间颜色，十六进制颜色值)
+- description: String? (区间描述，可选)
+- isVisible: Bool (是否在日历中显示)
 - createdAt: Date (创建时间)
 - updatedAt: Date (更新时间)
 
-###### 显示属性
-- colorHex: String (区间颜色，十六进制颜色值)
-- position: Int (在日历视图中的显示位置)
-- isVisible: Bool (是否在日历中显示)
-- isLocked: Bool (是否锁定不可修改)
-
-###### 状态属性
-- status: String (区间状态：活跃/已归档/已删除)
-- priority: Int (优先级：1-高，2-中，3-低)
-- type: String (区间类型：工作/学习/运动/休息等)
-
-###### 统计属性
-- totalPlans: Int (包含的计划总数)
-- completedPlans: Int (已完成的计划数)
-- utilizationRate: Double (区间时间利用率)
-
-##### 2. Plan（计划）实体
+##### 2. PlanningZoneInstance（计划区间实例）实体
 ###### 基础属性
 - id: UUID (主键)
-- title: String (计划名称)
-- description: String? (计划描述，可选)
-- startTime: Date (开始时间)
-- endTime: Date (结束时间)
+- templateId: UUID (关联的区间模板ID)
+- startAt: Date (开始时间)
+- endAt: Date (结束时间)
 - createdAt: Date (创建时间)
 - updatedAt: Date (更新时间)
 
-###### 重复设置
-- repeatType: String (重复类型：无/每天/每周/每月)
-- repeatEndType: String (结束类型：永不/次数/截止日期)
-- repeatEndDate: Date? (重复结束日期，可选)
-- repeatCount: Int? (重复次数，可选)
-- repeatDays: [Int]? (每周重复的星期几，可选)
+##### 3. PlanTemplate（计划模板）实体
+###### 基础属性
+- id: UUID (主键)
+- name: String (计划名称)
+- categoryId: UUID (关联的类别ID)
+- color: String (显示颜色)
+- isFixedTime: Bool (是否固定时间)
+- isReminderEnabled: Bool (是否启用提醒)
+- reminderTime: Int (提前提醒分钟数)
+- priority: Int (优先级：1-5)
+- difficulty: Int (难度：1-5)
+- tags: [String] (标签列表)
+- createdAt: Date (创建时间)
+- updatedAt: Date (更新时间)
 
-###### 提醒设置
-- reminderEnabled: Bool (是否开启提醒)
-- reminderTime: Date? (提醒时间，可选)
-- reminderType: String (提醒类型：一次/重复)
-- reminderAdvanceMinutes: Int (提前提醒分钟数)
-- reminderSound: String? (提醒声音，可选)
+##### 4. Plan（计划实例）实体
+###### 基础属性
+- id: UUID (主键)
+- templateId: UUID (关联的计划模板ID)
+- blockId: UUID (所属区间实例ID)
+- name: String (计划名称)
+- categoryId: UUID (关联的类别ID)
+- startTime: Date (开始时间)
+- endTime: Date (结束时间)
+- duration: Int (持续时长，分钟)
+- reminderTime: Int? (提醒时间，可选)
+- createdAt: Date (创建时间)
+- updatedAt: Date (更新时间)
 
-###### 执行状态
-- status: String (状态：未开始/进行中/已完成/已取消)
-- actualStartTime: Date? (实际开始时间，可选)
-- actualEndTime: Date? (实际结束时间，可选)
-- completionRate: Double (完成度：0-100%)
-- interruptions: [String]? (中断原因记录，可选)
+##### 5. Category（类别）实体
+###### 基础属性
+- id: UUID (主键)
+- name: String (类别名称)
+- color: String (类别颜色)
+- parentId: UUID? (父类别ID，可选)
+- level: Int (层级深度，0表示顶级)
+- path: String (完整类别路径)
+- isVisible: Bool (是否显示)
+- displayOrder: Int (显示顺序)
+- createdAt: Date (创建时间)
+- updatedAt: Date (更新时间)
 
-###### 关联关系
-- planningZone: PlanningZone (所属区间)
-- tags: [String]? (标签列表，可选)
-- attachments: [String]? (附件列表，可选)
-
-##### 3. 枚举类型定义
-###### RepeatType (重复类型)
-- none: "无重复"
-- daily: "每天"
-- weekly: "每周"
-- monthly: "每月"
-
-###### ReminderType (提醒类型)
-- once: "单次提醒"
-- repeat: "重复提醒"
-
-###### PlanStatus (计划状态)
-- notStarted: "未开始"
-- inProgress: "进行中"
-- completed: "已完成"
-- cancelled: "已取消"
-
-###### ZoneType (区间类型)
-- work: "工作"
-- study: "学习"
-- exercise: "运动"
-- rest: "休息"
-- other: "其他"
-
-##### 4. 数据关系
+##### 6. 数据关系
 ###### 一对多关系
-- 一个PlanningZone包含多个Plan
-- 每个Plan必须属于一个PlanningZone
+- 一个PlanningZone模板可以有多个实例
+- 一个PlanTemplate可以有多个Plan实例
+- 一个PlanningZoneInstance可以包含多个Plan
+- 一个Category可以有多个子Category
 
 ###### 数据完整性
-- 删除PlanningZone时级联删除其包含的所有Plan
-- 更新PlanningZone时间范围时验证所包含Plan的时间有效性
-
-##### 5. 数据统计支持
-###### 计划统计
-- 每日/周/月计划完成率
-- 计划准时率
-- 计划中断原因分析
-- 实际执行时间统计
-
-###### 区间统计
-- 区间时间利用率
-- 区间计划分布
-- 区间效率分析
-- 区间类型占比
+- 删除模板时不删除已创建的实例
+- 更新区间时间范围时验证所包含Plan的时间有效性
