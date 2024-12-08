@@ -2,28 +2,26 @@
 
 ## 1. 用户需求场景
 ### 1.1 计划区间管理
-- 用户可以创建计划区间
+- 用户可以创建计划区间模版
   - 设置区间名称
-  - 设置开始和结束时间
-- 用户可以将计划区间拖拽到日历视图中
+- 用户可以将计划区间模版拖拽到日历视图中生成计划区间实例
   - 支持拖拽交互
   - 显示区间时间范围
   - 可视化区间边界
 
-### 1.2 计划创建
-- 用户可以创建新计划，包含以下属性：
+### 1.2 计划模版创建
+- 用户可以创建新计划模版，包含以下属性：
   - 计划名称（必填）
-  - 重复设置（可选）
-    - 无重复/每天/每周/每月
   - 提醒设置（可选）
     - 开启/关闭提醒
     - 提醒时间点
-  - 时间设置（必填）
-    - 开始时间
-    - 结束时间
+  - 其他属性（可选）
+    - 优先级（1-5）
+    - 难度（1-5）
+    - 类别
 
 ### 1.3 计划分配
-- 用户可以将计划拖拽到计划区间内
+- 用户可以将计划模版拖拽到计划区间内生成计划实例
   - 支持拖拽交互
   - 显示计划时间段
   - 计划与区间的视觉关联
@@ -123,7 +121,7 @@
   - UI常量（间距、大小等）
   - 配置常量
   - 错误信息常量
-  - 通知名称常量
+  - ��知名称常量
 
 #### 3. CoreData模型设计（2天）
 ##### 3.1 数据模型文件创建
@@ -279,73 +277,80 @@
 
 #### CoreData数据模型详细设计
 
-##### 1. PlanningZone（计划区间模板）实体
+##### 1. Category（类别）实体
+###### 基础属性
+- id: UUID (主键)
+- name: String (类别名称)
+- color: String? (类别颜色，可选)
+- parentId: UUID? (父类别ID，可选)
+- level: Int (层级深度，0表示顶级)
+- path: String? (完整类别路径，可选)
+- isVisible: Bool (是否显示)
+- displayOrder: Int? (显示顺序，可选)
+- createdAt: Date (创建时间)
+- updatedAt: Date (更新时间)
+- deletedAt: Date? (删除时间，可选)
+
+##### 2. PlanBlockTemplate（计划区间模板）实体
 ###### 基础属性
 - id: UUID (主键)
 - name: String (区间名称)
-- color: String (区间颜色，十六进制颜色值)
-- description: String? (区间描述，可选)
+- color: String? (区间颜色，可选)
+- desc: String? (区间描述，可选)
 - isVisible: Bool (是否在日历中显示)
 - createdAt: Date (创建时间)
 - updatedAt: Date (更新时间)
+- deletedAt: Date? (删除时间，可选)
 
-##### 2. PlanningZoneInstance（计划区间实例）实体
+##### 3. PlanBlockInstance（计划区间实例）实体
 ###### 基础属性
 - id: UUID (主键)
-- templateId: UUID (关联的区间模板ID)
 - startAt: Date (开始时间)
 - endAt: Date (结束时间)
 - createdAt: Date (创建时间)
 - updatedAt: Date (更新时间)
+- deletedAt: Date? (删除时间，可选)
 
-##### 3. PlanTemplate（计划模板）实体
+##### 4. PlanTemplate（计划模板）实体
 ###### 基础属性
 - id: UUID (主键)
 - name: String (计划名称)
-- categoryId: UUID (关联的类别ID)
-- color: String (显示颜色)
+- color: String? (显示颜色，可选)
 - isFixedTime: Bool (是否固定时间)
 - isReminderEnabled: Bool (是否启用提醒)
-- reminderTime: Int (提前提醒分钟数)
-- priority: Int (优先级：1-5)
-- difficulty: Int (难度：1-5)
-- tags: [String] (标签列表)
+- reminderTime: Int? (提前提醒分钟数，可选)
+- priority: Int? (优先级：1-5，可选)
+- difficulty: Int? (难度：1-5，可选)
+- tags: String? (标签列表，可选)
 - createdAt: Date (创建时间)
 - updatedAt: Date (更新时间)
+- deletedAt: Date? (删除时间，可选)
 
-##### 4. Plan（计划实例）实体
+##### 5. PlanInstance（计划实例）实体
 ###### 基础属性
 - id: UUID (主键)
-- templateId: UUID (关联的计划模板ID)
-- blockId: UUID (所属区间实例ID)
-- name: String (计划名称)
-- categoryId: UUID (关联的类别ID)
 - startTime: Date (开始时间)
 - endTime: Date (结束时间)
 - duration: Int (持续时长，分钟)
+- isReminderEnabled: Bool (是否启用提醒)
 - reminderTime: Int? (提醒时间，可选)
+- priority: Int? (优先级：1-5，可选)
+- difficulty: Int? (难度：1-5，可选)
 - createdAt: Date (创建时间)
 - updatedAt: Date (更新时间)
-
-##### 5. Category（类别）实体
-###### 基础属性
-- id: UUID (主键)
-- name: String (类别名称)
-- color: String (类别颜色)
-- parentId: UUID? (父类别ID，可选)
-- level: Int (层级深度，0表示顶级)
-- path: String (完整类别路径)
-- isVisible: Bool (是否显示)
-- displayOrder: Int (显示顺序)
-- createdAt: Date (创建时间)
-- updatedAt: Date (更新时间)
+- deletedAt: Date? (删除时间，可选)
 
 ##### 6. 数据关系
 ###### 一对多关系
-- 一个PlanningZone模板可以有多个实例
-- 一个PlanTemplate可以有多个Plan实例
-- 一个PlanningZoneInstance可以包含多个Plan
-- 一个Category可以有多个子Category
+- Category <-> Category (父子关系)
+- Category <-> PlanTemplate (类别-计划模板)
+- PlanTemplate <-> PlanInstance (模板-实例)
+- PlanBlockTemplate <-> PlanBlockInstance (区间模板-实例)
+- PlanBlockInstance <-> PlanInstance (区间实例-计划实例)
+
+###### 删除规则
+- 父子关系：父实体删除时级联删除子实体（Cascade）
+- 引用关系：被引用实体删除时清空引用（Nullify）
 
 ###### 数据完整性
 - 删除模板时不删除已创建的实例

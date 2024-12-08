@@ -23,7 +23,7 @@
         <attribute name="startAt" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="updatedAt" attributeType="Date" usesScalarValueType="NO"/>
         <relationship name="blockTemplate" maxCount="1" deletionRule="Nullify" destinationEntity="PlanBlockTemplate" inverseName="blockInstances" inverseEntity="PlanBlockTemplate"/>
-        <relationship name="planInstance" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="PlanInstance" inverseName="blockInstances" inverseEntity="PlanInstance"/>
+        <relationship name="planInstances" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="PlanInstance" inverseName="blockInstance" inverseEntity="PlanInstance"/>
     </entity>
     <entity name="PlanBlockTemplate" representedClassName="PlanBlockTemplate" syncable="YES" codeGenerationType="class">
         <attribute name="color" optional="YES" attributeType="String"/>
@@ -48,7 +48,7 @@
         <attribute name="reminderTime" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="startTime" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="updatedAt" attributeType="Date" usesScalarValueType="NO"/>
-        <relationship name="blockInstances" maxCount="1" deletionRule="Nullify" destinationEntity="PlanBlockInstance" inverseName="planInstance" inverseEntity="PlanBlockInstance"/>
+        <relationship name="blockInstance" maxCount="1" deletionRule="Nullify" destinationEntity="PlanBlockInstance" inverseName="planInstances" inverseEntity="PlanBlockInstance"/>
         <relationship name="planTemplate" maxCount="1" deletionRule="Nullify" destinationEntity="PlanTemplate" inverseName="planInstances" inverseEntity="PlanTemplate"/>
     </entity>
     <entity name="PlanTemplate" representedClassName="PlanTemplate" syncable="YES" codeGenerationType="class">
