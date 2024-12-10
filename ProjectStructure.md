@@ -45,7 +45,7 @@
   - `SmartPlannerApp.swift` - 应用程序入口文件
   - `ContentView.swift` - 主视图文件
   - `Assets.xcassets/` - 资源文件目录
-  - `Preview Content/` - SwiftUI 预���内容
+  - `Preview Content/` - SwiftUI 预览内容
   - `SmartPlanner.xcdatamodeld/` - Core Data 数据模型
   - `Models/` - 数据模型层
     - 负责数据实体定义
@@ -82,7 +82,7 @@
         - 支持类别关联
         - 实现优先级和难度管理
         - 支持实例创建和验证
-      - `PlanBlockInstanceService.swift` - 计划区间实例服务类
+      - `PlanBlockInstanceService.swift` - 计划区间实例��务类
         - 实现 PlanBlockInstanceServiceProtocol
         - 提供区间实例管理功能
         - 支持时间范围管理
@@ -101,7 +101,26 @@
     - 常量定义
 
 - `SmartPlannerTests/` - 单元测试目录
-  - `SmartPlannerTests.swift` - 单元测试文件
+  - `CoreData/` - CoreData 相关测试
+    - `CoreDataManagerTests.swift` - CoreData 管理器测试
+      - 测试数据库初始化
+      - 测试 CRUD 操作
+      - 测试上下文管理
+      - 测试并发操作
+    - `CategoryServiceTests.swift` - 类别服务测试
+      - 测试类别创建
+      - 测试层级管理
+      - 测试路径维护
+      - 测试更新操作
+      - 测试移动功能
+      - 测试删除操作
+      - 测试错误处理
+  - `Mocks/` - 模拟对象
+    - 测试数据生成器
+    - 模拟服务实现
+  - `TestHelpers/` - 测试辅助工具
+    - 测试工具函数
+    - 测试数据构建器
 
 - `SmartPlannerUITests/` - UI测试目录
   - `SmartPlannerUITests.swift` - UI测试用例
@@ -135,9 +154,28 @@
   - 常量定义
 
 建议在 `SmartPlannerTests/` 目录下包含：
-- 模型测试
-- 业务逻辑测试
-- 工具类测试
+- `CoreData/` - CoreData 相关测试
+  - 实体服务测试
+  - 数据管理测试
+  - 关系维护测试
+- `Models/` - 模型测试
+  - 数据模型测试
+  - 业务模型测试
+- `ViewModels/` - 视图模型测试
+  - 状态管理测试
+  - 业务逻辑测试
+- `Services/` - 服务层测试
+  - API 测试
+  - 业务服务测试
+- `Utilities/` - 工具测试
+  - 工具类测试
+  - 扩展方法测试
+- `Mocks/` - 模拟对象
+  - 测试数据生成器
+  - 模拟服务实现
+- `TestHelpers/` - 测试辅助工具
+  - 测试工具函数
+  - 测试数据构建器
 
 建议在 `SmartPlannerUITests/` 目录下包含：
 - 界面交互测试
