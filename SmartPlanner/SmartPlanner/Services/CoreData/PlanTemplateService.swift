@@ -32,7 +32,7 @@ protocol PlanTemplateServiceProtocol {
                        difficulty: Int16?,
                        tags: String?) throws -> PlanTemplate
     
-    /// 获取指定类别的计划模板
+    /// 获取指定类别的计划��板
     /// - Parameter category: 类别（nil表示获取未分类的模板）
     /// - Returns: 计划模板列表
     func fetchTemplates(in category: Category?) throws -> [PlanTemplate]
@@ -174,7 +174,7 @@ final class PlanTemplateService: PlanTemplateServiceProtocol {
         let context = coreDataManager.mainContext
         let instance = coreDataManager.create(PlanInstance.self, context: context)
         
-        // 设置基本属性
+        // 设置��本属性
         instance.id = UUID()
         instance.startTime = startTime
         instance.endTime = endTime
@@ -196,10 +196,9 @@ final class PlanTemplateService: PlanTemplateServiceProtocol {
     
     func fetchTemplates(in category: Category?) throws -> [PlanTemplate] {
         let context = coreDataManager.mainContext
-        let predicateFormat = category == nil ?
-            "category == nil AND deletedAt == nil" :
-            "category == %@ AND deletedAt == nil"
-        let predicate = NSPredicate(format: predicateFormat, category as Any)
+        let predicate = category == nil ?
+            NSPredicate(format: "category == nil AND deletedAt == nil") :
+            NSPredicate(format: "category == %@ AND deletedAt == nil", category!)
         return try coreDataManager.fetch(PlanTemplate.self,
                                        predicate: predicate,
                                        context: context)

@@ -80,7 +80,7 @@ extension CoreDataManager {
     /// 获取实体
     /// - Parameters:
     ///   - entityType: 实体类型
-    ///   - predicate: 查询条件
+    ///   - predicate: 查���条件
     ///   - context: 上下文
     /// - Returns: 查询结果
     func fetch<T: NSManagedObject>(_ entityType: T.Type,
@@ -148,13 +148,14 @@ extension CoreDataManager {
     /// 批量删除
     /// - Parameters:
     ///   - entityType: 实体类型
-    ///   - predicate: 查询条件
+    ///   - predicate: ��询条件
     ///   - context: 上下文
     func batchDelete<T: NSManagedObject>(_ entityType: T.Type,
                                         predicate: NSPredicate? = nil,
                                         context: NSManagedObjectContext) throws {
-        let request = NSBatchDeleteRequest(fetchRequest: T.fetchRequest())
-        request.predicate = predicate
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: String(describing: entityType))
+        fetchRequest.predicate = predicate
+        let request = NSBatchDeleteRequest(fetchRequest: fetchRequest)
         request.resultType = .resultTypeObjectIDs
         
         let result = try context.execute(request) as? NSBatchDeleteResult

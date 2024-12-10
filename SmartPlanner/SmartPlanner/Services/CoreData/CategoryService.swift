@@ -129,14 +129,14 @@ final class CategoryService: CategoryServiceProtocol {
         
         var result: [Category] = []
         for component in components {
-            guard let uuid = UUID(uuidString: component),
-                  let predicate = NSPredicate(format: "id == %@", uuid as CVarArg),
-                  let category = try coreDataManager.fetch(Category.self,
-                                                         predicate: predicate,
-                                                         context: context).first
-            else { continue }
+            guard let uuid = UUID(uuidString: component) else { continue }
             
-            result.append(category)
+            let predicate = NSPredicate(format: "id == %@", uuid as CVarArg)
+            if let category = try coreDataManager.fetch(Category.self,
+                                                      predicate: predicate,
+                                                      context: context).first {
+                result.append(category)
+            }
         }
         
         return result
@@ -145,7 +145,7 @@ final class CategoryService: CategoryServiceProtocol {
     // MARK: - 更新操作
     
     func updateCategory(_ category: Category, name: String?, color: String?) throws {
-        // 如果要更新名称，先验证是否可���
+        // 如果要更新名称，先验证是否可用
         if let name = name {
             guard try isNameAvailable(name, parent: category.parent, excluding: category) else {
                 throw CategoryError.nameAlreadyExists

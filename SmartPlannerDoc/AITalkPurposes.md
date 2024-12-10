@@ -20,4 +20,37 @@
 
 请更新 @ProjectStructure.md 文件。请记住，在项目目录、文件发生变动时，需要及时更新 @ProjectStructure.md 文件。
 
-我需要你提醒我，作为一个经验丰富的ios开发者何时应该向git仓库commit，并给我commit的内容。
+我需要你提醒我，作为一个经验丰富的ios开发者何时应该向git仓库commit，并给我commit的内容。要求如下：
+Now, please generate a commit message with Chinese.
+Make sure it includes an accurate and informative subject line that succinctly summarizes the key points of the changes, the response must only have commit message content and must have blank line in message template.
+
+Below is the commit message template:
+
+<type>(<scope>): <subject>
+// blank line
+<body>
+// blank line
+<footer>
+
+The Header is mandatory, while the Body and Footer are optional.
+
+Regardless of which part, no line should exceed 72 characters (or 100 characters). This is to avoid automatic line breaks affecting aesthetics.
+
+Below is the type Enum:
+
+- feat: new feature
+- fix: bug fix
+- docs: documentation
+- style: formatting (changes that do not affect code execution)
+- refactor: refactoring (code changes that are neither new features nor bug fixes)
+- test: adding tests
+- chore: changes to the build process or auxiliary tools
+
+The body section is a detailed description of this commit and can be split into multiple lines. Here's an example:
+
+More detailed explanatory text, if necessary. Wrap it to about 72 characters or so. 
+
+Further paragraphs come after blank lines.
+
+- Bullet points are okay, too
+- Use a hanging indent
