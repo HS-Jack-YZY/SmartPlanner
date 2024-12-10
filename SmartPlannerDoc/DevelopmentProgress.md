@@ -75,7 +75,7 @@
      - 关系：blockTemplate, planInstances
    - PlanTemplate（计划模板）
      - 基本属性：id, name, color, isFixedTime等
-     - 关��：category, planInstances
+     - 关系：category, planInstances
    - PlanInstance（计划实例）
      - 基本属性：id, startTime, endTime, duration等
      - 关系：planTemplate, blockInstance
@@ -164,7 +164,7 @@
    - `Services/CoreData/PlanBlockTemplateService.swift`
      - 用途：PlanBlockTemplate 实体服务层
      - 功能：
-       - 定义 PlanBlockTemplateServiceProtocol
+       - ���义 PlanBlockTemplateServiceProtocol
        - 实现 PlanBlockTemplateService 类
        - 提供模板管理功能
        - 支持实例创建
@@ -206,7 +206,7 @@
    - [x] 创建 PlanTemplateServiceProtocol 协议
    - [x] 实现基础 CRUD 操作
    - [x] 添加类别关联管理
-   - [x] 实现优先级和难度���证
+   - [x] 实现优先级和难度管理
    - [x] 添加实例创建功能
    - [x] 实现数据验证逻辑
 
@@ -253,8 +253,44 @@
    - 使用协议定义服务接口
    - 实现时间范围管理
    - 支持冲突检测
-   - 维护实例关系完整性
+   - 维��实例关系完整性
    - 添加时间验证逻辑
+
+#### PlanInstance服务实现阶段
+1. 新建文件
+   - `Services/CoreData/PlanInstanceService.swift`
+     - 用途：PlanInstance 实体服务层
+     - 功能：
+       - 定义 PlanInstanceServiceProtocol
+       - 实现 PlanInstanceService 类
+       - 提供计划实例管理功能
+       - 支持时间范围管理
+       - 实现优先级和难度管理
+       - 支持提醒功能
+       - 实现冲突检测
+
+2. 完成内容
+   - [x] 创建 PlanInstanceServiceProtocol 协议
+   - [x] 实现基础 CRUD 操作
+   - [x] 添加时间范围管理
+   - [x] 实现优先级和难度管理
+   - [x] 添加提醒功能支持
+   - [x] 实现冲突检测逻辑
+   - [x] 维护实例关系完整性
+
+3. 下一步计划
+   - [ ] 添加单元测试
+   - [ ] 创建示例数据
+   - [ ] 实现UI层的计划实例管理
+   - [ ] 添加本地通知支持
+
+4. 技术要点
+   - 使用协议定义服务接口
+   - 实现时间范围管理
+   - 支持优先级和难度设置
+   - 添加提醒功能
+   - 实现冲突检测
+   - 维护数据完整性
 
 #### 项目结构确认阶段
 1. 确认项目文件结构
@@ -312,7 +348,7 @@
 ### 已解决问题
 1. 第一次迭代范围确定
    - 问题描述：需要明确第一次迭代的功能范围
-   - 解决方案��移除重复功能相关内容，专注核心功能实现
+   - 解决方案：移除重复功能相关内容，专注核心功能实现
    - 解决日期：2024-12-10
 
 ## 开发环境信息
