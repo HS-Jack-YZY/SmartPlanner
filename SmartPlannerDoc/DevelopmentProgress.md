@@ -75,7 +75,7 @@
      - 关系：blockTemplate, planInstances
    - PlanTemplate（计划模板）
      - 基本属性：id, name, color, isFixedTime等
-     - 关��：category, planInstances
+     - 关系：category, planInstances
    - PlanInstance（计划实例）
      - 基本属性：id, startTime, endTime, duration等
      - 关系：planTemplate, blockInstance
@@ -172,7 +172,7 @@
 
 2. 完成内容
    - [x] 创建 PlanBlockTemplateServiceProtocol 协议
-   - [x] 实现基础 CRUD 操作
+   - [x] 实现��础 CRUD 操作
    - [x] 添加实例创建功能
    - [x] 实现数据验证逻辑
    - [x] 添加错误处理
@@ -219,7 +219,7 @@
 4. 技术要点
    - 使用协议定义服务接口
    - 实现类别关联管理
-   - 支持优先级和难度设置
+   - 支持优��级和难度设置
    - 添加时间范围验证
    - 维护数据完整性
 
@@ -256,7 +256,7 @@
    - 维护实例关系完整性
    - 添加时间验证逻辑
 
-#### PlanInstance服务实现��段
+#### PlanInstance服务实现阶段
 1. 新建文件
    - `Services/CoreData/PlanInstanceService.swift`
      - 用途：PlanInstance 实体服务层
@@ -300,7 +300,7 @@
        - 测试初始化功能
        - 测试 CRUD 操作
        - 测试批量操作
-       - 测试后台操作
+       - 测试后台操���
 
 2. 完成内容
    - [x] 创建测试类和基础设置
@@ -437,6 +437,45 @@
    - 测试名称唯一性
    - 确保数据完整性
 
+#### PlanBlockInstanceService单元测试阶段
+1. 新建文件
+   - `SmartPlannerTests/CoreData/PlanBlockInstanceServiceTests.swift`
+     - 用途：PlanBlockInstance 单元测试
+     - 功能：
+       - 测试创建功能
+       - 测试查询功能
+       - 测试更新功能
+       - 测试删除功能
+       - 测试错误处理
+
+2. 完成内容
+   - [x] 创建测试类和基础设置
+   - [x] 实现创建相关测试
+     - 基本创建测试
+     - 无效时间范围测试
+     - 时间冲突测试
+   - [x] 实现查询相关测试
+     - 按时间范围查询测试
+     - 按模板查询测试
+   - [x] 实现更新相关测试
+     - 基本更新测试
+     - 时间冲突更新测试
+   - [x] 实现删除相关测试
+     - 软删除验证
+
+3. 下一步计划
+   - [ ] 实现 PlanInstance 单元测试
+   - [ ] 添加更多边界条件测试
+   - [ ] 添加性能测试
+   - [ ] 添加并发测试
+
+4. 技术要点
+   - 测试时间范围验证
+   - 测试时间冲突检测
+   - 测试模板关联
+   - 测试完成状态管理
+   - 确保数据完整性
+
 #### 测试框架搭建阶段
 1. 目录结构创建
    - 创建测试相关目录
@@ -536,7 +575,7 @@
 ### 中优先级
 - [ ] 计划管理功能
 - [ ] 区间管理功能
-- [ ] 本���通知系统
+- [ ] 本通知系统
 
 ### 低优先级
 - [ ] 单元测试编写
