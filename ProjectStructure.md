@@ -45,7 +45,7 @@
   - `SmartPlannerApp.swift` - 应用程序入口文件
   - `ContentView.swift` - 主视图文件
   - `Assets.xcassets/` - 资源文件目录
-  - `Preview Content/` - SwiftUI 预���内容
+  - `Preview Content/` - SwiftUI 预览内容
   - `SmartPlanner.xcdatamodeld/` - Core Data 数据模型
   - `Models/` - 数据模型层
     - 负责数据实体定义
@@ -101,6 +101,7 @@
     - 常量定义
 
 - `SmartPlannerTests/` - 单元测试目录
+  - `SmartPlannerTests.swift` - 测试基础配置文件
   - `CoreData/` - CoreData 相关测试
     - `CoreDataManagerTests.swift` - CoreData 管理器测试
       - 测试数据库初始化
@@ -132,12 +133,12 @@
         - 名称重复错误
         - 持续时间错误
         - 时间范围错误
+  - `Models/` - 模型测试
+  - `ViewModels/` - 视图模型测试
+  - `Services/` - 服务层测试
+  - `Utilities/` - 工具测试
   - `Mocks/` - 模拟对象
-    - 测试数据生成器
-    - 模拟服务实现
   - `TestHelpers/` - 测试辅助工具
-    - 测试工具函数
-    - 测试数据构建器
 
 - `SmartPlannerUITests/` - UI测试目录
   - `SmartPlannerUITests.swift` - UI测试用例
@@ -185,7 +186,7 @@
   - API 测试
   - 业务服务测试
 - `Utilities/` - 工具测试
-  - 工具类测���
+  - 工具类测试
   - 扩展方法测试
 - `Mocks/` - 模拟对象
   - 测试数据生成器
