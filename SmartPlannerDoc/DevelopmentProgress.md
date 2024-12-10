@@ -52,9 +52,9 @@
    - 解决：移除重复功能相关内容，专注核心功能实现
 
 4. 下一步计划
-   - [ ] 创建Xcode项目
-   - [ ] 搭建基础项目结构
-   - [ ] 实现CoreData数据模型
+   - [x] 创建Xcode项目
+   - [x] 搭建基础项目结构
+   - [x] 实现CoreData数据模型
 
 5. 备注
    - 项目使用SwiftUI框架
@@ -75,7 +75,7 @@
      - 关系：blockTemplate, planInstances
    - PlanTemplate（计划模板）
      - 基本属性：id, name, color, isFixedTime等
-     - 关系：category, planInstances
+     - 关��：category, planInstances
    - PlanInstance（计划实例）
      - 基本属性：id, startTime, endTime, duration等
      - 关系：planTemplate, blockInstance
@@ -87,10 +87,10 @@
    - [x] 设置默认值和可选属性
 
 3. 下一步计划
-   - [ ] 创建 CoreData 管理类
-   - [ ] 实现数据持久化服务
-   - [ ] 添加数据验证逻辑
-   - [ ] 创建数据访问接口
+   - [x] 创建 CoreData 管理类
+   - [x] 实现数据持久化服务
+   - [x] 添加数据验证逻辑
+   - [x] 创建数据访问接口
 
 4. 技术要点
    - 所有实体都使用 UUID 作为唯一标识符
@@ -117,8 +117,8 @@
    - [x] 添加后台任务支持
 
 3. 下一步计划
-   - [ ] 为每个实体创建专门的管理服务
-   - [ ] 实现数据验证逻辑
+   - [x] 为每个实体创建专门的管理服务
+   - [x] 实现数据验证逻辑
    - [ ] 添加数据迁移支持
    - [ ] 创建单元测试
 
@@ -147,7 +147,7 @@
    - [x] 添加数据验证逻辑
 
 3. 下一步计划
-   - [ ] 实现 PlanBlockTemplate 服务
+   - [x] 实现 PlanBlockTemplate 服务
    - [ ] 添加单元测试
    - [ ] 创建示例数据
    - [ ] 实现UI层的类别管理
@@ -164,7 +164,7 @@
    - `Services/CoreData/PlanBlockTemplateService.swift`
      - 用途：PlanBlockTemplate 实体服务层
      - 功能：
-       - ���义 PlanBlockTemplateServiceProtocol
+       - 定义 PlanBlockTemplateServiceProtocol
        - 实现 PlanBlockTemplateService 类
        - 提供模板管理功能
        - 支持实例创建
@@ -178,7 +178,7 @@
    - [x] 添加错误处理
 
 3. 下一步计划
-   - [ ] 实现 PlanTemplate 服务
+   - [x] 实现 PlanTemplate 服务
    - [ ] 添加单元测试
    - [ ] 创建示例数据
    - [ ] 实现UI层的区间模板管理
@@ -211,7 +211,7 @@
    - [x] 实现数据验证逻辑
 
 3. 下一步计划
-   - [ ] 实现 PlanBlockInstance 服务
+   - [x] 实现 PlanBlockInstance 服务
    - [ ] 添加单元测试
    - [ ] 创建示例数据
    - [ ] 实现UI层的计划模板管理
@@ -244,7 +244,7 @@
    - [x] 添加数据验证逻辑
 
 3. 下一步计划
-   - [ ] 实现 PlanInstance 服务
+   - [x] 实现 PlanInstance 服务
    - [ ] 添加单元测试
    - [ ] 创建示例数据
    - [ ] 实现UI层的区间实例管理
@@ -253,11 +253,11 @@
    - 使用协议定义服务接口
    - 实现时间范围管理
    - 支持冲突检测
-   - 维��实例关系完整性
+   - 维护实例关系完整性
    - 添加时间验证逻辑
 
 #### PlanInstance服务实现阶段
-1. 新建文件
+1. 新建���件
    - `Services/CoreData/PlanInstanceService.swift`
      - 用途：PlanInstance 实体服务层
      - 功能：
@@ -291,6 +291,36 @@
    - 添加提醒功能
    - 实现冲突检测
    - 维护数据完整性
+
+#### CoreDataManager单元测试阶段
+1. 新建文件
+   - `SmartPlannerTests/CoreData/CoreDataManagerTests.swift`
+     - 用途：CoreDataManager 单元测试
+     - 功能：
+       - 测试初始化功能
+       - 测试 CRUD 操作
+       - 测试批量操作
+       - 测试后台操作
+
+2. 完成内容
+   - [x] 创建测试类和基础设置
+   - [x] 实现初始化测试
+   - [x] 实现 CRUD 操作测试
+   - [x] 实现批量操作测试
+   - [x] 实现后台操作测试
+
+3. 下一步计划
+   - [ ] 实现 CategoryService 单元测试
+   - [ ] 添加更多边界条件测试
+   - [ ] 添加错误处理测试
+   - [ ] 添加性能测试
+
+4. 技术要点
+   - 使用 XCTest 框架
+   - 实现完整的测试生命周期
+   - 包含正向和异常测试
+   - 确保测试数据清理
+   - 验证异步操作
 
 #### 项目结构确认阶段
 1. 确认项目文件结构
@@ -348,7 +378,7 @@
 ### 已解决问题
 1. 第一次迭代范围确定
    - 问题描述：需要明确第一次迭代的功能范围
-   - 解决方案：移除重复功能相关内容，专注核心功能实现
+   - 解决方案：移除重复功能相关内容，专���核心功能实现
    - 解决日期：2024-12-10
 
 ## 开发环境信息
