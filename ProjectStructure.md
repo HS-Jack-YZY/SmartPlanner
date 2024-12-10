@@ -45,7 +45,7 @@
   - `SmartPlannerApp.swift` - 应用程序入口文件
   - `ContentView.swift` - 主视图文件
   - `Assets.xcassets/` - 资源文件目录
-  - `Preview Content/` - SwiftUI 预览内容
+  - `Preview Content/` - SwiftUI 预���内容
   - `SmartPlanner.xcdatamodeld/` - Core Data 数据模型
   - `Models/` - 数据模型层
     - 负责数据实体定义
@@ -82,7 +82,7 @@
         - 支持类别关联
         - 实现优先级和难度管理
         - 支持实例创建和验证
-      - `PlanBlockInstanceService.swift` - 计划区间实例��务类
+      - `PlanBlockInstanceService.swift` - 计划区间实例服务类
         - 实现 PlanBlockInstanceServiceProtocol
         - 提供区间实例管理功能
         - 支持时间范围管理
@@ -115,6 +115,23 @@
       - 测试移动功能
       - 测试删除操作
       - 测试错误处理
+    - `PlanBlockTemplateServiceTests.swift` - 计划区间模板服务测试
+      - 测试模板创建
+        - 基本创建功能
+        - 重复名称处理
+        - 无效持续时间验证
+        - 无效时间范围验证
+      - 测试模板查询
+        - 按类别查询
+      - 测试模板更新
+        - 基本更新功能
+        - 重复名称处理
+      - 测试模板删除
+        - 软删除验证
+      - 测试错误处理
+        - 名称重复错误
+        - 持续时间错误
+        - 时间范围错误
   - `Mocks/` - 模拟对象
     - 测试数据生成器
     - 模拟服务实现
@@ -168,7 +185,7 @@
   - API 测试
   - 业务服务测试
 - `Utilities/` - 工具测试
-  - 工具类测试
+  - 工具类测���
   - 扩展方法测试
 - `Mocks/` - 模拟对象
   - 测试数据生成器

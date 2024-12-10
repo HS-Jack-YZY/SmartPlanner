@@ -75,7 +75,7 @@
      - 关系：blockTemplate, planInstances
    - PlanTemplate（计划模板）
      - 基本属性：id, name, color, isFixedTime等
-     - 关��：category, planInstances
+     - 关系：category, planInstances
    - PlanInstance（计划实例）
      - 基本属性：id, startTime, endTime, duration等
      - 关系：planTemplate, blockInstance
@@ -117,7 +117,7 @@
    - [x] 添加后台任务支持
 
 3. 下一步计划
-   - [x] 为每个实体创建专门的管理服务
+   - [x] 为每个实体创建专门��管理服务
    - [x] 实现数据验证逻辑
    - [ ] 添加数据迁移支持
    - [ ] 创建单元测试
@@ -211,7 +211,7 @@
    - [x] 实现数据验证逻辑
 
 3. 下一步计划
-   - [x] ���现 PlanBlockInstance 服务
+   - [x] 实现 PlanBlockInstance 服务
    - [ ] 添加单元测试
    - [ ] 创建示例数据
    - [ ] 实现UI层的计划模板管理
@@ -355,6 +355,46 @@
    - 测试名称唯一性
    - 防止循环引用
    - 验证级联删除
+   - 确保数据完整性
+
+#### PlanBlockTemplateService单元测试阶段
+1. 新建文件
+   - `SmartPlannerTests/CoreData/PlanBlockTemplateServiceTests.swift`
+     - 用途：PlanBlockTemplate 单元测试
+     - 功能：
+       - 测试创建功能
+       - 测试查询功能
+       - 测试更新功能
+       - 测试删除功能
+       - 测试错误处理
+
+2. 完成内容
+   - [x] 创建测试类和基础设置
+   - [x] 实现创建相关测试
+     - 基本创建测试
+     - 重复名称测试
+     - 无效持续时间测试
+     - 无效时间范围测试
+   - [x] 实现查询相关测试
+     - 按类别查询测试
+   - [x] 实现更新相关测试
+     - 基本更新测试
+     - 重复名称更新测试
+   - [x] 实现删除相关测试
+     - 软删除验证
+
+3. 下一步计划
+   - [ ] 实现 PlanTemplate 单元测试
+   - [ ] 添加更多边界条件测试
+   - [ ] 添加性能测试
+   - [ ] 添加并发测试
+
+4. 技术要点
+   - 测试模板创建验证
+   - 测试时间范围验证
+   - 测试持续时间验证
+   - 测试名称唯一性
+   - 测试类别关联
    - 确保数据完整性
 
 #### 测试框架搭建阶段
