@@ -45,7 +45,7 @@
   - `SmartPlannerApp.swift` - 应用程序入口文件
   - `ContentView.swift` - 主视图文件
   - `Assets.xcassets/` - 资源文件目录
-  - `Preview Content/` - SwiftUI 预���内容
+  - `Preview Content/` - SwiftUI 预览内容
   - `SmartPlanner.xcdatamodeld/` - Core Data 数据模型
   - `Models/` - 数据模型层
     - 负责数据实体定义
@@ -82,6 +82,12 @@
         - 支持类别关联
         - 实现优先级和难度管理
         - 支持实例创建和验证
+      - `PlanBlockInstanceService.swift` - 计划区间实例服务类
+        - 实现 PlanBlockInstanceServiceProtocol
+        - 提供区间实例管理功能
+        - 支持时间范围管理
+        - 实现冲突检测
+        - 维护计划实例关系
   - `Utilities/` - 工具层
     - 通用工具类
     - 扩展方法
