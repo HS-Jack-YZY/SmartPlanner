@@ -75,7 +75,7 @@
      - 关系：blockTemplate, planInstances
    - PlanTemplate（计划模板）
      - 基本属性：id, name, color, isFixedTime等
-     - 关系：category, planInstances
+     - 关��：category, planInstances
    - PlanInstance（计划实例）
      - 基本属性：id, startTime, endTime, duration等
      - 关系：planTemplate, blockInstance
@@ -158,6 +158,37 @@
    - 支持类别移动和重组
    - 防止循环引用
    - 维护类别路径完整性
+
+#### PlanBlockTemplate服务实现阶段
+1. 新建文件
+   - `Services/CoreData/PlanBlockTemplateService.swift`
+     - 用途：PlanBlockTemplate 实体服务层
+     - 功能：
+       - 定义 PlanBlockTemplateServiceProtocol
+       - 实现 PlanBlockTemplateService 类
+       - 提供模板管理功能
+       - 支持实例创建
+       - 实现数据验证
+
+2. 完成内容
+   - [x] 创建 PlanBlockTemplateServiceProtocol 协议
+   - [x] 实现基础 CRUD 操作
+   - [x] 添加实例创建功能
+   - [x] 实现数据验证逻辑
+   - [x] 添加错误处理
+
+3. 下一步计划
+   - [ ] 实现 PlanTemplate 服务
+   - [ ] 添加单元测试
+   - [ ] 创建示例数据
+   - [ ] 实现UI层的区间模板管理
+
+4. 技术要点
+   - 使用协议定义服务接口
+   - 实现模板和实例的关联
+   - 支持可见性控制
+   - 添加时间范围验证
+   - 维护数据完整性
 
 #### 项目结构确认阶段
 1. 确认项目文件结构
