@@ -66,6 +66,22 @@
         - 管理 CoreData 栈
         - 提供 CRUD 操作
         - 支持批量操作
+      - `CategoryService.swift` - 类别服务类
+        - 实现 CategoryServiceProtocol
+        - 提供类别管理功能
+        - 支持层级结构
+        - 维护路径完整性
+      - `PlanBlockTemplateService.swift` - 计划区间模板服务类
+        - 实现 PlanBlockTemplateServiceProtocol
+        - 提供模板管理功能
+        - 支持实例创建
+        - 实现数据验证
+      - `PlanTemplateService.swift` - 计划模板服务类
+        - 实现 PlanTemplateServiceProtocol
+        - 提供模板管理功能
+        - 支持类别关联
+        - 实现优先级和难度管理
+        - 支持实例创建和验证
   - `Utilities/` - 工具层
     - 通用工具类
     - 扩展方法
