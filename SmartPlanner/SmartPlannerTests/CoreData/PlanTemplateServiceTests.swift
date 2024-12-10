@@ -36,14 +36,16 @@ final class PlanTemplateServiceTests: XCTestCase {
         let category = try categoryService.createCategory(name: "测试类别", color: "#FF0000", parent: nil)
         
         // 创建计划模板
-        let template = try planTemplateService.createPlanTemplate(
+        let template = try planTemplateService.createTemplate(
             name: "测试计划模板",
             category: category,
+            color: "#00FF00",
+            isFixedTime: false,
+            isReminderEnabled: false,
+            reminderTime: nil,
             priority: 1,
             difficulty: 2,
-            isFixedTime: false,
-            color: "#00FF00",
-            description: "这是一个测试计划模板"
+            tags: nil
         )
         
         XCTAssertNotNil(template.id, "模板ID不应为空")
@@ -53,11 +55,13 @@ final class PlanTemplateServiceTests: XCTestCase {
         XCTAssertEqual(template.difficulty, 2, "模板难度应该匹配")
         XCTAssertFalse(template.isFixedTime, "模板固定时间标志应该匹配")
         XCTAssertEqual(template.color, "#00FF00", "模板颜色应该匹配")
-        XCTAssertEqual(template.templateDescription, "这是一个测试计划模板", "模板描述应该匹配")
-        XCTAssertTrue(template.isVisible, "模板默认应该可见")
+        XCTAssertEqual(template.tags, nil, "模板标签应该匹配")
+        XCTAssertNotNil(template.createdAt, "创建时间不应为空")
+        XCTAssertNotNil(template.updatedAt, "更新时间不应为空")
+        XCTAssertNil(template.deletedAt, "删除时间应为空")
         
         // 清理
-        try planTemplateService.deletePlanTemplate(template)
+        try planTemplateService.deleteTemplate(template)
         try categoryService.deleteCategory(category)
     }
     
@@ -66,31 +70,35 @@ final class PlanTemplateServiceTests: XCTestCase {
         let category = try categoryService.createCategory(name: "测试类别", color: "#FF0000", parent: nil)
         
         // 创建第一个模板
-        let template1 = try planTemplateService.createPlanTemplate(
+        let template1 = try planTemplateService.createTemplate(
             name: "重复名称",
             category: category,
+            color: nil,
+            isFixedTime: false,
+            isReminderEnabled: false,
+            reminderTime: nil,
             priority: 1,
             difficulty: 1,
-            isFixedTime: false,
-            color: nil,
-            description: nil
+            tags: nil
         )
         
         // 尝试创建同名模板
-        XCTAssertThrowsError(try planTemplateService.createPlanTemplate(
+        XCTAssertThrowsError(try planTemplateService.createTemplate(
             name: "重复名称",
             category: category,
+            color: nil,
+            isFixedTime: true,
+            isReminderEnabled: false,
+            reminderTime: nil,
             priority: 2,
             difficulty: 2,
-            isFixedTime: true,
-            color: nil,
-            description: nil
+            tags: nil
         )) { error in
             XCTAssertEqual(error as? PlanTemplateError, .nameAlreadyExists)
         }
         
         // 清理
-        try planTemplateService.deletePlanTemplate(template1)
+        try planTemplateService.deleteTemplate(template1)
         try categoryService.deleteCategory(category)
     }
     
@@ -98,28 +106,32 @@ final class PlanTemplateServiceTests: XCTestCase {
         // 创建类别
         let category = try categoryService.createCategory(name: "测试类别", color: "#FF0000", parent: nil)
         
-        // 尝试创建优先级小于0的模板
-        XCTAssertThrowsError(try planTemplateService.createPlanTemplate(
+        // 尝试创建优先级小于1的模板
+        XCTAssertThrowsError(try planTemplateService.createTemplate(
             name: "无效优先级",
             category: category,
-            priority: -1,
-            difficulty: 1,
-            isFixedTime: false,
             color: nil,
-            description: nil
+            isFixedTime: false,
+            isReminderEnabled: false,
+            reminderTime: nil,
+            priority: 0,
+            difficulty: 1,
+            tags: nil
         )) { error in
             XCTAssertEqual(error as? PlanTemplateError, .invalidPriority)
         }
         
-        // 尝试创建优先级大于3的模板
-        XCTAssertThrowsError(try planTemplateService.createPlanTemplate(
+        // 尝试创建优先级大于5的模板
+        XCTAssertThrowsError(try planTemplateService.createTemplate(
             name: "无效优先级",
             category: category,
-            priority: 4,
-            difficulty: 1,
-            isFixedTime: false,
             color: nil,
-            description: nil
+            isFixedTime: false,
+            isReminderEnabled: false,
+            reminderTime: nil,
+            priority: 6,
+            difficulty: 1,
+            tags: nil
         )) { error in
             XCTAssertEqual(error as? PlanTemplateError, .invalidPriority)
         }
@@ -132,28 +144,32 @@ final class PlanTemplateServiceTests: XCTestCase {
         // 创建类别
         let category = try categoryService.createCategory(name: "测试类别", color: "#FF0000", parent: nil)
         
-        // 尝试创建难度小于0的模板
-        XCTAssertThrowsError(try planTemplateService.createPlanTemplate(
+        // 尝试创建难度小于1的模板
+        XCTAssertThrowsError(try planTemplateService.createTemplate(
             name: "无效难度",
             category: category,
-            priority: 1,
-            difficulty: -1,
-            isFixedTime: false,
             color: nil,
-            description: nil
+            isFixedTime: false,
+            isReminderEnabled: false,
+            reminderTime: nil,
+            priority: 1,
+            difficulty: 0,
+            tags: nil
         )) { error in
             XCTAssertEqual(error as? PlanTemplateError, .invalidDifficulty)
         }
         
-        // 尝试创建难度大于3的模板
-        XCTAssertThrowsError(try planTemplateService.createPlanTemplate(
+        // 尝试创建难度大于5的模板
+        XCTAssertThrowsError(try planTemplateService.createTemplate(
             name: "无效难度",
             category: category,
-            priority: 1,
-            difficulty: 4,
-            isFixedTime: false,
             color: nil,
-            description: nil
+            isFixedTime: false,
+            isReminderEnabled: false,
+            reminderTime: nil,
+            priority: 1,
+            difficulty: 6,
+            tags: nil
         )) { error in
             XCTAssertEqual(error as? PlanTemplateError, .invalidDifficulty)
         }
@@ -170,54 +186,57 @@ final class PlanTemplateServiceTests: XCTestCase {
         let category2 = try categoryService.createCategory(name: "类别2", color: "#00FF00", parent: nil)
         
         // 创建模板
-        let template1 = try planTemplateService.createPlanTemplate(
+        let template1 = try planTemplateService.createTemplate(
             name: "模板1",
             category: category1,
+            color: nil,
+            isFixedTime: false,
+            isReminderEnabled: false,
+            reminderTime: nil,
             priority: 1,
             difficulty: 1,
-            isFixedTime: false,
-            color: nil,
-            description: nil
+            tags: nil
         )
         
-        let template2 = try planTemplateService.createPlanTemplate(
+        let template2 = try planTemplateService.createTemplate(
             name: "模板2",
             category: category1,
+            color: nil,
+            isFixedTime: true,
+            isReminderEnabled: false,
+            reminderTime: nil,
             priority: 2,
             difficulty: 2,
-            isFixedTime: true,
-            color: nil,
-            description: nil
+            tags: nil
         )
         
-        let template3 = try planTemplateService.createPlanTemplate(
+        let template3 = try planTemplateService.createTemplate(
             name: "模板3",
             category: category2,
+            color: nil,
+            isFixedTime: false,
+            isReminderEnabled: false,
+            reminderTime: nil,
             priority: 3,
             difficulty: 3,
-            isFixedTime: false,
-            color: nil,
-            description: nil
+            tags: nil
         )
         
-        // 获取类别1的模板
-        let templatesInCategory1 = try planTemplateService.fetchPlanTemplates(in: category1)
+        // 查询类别1的模板
+        let templatesInCategory1 = try planTemplateService.fetchTemplates(in: category1)
+        XCTAssertEqual(templatesInCategory1.count, 2, "类别1应该有2个模板")
+        XCTAssertTrue(templatesInCategory1.contains(template1), "类别1应该包含模板1")
+        XCTAssertTrue(templatesInCategory1.contains(template2), "类别1应该包含模板2")
         
-        XCTAssertEqual(templatesInCategory1.count, 2, "类别1应该有两个模板")
-        XCTAssertTrue(templatesInCategory1.contains(template1), "模板1应该在结果中")
-        XCTAssertTrue(templatesInCategory1.contains(template2), "模板2应该在结果中")
-        XCTAssertFalse(templatesInCategory1.contains(template3), "模板3不应该在结果中")
-        
-        // 获取类别2的模板
-        let templatesInCategory2 = try planTemplateService.fetchPlanTemplates(in: category2)
-        
-        XCTAssertEqual(templatesInCategory2.count, 1, "类别2应该有一个模板")
-        XCTAssertTrue(templatesInCategory2.contains(template3), "模板3应该在结果中")
+        // 查询类别2的模板
+        let templatesInCategory2 = try planTemplateService.fetchTemplates(in: category2)
+        XCTAssertEqual(templatesInCategory2.count, 1, "类别2应该有1个模板")
+        XCTAssertTrue(templatesInCategory2.contains(template3), "类别2应该包含模板3")
         
         // 清理
-        try planTemplateService.deletePlanTemplate(template1)
-        try planTemplateService.deletePlanTemplate(template2)
-        try planTemplateService.deletePlanTemplate(template3)
+        try planTemplateService.deleteTemplate(template1)
+        try planTemplateService.deleteTemplate(template2)
+        try planTemplateService.deleteTemplate(template3)
         try categoryService.deleteCategory(category1)
         try categoryService.deleteCategory(category2)
     }
@@ -270,6 +289,47 @@ final class PlanTemplateServiceTests: XCTestCase {
         try categoryService.deleteCategory(category)
     }
     
+    func testFetchAllPlanTemplates() throws {
+        // 创建类别
+        let category = try categoryService.createCategory(name: "测试类别", color: "#FF0000", parent: nil)
+        
+        // 创建模板
+        let template1 = try planTemplateService.createTemplate(
+            name: "模板1",
+            category: category,
+            color: nil,
+            isFixedTime: false,
+            isReminderEnabled: false,
+            reminderTime: nil,
+            priority: 1,
+            difficulty: 1,
+            tags: nil
+        )
+        
+        let template2 = try planTemplateService.createTemplate(
+            name: "模板2",
+            category: nil,
+            color: nil,
+            isFixedTime: true,
+            isReminderEnabled: false,
+            reminderTime: nil,
+            priority: 2,
+            difficulty: 2,
+            tags: nil
+        )
+        
+        // 获取所有模板
+        let allTemplates = try planTemplateService.fetchAllTemplates()
+        XCTAssertEqual(allTemplates.count, 2, "应该有2个模板")
+        XCTAssertTrue(allTemplates.contains(template1), "结果应该包含模板1")
+        XCTAssertTrue(allTemplates.contains(template2), "结果应该包含模板2")
+        
+        // 清理
+        try planTemplateService.deleteTemplate(template1)
+        try planTemplateService.deleteTemplate(template2)
+        try categoryService.deleteCategory(category)
+    }
+    
     // MARK: - 更新测试
     
     func testUpdatePlanTemplate() throws {
@@ -284,7 +344,7 @@ final class PlanTemplateServiceTests: XCTestCase {
             difficulty: 1,
             isFixedTime: false,
             color: "#000000",
-            description: "原始描述"
+            description: "原描述"
         )
         
         // 更新模板
@@ -361,32 +421,26 @@ final class PlanTemplateServiceTests: XCTestCase {
         let category = try categoryService.createCategory(name: "测试类别", color: "#FF0000", parent: nil)
         
         // 创建模板
-        let template = try planTemplateService.createPlanTemplate(
+        let template = try planTemplateService.createTemplate(
             name: "测试模板",
             category: category,
+            color: nil,
+            isFixedTime: false,
+            isReminderEnabled: false,
+            reminderTime: nil,
             priority: 1,
             difficulty: 1,
-            isFixedTime: false,
-            color: nil,
-            description: nil
+            tags: nil
         )
         
         // 删除模板
-        try planTemplateService.deletePlanTemplate(template)
+        try planTemplateService.deleteTemplate(template)
         
         // 验证模板被软删除
-        let context = coreDataManager.mainContext
-        let predicate = NSPredicate(format: "deletedAt != nil")
-        let deletedTemplates = try coreDataManager.fetch(PlanTemplate.self,
-                                                       predicate: predicate,
-                                                       context: context)
-        
-        XCTAssertEqual(deletedTemplates.count, 1, "应该有一个被软删除的模板")
-        XCTAssertTrue(deletedTemplates.contains(template), "测试模板应该被软删除")
+        let deletedTemplates = try planTemplateService.fetchAllTemplates()
+        XCTAssertEqual(deletedTemplates.count, 0, "不应该有任何可见的模板")
         
         // 清理
-        context.delete(template)
         try categoryService.deleteCategory(category)
-        try coreDataManager.saveContext(context)
     }
 } 

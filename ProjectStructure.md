@@ -48,6 +48,17 @@
   - `Preview Content/` - SwiftUI 预览内容
   - `SmartPlanner.xcdatamodeld/` - Core Data 数据模型
   - `Models/` - 数据模型层
+    - `CoreData/` - CoreData 实体类
+      - `Category+CoreDataClass.swift` - 类别实体类
+      - `Category+CoreDataProperties.swift` - 类别实体属性
+      - `PlanTemplate+CoreDataClass.swift` - 计划模板实体类
+      - `PlanTemplate+CoreDataProperties.swift` - 计划模板实体属性
+      - `PlanInstance+CoreDataClass.swift` - 计划实例实体类
+      - `PlanInstance+CoreDataProperties.swift` - 计划实例实体属性
+      - `PlanBlockTemplate+CoreDataClass.swift` - 计划区间模板实体类
+      - `PlanBlockTemplate+CoreDataProperties.swift` - 计划区间模板实体属性
+      - `PlanBlockInstance+CoreDataClass.swift` - 计划区间实例实体类
+      - `PlanBlockInstance+CoreDataProperties.swift` - 计划区间实例实体属性
     - 负责数据实体定义
     - 数据转换和持久化
     - 业务模型
