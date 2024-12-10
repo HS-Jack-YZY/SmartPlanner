@@ -13,3 +13,11 @@
 用户在今天8:00-9:00有一个“学习雅思”计划。app会提供几个选项“开始”“跳过”“延后”，“开始”指app开始记录用户正在执行计划；“跳过”指用户今天不执行这个计划了；“延后”指用户将这个计划延后到将来做。
 用户按下“开始”后，app记录该计划的开始时间，app中也会显示该计划的持续时间。在计划进行状态下，用户可以选择”暂停“”完成“。”暂停“则进入暂停状态，”完成“则会记录停止时间，并标记该计划已完成。
 ”暂停“状态下会记录暂停的开始时间，也会显示暂停的持续时间。在”暂停“状态下，用户可以选择”继续“”完成“。”继续“则代表继续该计划，记录暂停的结束时间；”完成“则代表该计划完成。
+
+
+
+@ProjectStructure.md @DevelopmentGuideV1.md @DatabaseDesignV1.md @prdV1.md @tddV1.md @DevelopmentProgress.md ，我列出的文件都是非常重要的文档，请协助我开发SmartPlanner。在我的项目结构发生变化时，请及时更新 @ProjectStructure.md ；当开发进度向前推进时请更新 @DevelopmentProgress.md 。
+
+请更新 @ProjectStructure.md 文件。请记住，在项目目录、文件发生变动时，需要及时更新 @ProjectStructure.md 文件。
+
+我需要你提醒我，作为一个经验丰富的ios开发者何时应该向git仓库commit，并给我commit的内容。

@@ -1,11 +1,11 @@
 # SmartPlanner 技术设计文档 (TDD)
 版本：1.0.0
-最后更新：2024-01-17
+最后更新：2024-12-10
 状态：草稿
 
 ## 1. 文档信息
 - 文档状态：草稿
-- 技术负责人：[待定]
+- 技术负责人：[HS_Jack_YZY]
 - 相关产品文档：PRD v1.0.0
 
 ## 2. 系统架构
@@ -92,7 +92,7 @@ class PlanningZone: NSManagedObject {
 }
 ```
 
-#### 3.1.2 计划模型（Plan��
+#### 3.1.2 计划模型（Plan）
 ```swift
 class Plan: NSManagedObject {
     @NSManaged var id: UUID
@@ -124,19 +124,6 @@ class Category: NSManagedObject {
     @NSManaged var plans: Set<Plan>
     @NSManaged var createdAt: Date
     @NSManaged var updatedAt: Date
-}
-```
-
-#### 3.1.4 重复规则模型（RecurrenceRule）
-```swift
-class RecurrenceRule: NSManagedObject {
-    @NSManaged var id: UUID
-    @NSManaged var type: String // daily, weekly, monthly
-    @NSManaged var interval: Int16
-    @NSManaged var daysOfWeek: String? // "1,2,3,4,5"
-    @NSManaged var startDate: Date
-    @NSManaged var endDate: Date?
-    @NSManaged var count: Int16?
 }
 ```
 
@@ -363,4 +350,4 @@ sequenceDiagram
 ### 9.3 修订历史
 | 版本  | 日期       | 修改内容           | 作者   |
 |------|------------|-------------------|--------|
-| 1.0.0| 2024-01-17| 初始版本创建        | [作者] |
+| 1.0.0| 2024-12-10| 初始版本创建        | [HS_Jack_YZY] |

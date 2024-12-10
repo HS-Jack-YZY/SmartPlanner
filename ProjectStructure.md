@@ -2,11 +2,13 @@
 
 ## 文档目录 (SmartPlannerDoc/)
 ### 迭代文档 (iteration_v1/)
-- `SmartplannerV1.md` - 第一轮迭代具体需求和实现计划
-  - 用户需求场景
-  - 开发步骤建议
-  - 技术要点
-  - 项目结构设计
+- `prdV1.md` - 产品需求文档
+  - 产品定位
+  - 功能需求
+  - 非功能需求
+  - UI/UX设计规范
+  - 兼容性要求
+  - 发布计划
   
 - `tddV1.md` - 技术设计文档
   - 系统架构设计
@@ -15,14 +17,12 @@
   - 安全设计
   - 性能优化
   - 测试策略
-  
-- `prdV1.md` - 产品需求文档
-  - 产品定位
-  - 功能需求
-  - 非功能需求
-  - UI/UX设计规范
-  - 兼容性要求
-  - 发布计划
+
+- `DevelopmentGuideV1.md` - 开发步骤指南
+  - 详细开发流程
+  - 具体实现步骤
+  - 时间规划
+  - 注意事项
 
 ### 核心文档
 - `Smartplanner.md` - 项目整体说明
@@ -30,49 +30,106 @@
   - 核心功能模块
   - 技术架构
   - 前后端职责划分
-  
-- `AITalkPurposes.md` - 业务逻辑补充说明
-  - 计划区间逻辑
-  - 计划模板逻辑
-  - 计划实例逻辑
-  - 类别管理逻辑
+
+- `DevelopmentProgress.md` - 开发进度追踪
+  - 已完成功能
+  - 进行中的任务
+  - 待办事项
+  - 问题记录
 
 ## 源代码目录 (SmartPlanner/)
-### App 入口
-- `SmartPlannerApp.swift` - 应用程序入口文件
+### 当前项目结构
+- `SmartPlanner.xcodeproj/` - Xcode 项目配置文件
 
-### 项目结构 (建议)
-- `Models/` - 数据模型
-  - 计划区间模型
-  - 计划模型
-  - 枚举定义
-  - 数据模型扩展
-  
+- `SmartPlanner/` - 主项目目录
+  - `SmartPlannerApp.swift` - 应用程序入口文件
+  - `ContentView.swift` - 主视图文件
+  - `Assets.xcassets/` - 资源文件目录
+  - `Preview Content/` - SwiftUI 预���内容
+  - `SmartPlanner.xcdatamodeld/` - Core Data 数据模型
+  - `Models/` - 数据模型层
+    - 负责数据实体定义
+    - 数据转换和持久化
+    - 业务模型
+  - `Views/` - 视图层
+    - 用户界面组件
+    - 页面布局
+    - 交互控件
+  - `ViewModels/` - 视图模型层
+    - 视图状态管理
+    - 业务逻辑处理
+    - 数据绑定
+  - `Services/` - 服务层
+    - `CoreData/` - CoreData 服务
+      - `CoreDataManager.swift` - CoreData 核心管理类
+        - 实现单例模式
+        - 管理 CoreData 栈
+        - 提供 CRUD 操作
+        - 支持批量操作
+  - `Utilities/` - 工具层
+    - 通用工具类
+    - 扩展方法
+    - 常量定义
+
+- `SmartPlannerTests/` - 单元测试目录
+  - `SmartPlannerTests.swift` - 单元测试文件
+
+- `SmartPlannerUITests/` - UI测试目录
+  - `SmartPlannerUITests.swift` - UI测试用例
+  - `SmartPlannerUITestsLaunchTests.swift` - 启动测试用例
+
+### 建议的项目结构
+建议在 `SmartPlanner/` 主项目目录下采用以下结构：
+- `Models/` - 数据模型层
+  - 负责数据实体定义
+  - 数据转换和持久化
+  - 业务模型
+
 - `Views/` - 视图层
-  - 日历相关视图
-  - 计划相关视图
-  - 通用组件
-  
+  - 用户界面组件
+  - 页面布局
+  - 交互控件
+
 - `ViewModels/` - 视图模型层
-  - 日历视图模型
-  - 计划视图模型
-  
+  - 视图状态管理
+  - 业务逻辑处理
+  - 数据绑定
+
 - `Services/` - 服务层
-  - 数据管理服务
-  - 通知管理服务
-  
+  - 网络请求
+  - 数据存储
+  - 业务服务
+
 - `Utilities/` - 工具层
+  - 通用工具类
   - 扩展方法
   - 常量定义
+
+建议在 `SmartPlannerTests/` 目录下包含：
+- 模型测试
+- 业务逻辑测试
+- 工具类测试
+
+建议在 `SmartPlannerUITests/` 目录下包含：
+- 界面交互测试
+- 用户流程测试
+- 性能测试
+
+### Xcode 项目配置
+- `SmartPlanner.xcodeproj/` - Xcode 项目配置文件
+  - 构建设置
+  - 依赖管理
+  - 签名配置
+  - 环境配置
 
 ## 文件依赖关系
 ```mermaid
 graph TD
-PRD[prd.md] --> TDD[tdd.md]
-TDD --> SmartplannerV1[SmartplannerV1.md]
-PRD --> SmartplannerV1
-Smartplanner[Smartplanner.md] --> PRD
-AITalkPurposes[AITalkPurposes.md] --> SmartplannerV1
+    PRD[prdV1.md] --> TDD[tddV1.md]
+    PRD --> DG[DevelopmentGuideV1.md]
+    TDD --> DG
+    Smartplanner[Smartplanner.md] --> PRD
+    DP[DevelopmentProgress.md] --> DG
 ```
 
 ## 版本控制
