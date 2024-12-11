@@ -6,19 +6,6 @@
 	objectVersion = 77;
 	objects = {
 
-/* Begin PBXBuildFile section */
-		4A36D2542D09B6670083245C /* PlanCategory+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A36D2502D09B6670083245C /* PlanCategory+CoreDataClass.swift */; };
-		4A36D2552D09B6670083245C /* PlanCategory+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A36D2512D09B6670083245C /* PlanCategory+CoreDataProperties.swift */; };
-		4A36D2A02D09B8550083245C /* PlanBlockTemplate+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A36D29A2D09B8550083245C /* PlanBlockTemplate+CoreDataClass.swift */; };
-		4A36D2A12D09B8550083245C /* PlanInstance+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A36D29C2D09B8550083245C /* PlanInstance+CoreDataClass.swift */; };
-		4A36D2A22D09B8550083245C /* PlanInstance+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A36D29D2D09B8550083245C /* PlanInstance+CoreDataProperties.swift */; };
-		4A36D2A32D09B8550083245C /* PlanBlockInstance+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A36D2982D09B8550083245C /* PlanBlockInstance+CoreDataClass.swift */; };
-		4A36D2A42D09B8550083245C /* PlanBlockInstance+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A36D2992D09B8550083245C /* PlanBlockInstance+CoreDataProperties.swift */; };
-		4A36D2A52D09B8550083245C /* PlanBlockTemplate+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A36D29B2D09B8550083245C /* PlanBlockTemplate+CoreDataProperties.swift */; };
-		4A36D2A62D09B8550083245C /* PlanTemplate+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A36D29E2D09B8550083245C /* PlanTemplate+CoreDataClass.swift */; };
-		4A36D2A72D09B8550083245C /* PlanTemplate+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A36D29F2D09B8550083245C /* PlanTemplate+CoreDataProperties.swift */; };
-/* End PBXBuildFile section */
-
 /* Begin PBXContainerItemProxy section */
 		4A36D1362D0442C40083245C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -52,9 +39,22 @@
 		4A36D29F2D09B8550083245C /* PlanTemplate+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "PlanTemplate+CoreDataProperties.swift"; path = "SmartPlanner/Models/CoreDataModels/PlanTemplate+CoreDataProperties.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		4A36D2BD2D09CB4E0083245C /* Exceptions for "SmartPlanner" folder in "SmartPlannerTests" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				SmartPlanner.xcdatamodeld,
+			);
+			target = 4A36D1342D0442C40083245C /* SmartPlannerTests */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		4A36D1272D0442C30083245C /* SmartPlanner */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				4A36D2BD2D09CB4E0083245C /* Exceptions for "SmartPlanner" folder in "SmartPlannerTests" target */,
+			);
 			path = SmartPlanner;
 			sourceTree = "<group>";
 		};
@@ -276,16 +276,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4A36D2542D09B6670083245C /* PlanCategory+CoreDataClass.swift in Sources */,
-				4A36D2A02D09B8550083245C /* PlanBlockTemplate+CoreDataClass.swift in Sources */,
-				4A36D2A12D09B8550083245C /* PlanInstance+CoreDataClass.swift in Sources */,
-				4A36D2A22D09B8550083245C /* PlanInstance+CoreDataProperties.swift in Sources */,
-				4A36D2A32D09B8550083245C /* PlanBlockInstance+CoreDataClass.swift in Sources */,
-				4A36D2A42D09B8550083245C /* PlanBlockInstance+CoreDataProperties.swift in Sources */,
-				4A36D2A52D09B8550083245C /* PlanBlockTemplate+CoreDataProperties.swift in Sources */,
-				4A36D2A62D09B8550083245C /* PlanTemplate+CoreDataClass.swift in Sources */,
-				4A36D2A72D09B8550083245C /* PlanTemplate+CoreDataProperties.swift in Sources */,
-				4A36D2552D09B6670083245C /* PlanCategory+CoreDataProperties.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

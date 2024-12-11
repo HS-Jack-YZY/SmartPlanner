@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="23507" systemVersion="24B91" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithSwiftData="YES" userDefinedModelVersionIdentifier="">
-    <entity name="PlanBlockInstance" representedClassName="PlanBlockInstance" syncable="YES">
+    <entity name="PlanBlockInstance" representedClassName=".PlanBlockInstance" syncable="YES">
         <attribute name="createdAt" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="deletedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="endAt" attributeType="Date" usesScalarValueType="NO"/>
@@ -10,7 +10,7 @@
         <relationship name="blockTemplate" maxCount="1" deletionRule="Nullify" destinationEntity="PlanBlockTemplate" inverseName="blockInstances" inverseEntity="PlanBlockTemplate"/>
         <relationship name="planInstances" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="PlanInstance" inverseName="blockInstance" inverseEntity="PlanInstance"/>
     </entity>
-    <entity name="PlanBlockTemplate" representedClassName="PlanBlockTemplate" syncable="YES">
+    <entity name="PlanBlockTemplate" representedClassName=".PlanBlockTemplate" syncable="YES">
         <attribute name="color" optional="YES" attributeType="String"/>
         <attribute name="createdAt" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="deletedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
@@ -21,7 +21,7 @@
         <attribute name="updatedAt" attributeType="Date" usesScalarValueType="NO"/>
         <relationship name="blockInstances" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="PlanBlockInstance" inverseName="blockTemplate" inverseEntity="PlanBlockInstance"/>
     </entity>
-    <entity name="PlanCategory" representedClassName="PlanCategory" syncable="YES">
+    <entity name="PlanCategory" representedClassName=".PlanCategory" syncable="YES">
         <attribute name="color" optional="YES" attributeType="String"/>
         <attribute name="createdAt" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="deletedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
@@ -36,7 +36,7 @@
         <relationship name="parent" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="PlanCategory" inverseName="children" inverseEntity="PlanCategory"/>
         <relationship name="planTemplates" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="PlanTemplate" inverseName="planCategory" inverseEntity="PlanTemplate"/>
     </entity>
-    <entity name="PlanInstance" representedClassName="PlanInstance" syncable="YES">
+    <entity name="PlanInstance" representedClassName=".PlanInstance" syncable="YES">
         <attribute name="createdAt" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="deletedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="difficulty" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
@@ -51,7 +51,7 @@
         <relationship name="blockInstance" maxCount="1" deletionRule="Nullify" destinationEntity="PlanBlockInstance" inverseName="planInstances" inverseEntity="PlanBlockInstance"/>
         <relationship name="planTemplate" maxCount="1" deletionRule="Nullify" destinationEntity="PlanTemplate" inverseName="planInstances" inverseEntity="PlanTemplate"/>
     </entity>
-    <entity name="PlanTemplate" representedClassName="PlanTemplate" syncable="YES">
+    <entity name="PlanTemplate" representedClassName=".PlanTemplate" syncable="YES">
         <attribute name="color" optional="YES" attributeType="String"/>
         <attribute name="createdAt" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="deletedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>

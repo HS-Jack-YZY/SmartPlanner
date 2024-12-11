@@ -1,4 +1,5 @@
 import XCTest
+import CoreData
 @testable import SmartPlanner
 
 /// PlanCategory 实体的单元测试
@@ -18,13 +19,23 @@ final class PlanCategoryTests: XCTestCase {
     
     override func setUp() {
         super.setUp()
+        print("开始设置测试环境...")
         testStack = TestCoreDataStack()
         context = testStack.context
+        print("测试环境设置完成")
+        
+        // 验证环境
+        let entityDescription = NSEntityDescription.entity(forEntityName: "PlanCategory", in: context)
+        if entityDescription == nil {
+            print("错误: 无法找到 PlanCategory 实体描述")
+        } else {
+            print("成功: 找到 PlanCategory 实体描述")
+        }
     }
     
     override func tearDown() {
         testStack = nil
-        context = nil
+        context = nil as NSManagedObjectContext?
         super.tearDown()
     }
     
@@ -41,14 +52,27 @@ final class PlanCategoryTests: XCTestCase {
         level: Int16 = 0,
         color: String = "#FF0000"
     ) throws -> PlanCategory {
-        let category = PlanCategory(context: context)
+        print("开始创建测试类别")
+        print("当前上下文: \(context)")
+        print("可用实体: \(context.persistentStoreCoordinator?.managedObjectModel.entities ?? [])")
+        
+        guard let entityDescription = NSEntityDescription.entity(forEntityName: "PlanCategory", in: context) else {
+            throw NSError(domain: "TestError", code: -1, userInfo: [NSLocalizedDescriptionKey: "无法找到 PlanCategory 实体描述"])
+        }
+        
+        print("找到实体描述: \(entityDescription)")
+        let category = NSEntityDescription.insertNewObject(forEntityName: "PlanCategory", into: context) as! PlanCategory
+        
+        // 设置必要属性
         category.id = UUID()
         category.name = name
         category.level = level
         category.color = color
         category.displayOrder = 0
+        category.isVisible = true
         category.createdAt = Date()
         category.updatedAt = Date()
+        
         return category
     }
     
@@ -81,7 +105,9 @@ final class PlanCategoryTests: XCTestCase {
         
         // When & Then
         XCTAssertThrowsError(try context.save()) { error in
-            XCTAssertTrue(error is NSValidationError)
+            let nsError = error as NSError
+            XCTAssertEqual(nsError.domain, NSCocoaErrorDomain)
+            XCTAssertTrue(nsError.code == NSValidationErrorMinimum || nsError.code > NSValidationErrorMinimum)
         }
     }
     
@@ -97,7 +123,9 @@ final class PlanCategoryTests: XCTestCase {
         
         // Then
         XCTAssertThrowsError(try context.save()) { error in
-            XCTAssertTrue(error is NSValidationError)
+            let nsError = error as NSError
+            XCTAssertEqual(nsError.domain, NSCocoaErrorDomain)
+            XCTAssertTrue(nsError.code == NSValidationErrorMinimum || nsError.code > NSValidationErrorMinimum)
         }
     }
     
@@ -111,7 +139,9 @@ final class PlanCategoryTests: XCTestCase {
         
         // Then
         XCTAssertThrowsError(try context.save()) { error in
-            XCTAssertTrue(error is NSValidationError)
+            let nsError = error as NSError
+            XCTAssertEqual(nsError.domain, NSCocoaErrorDomain)
+            XCTAssertTrue(nsError.code == NSValidationErrorMinimum || nsError.code > NSValidationErrorMinimum)
         }
     }
     
