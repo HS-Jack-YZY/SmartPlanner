@@ -2,93 +2,83 @@
 
 ## 第一阶段：基础架构搭建
 
-### 3. CoreData模型设计 ✓
-- [x] 创建CoreData Model文件 ✓
+### 1. 项目初始化
+- [x] 创建项目
+  - [x] 使用Xcode创建新项目
+  - [x] 设置项目名称：SmartPlanner
+  - [x] 选择开发语言：Swift
+  - [x] 选择界面框架：SwiftUI
+  - [x] 设置最低支持版本：iOS 15.0
+- [x] 版本控制设置
+  - [x] 初始化Git仓库
+  - [x] 创建.gitignore文件
+  - [x] 设置首次提交
+
+### 2. 项目结构搭建
+- [x] Models目录创建
+- [x] Views目录创建
+- [x] ViewModels目录创建
+- [x] Services目录创建
+- [x] Utilities目录创建
+
+### 3. CoreData模型设计
+- [x] 创建CoreData Model文件
   - [x] 新建SmartPlanner.xcdatamodeld文件
   - [x] 配置Model Version
-- [x] 设计PlanBlockTemplate实体 ✓
-  - [x] 创建基础属性
-    - [x] id: UUID (PRIMARY KEY)
-    - [x] name: String (NOT NULL)
-    - [x] color: String (optional)
-    - [x] desc: String (optional)
-    - [x] isVisible: Boolean (DEFAULT true)
-    - [x] createdAt: Date (NOT NULL)
-    - [x] updatedAt: Date (NOT NULL)
-    - [x] deletedAt: Date (optional)
-  - [x] 设置关联关系
-    - [x] 与PlanBlockInstance的一对多关系（instances <-> template）
-- [x] 设计PlanBlockInstance实体 ✓
-  - [x] 创建基础属性
-    - [x] id: UUID (PRIMARY KEY)
-    - [x] startAt: Date (NOT NULL)
-    - [x] endAt: Date (NOT NULL)
-    - [x] createdAt: Date (NOT NULL)
-    - [x] updatedAt: Date (NOT NULL)
-    - [x] deletedAt: Date (optional)
-  - [x] 设置关联关系
-    - [x] 与PlanBlockTemplate的多对一关系（template <-> instances）
-    - [x] 与PlanInstance的一对多关系（planInstances <-> blockInstance）
-- [x] 设计PlanTemplate实体 ✓
-  - [x] 创建基础属性
-    - [x] id: UUID (PRIMARY KEY)
-    - [x] name: String (NOT NULL)
-    - [x] color: String (optional)
-    - [x] isFixedTime: Boolean (DEFAULT false)
-    - [x] isReminderEnabled: Boolean (DEFAULT true)
-    - [x] reminderTime: Integer (optional)
-    - [x] priority: Integer (optional)
-    - [x] difficulty: Integer (optional)
-    - [x] tags: String (optional)
-    - [x] createdAt: Date (NOT NULL)
-    - [x] updatedAt: Date (NOT NULL)
-    - [x] deletedAt: Date (optional)
-  - [x] 设置关联关系
-    - [x] 与Category的多对一关系（category <-> planTemplates）
-    - [x] 与PlanInstance的一对多关系（planInstances <-> planTemplate）
-- [x] 设计PlanInstance实体 ✓
-  - [x] 创建基础属性
-    - [x] id: UUID (PRIMARY KEY)
-    - [x] startTime: Date (NOT NULL)
-    - [x] endTime: Date (NOT NULL)
-    - [x] duration: Integer (NOT NULL)
-    - [x] reminderTime: Integer (optional)
-    - [x] priority: Integer (optional)
-    - [x] difficulty: Integer (optional)
-    - [x] createdAt: Date (NOT NULL)
-    - [x] updatedAt: Date (NOT NULL)
-    - [x] deletedAt: Date (optional)
-  - [x] 设置关联关系
-    - [x] 与PlanTemplate的多对一关系（planTemplate <-> planInstances）
-    - [x] 与PlanBlockInstance的多对一关系（blockInstance <-> planInstances）
-- [x] 设计Category实体 ✓
-  - [x] 创建基础属性
-    - [x] id: UUID (PRIMARY KEY)
-    - [x] name: String (NOT NULL)
-    - [x] color: String (optional)
-    - [x] level: Integer 16 (DEFAULT 0)
-    - [x] path: String (optional)
-    - [x] isVisible: Boolean (DEFAULT true)
-    - [x] displayOrder: Integer 16 (optional, DEFAULT 0)
-    - [x] createdAt: Date (NOT NULL)
-    - [x] updatedAt: Date (NOT NULL)
-    - [x] deletedAt: Date (optional)
-  - [x] 设置关联关系
-    - [x] 设置parent关系（自引用，多对一）
-      - [x] Destination: Category
-      - [x] Optional: YES
-      - [x] To Many: NO
-      - [x] Deletion Rule: Nullify
-      - [x] 设置Inverse: children
-    - [x] 设置children关系（自引用，一对多）
-      - [x] Destination: Category
-      - [x] Optional: YES
-      - [x] To Many: YES
-      - [x] Deletion Rule: Cascade
-      - [x] 设置Inverse: parent
-    - [x] 与PlanTemplate的一对多关系（planTemplates <-> category）
+- [ ] 设计PlanBlockTemplate实体
+  - [ ] 创建基础属性
+  - [ ] 设置关联关系
+- [ ] 设计PlanBlockInstance实体
+  - [ ] 创建基础属性
+  - [ ] 设置关联关系
+- [ ] 设计PlanTemplate实体
+  - [ ] 创建基础属性
+  - [ ] 设置关联关系
+- [ ] 设计PlanInstance实体
+  - [ ] 创建基础属性
+  - [ ] 设置关联关系
+- [ ] 设计Category实体
+  - [ ] 创建基础属性
+  - [ ] 设置关联关系
+
+### 4. 基础服务实现
+- [ ] 数据管理服务
+  - [ ] CoreData Stack实现
+  - [ ] CRUD操作封装
+  - [ ] 错误处理机制
+- [ ] 通知管理服务
+  - [ ] 通知权限管理
+  - [ ] 本地通知设置
+  - [ ] 通知响应处理
+
+## 当前开发状态
+🟡 进行中：CoreData模型设计
 
 ## 下一步工作计划
-1. 生成NSManagedObject子类
-2. 实现CoreData Stack
-3. 编写CRUD操作的基础代码
+1. 完成CoreData模型设计
+2. 生成NSManagedObject子类
+3. 实现CoreData Stack
+4. 编写CRUD操作的基础代码
+
+## 问题记录
+| 问题描述 | 状态 | 解决方案 | 记录时间 |
+|---------|------|---------|----------|
+|         |      |         |          |
+
+## 开发备注
+- 开发环境：Xcode 15.0
+- Swift版本：Swift 6.0
+- 最低支持iOS版本：15.0
+- 团队成员：@HS_Jack_YZY
+
+## 里程碑
+- [ ] 第一阶段完成（预计：1周）
+  - [ ] 基础框架搭建
+  - [ ] CoreData设计完成
+  - [ ] 基础服务可用
+- [ ] 第二阶段完成（预计：1周）
+  - [ ] 日历视图开发
+  - [ ] 拖拽系统实现
+- [ ] 第三阶段完成（预计：1周）
+  - [ ] 计划区间功能
+  - [ ] 计划创建功能

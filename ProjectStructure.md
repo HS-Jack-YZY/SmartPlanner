@@ -1,82 +1,67 @@
-# SmartPlanner 项目结构说明
+# SmartPlanner Project Structure
 
-## 文档目录 (SmartPlannerDoc/)
-### 迭代文档 (iteration_v1/)
-- `SmartplannerV1.md` - 第一轮迭代具体需求和实现计划
-  - 用户需求场景
-  - 开发步骤建议
-  - 技术要点
-  - 项目结构设计
-  
-- `tddV1.md` - 技术设计文档
-  - 系统架构设计
-  - 数据模型设计
-  - 核心类设计
-  - 安全设计
-  - 性能优化
-  - 测试策略
-  
-- `prdV1.md` - 产品需求文档
-  - 产品定位
-  - 功能需求
-  - 非功能需求
-  - UI/UX设计规范
-  - 兼容性要求
-  - 发布计划
+```
+SmartPlanner/
+├── SmartPlannerDoc/                    # 项目文档目录
+│   ├── iteration_v1/                   # 第一轮迭代相关文档
+│   │   ├── SmartplannerV1.md          # 迭代实现计划和需求
+│   │   ├── tddV1.md                   # 技术设计文档
+│   │   └── prdV1.md                   # 产品需求文档
+│   ├── Development_Progress.md         # 开发进度追踪
+│   ├── Smartplanner.md                # 项目整体说明
+│   └── AITalkPurposes.md              # 业务逻辑补充说明
+│
+├── SmartPlanner/                       # 主项目目录
+│   ├── SmartPlanner/                  # 源代码目录
+│   │   ├── SmartPlannerApp.swift      # 应用程序入口
+│   │   ├── Models/                    # 数据模型
+│   │   │   ├── PlanningZone.swift     # 计划区间模型
+│   │   │   ├── Plan.swift            # 计划模型
+│   │   │   └── Enums/                # 枚举定义
+│   │   │
+│   │   ├── Views/                    # 视图层
+│   │   │   ├── Calendar/            # 日历相关视图
+│   │   │   ├── Plan/               # 计划相关视图
+│   │   │   └── Components/         # 通用组件
+│   │   │
+│   │   ├── ViewModels/             # 视图模型层
+│   │   │   ├── CalendarViewModel/  # 日历视图模型
+│   │   │   └── PlanViewModel/      # 计划视图模型
+│   │   │
+│   │   ├── Services/               # 服务层
+│   │   │   ├── DataManager/        # 数据管理服务
+│   │   │   └── NotificationManager/# 通知管理服务
+│   │   │
+│   │   └── Utilities/              # 工具层
+│   │       ├── Extensions/         # 扩展方法
+│   │       └── Constants/          # 常量定义
+│   │
+│   ├── SmartPlannerTests/          # 单元测试目录
+│   └── SmartPlannerUITests/        # UI测试目录
+│
+├── README.md                       # 项目说明文档
+├── LICENSE                        # GNU General Public License v3.0
+└── .gitignore                    # Git忽略文件配置
 
-### 核心文档
-- `Smartplanner.md` - 项目整体说明
-  - 设计初衷
-  - 核心功能模块
-  - 技术架构
-  - 前后端职责划分
-  
-- `AITalkPurposes.md` - 业务逻辑补充说明
-  - 计划区间逻辑
-  - 计划模板逻辑
-  - 计划实例逻辑
-  - 类别管理逻辑
-
-## 源代码目录 (SmartPlanner/)
-### App 入口
-- `SmartPlannerApp.swift` - 应用程序入口文件
-
-### 项目结构 (建议)
-- `Models/` - 数据模型
-  - 计划区间模型
-  - 计划模型
-  - 枚举定义
-  - 数据模型扩展
-  
-- `Views/` - 视图层
-  - 日历相关视图
-  - 计划相关视图
-  - 通用组件
-  
-- `ViewModels/` - 视图模型层
-  - 日历视图模型
-  - 计划视图模型
-  
-- `Services/` - 服务层
-  - 数据管理服务
-  - 通知管理服务
-  
-- `Utilities/` - 工具层
-  - 扩展方法
-  - 常量定义
-
-## 文件依赖关系
-```mermaid
-graph TD
-PRD[prd.md] --> TDD[tdd.md]
-TDD --> SmartplannerV1[SmartplannerV1.md]
-PRD --> SmartplannerV1
-Smartplanner[Smartplanner.md] --> PRD
-AITalkPurposes[AITalkPurposes.md] --> SmartplannerV1
 ```
 
-## 版本控制
-- `.gitignore` - Git忽略文件配置
-- `LICENSE` - GNU General Public License v3.0
-- `README.md` - 项目说明文档
-- `ProjectStructure.md` - 项目结构说明文档
+## 文件说明
+
+### 文档文件
+- `SmartPlannerDoc/iteration_v1/SmartplannerV1.md`: 包含用户场景、开发步骤、技术要点和项目结构设计
+- `SmartPlannerDoc/iteration_v1/tddV1.md`: 包含系统架构、数据模型、核心类、安全、性能和测试策略
+- `SmartPlannerDoc/iteration_v1/prdV1.md`: 包含产品定位、功能需求、UI/UX设计规范和发布计划
+- `SmartPlannerDoc/Smartplanner.md`: 描述项目设计初衷、核心功能和技术架构
+- `SmartPlannerDoc/AITalkPurposes.md`: 详细说明各类业务逻辑实现方案
+
+### 源代码文件
+- `SmartPlanner/SmartPlanner/SmartPlannerApp.swift`: App 生命周期管理和初始化配置
+- `SmartPlanner/SmartPlanner/Models/`: 包含所有数据模型定义和业务逻辑
+- `SmartPlanner/SmartPlanner/Views/`: 包含所有 SwiftUI 视图组件
+- `SmartPlanner/SmartPlanner/ViewModels/`: 包含视图数据处理和业务逻辑
+- `SmartPlanner/SmartPlanner/Services/`: 包含数据持久化和系统服务
+- `SmartPlanner/SmartPlanner/Utilities/`: 包含通用工具和扩展方法
+
+### 测试文件
+- `SmartPlanner/SmartPlannerTests/`: 包含单元测试和集成测试
+- `SmartPlanner/SmartPlannerUITests/`: 包含UI自动化测试
