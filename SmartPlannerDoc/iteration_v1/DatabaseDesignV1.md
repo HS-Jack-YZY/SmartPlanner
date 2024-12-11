@@ -9,7 +9,7 @@
 
 ## 二、表结构设计
 
-### 1. 类别表 (Category)
+### 1. 类别表 (PlanCategory)
 
 #### 属性
 - `id` UUID PRIMARY KEY  // 类别的唯一标识符
@@ -24,8 +24,8 @@
 - `deletedAt` TIMESTAMP NULL  // 软删除时间标记，可选
 
 #### 关系
-- `parent` 多对一关系指向 Category  // 父类别，可选
-- `children` 一对多关系指向 Category  // 子类别，可选
+- `parent` 多对一关系指向 PlanCategory  // 父类别，可选
+- `children` 一对多关系指向 PlanCategory  // 子类别，可选
 - `planTemplates` 一对多关系指向 PlanTemplate  // 关联的计划模板，可选
 
 ### 2. 计划区间模板表 (PlanBlockTemplate)
@@ -74,7 +74,7 @@
 - `deletedAt` TIMESTAMP NULL  // 软删除时间标记，可选
 
 #### 关系
-- `category` 多对一关系指向 Category  // 关联的类别，可选
+- `planCategory` 多对一关系指向 PlanCategory  // 关联的类别，可选
 - `planInstances` 一对多关系指向 PlanInstance  // 计划实例，可选
 
 ### 5. 计划实例表 (PlanInstance)
@@ -99,14 +99,14 @@
 ## 三、删除规则
 
 ### 1. 级联删除（Cascade）
-- Category.children -> Category  // 删除父类别时级联删除子类别
-- Category.planTemplates -> PlanTemplate  // 删除类别时级联删除关联的计划模板
+- PlanCategory.children -> PlanCategory  // 删除父类别时级联删除子类别
+- PlanCategory.planTemplates -> PlanTemplate  // 删除类别时级联删除关联的计划模板
 - PlanTemplate.planInstances -> PlanInstance  // 删除计划模板时级联删除关联的计划实例
 - PlanBlockInstance.planInstance -> PlanInstance  // 删除区间实例时级联删除包含的计划实例
 
 ### 2. 清空引用（Nullify）
-- Category.parent -> Category  // 删除父类别时子类别的parent引用置空
-- PlanTemplate.category -> Category  // 删除类别时计划模板的category引用置空
+- PlanCategory.parent -> PlanCategory  // 删除父类别时子类别的parent引用置空
+- PlanTemplate.planCategory -> PlanCategory  // 删除类别时计划模板的planCategory引用置空
 - PlanInstance.planTemplate -> PlanTemplate  // 删除计划模板时计划实例的planTemplate引用置空
 - PlanInstance.blockInstances -> PlanBlockInstance  // 删除区间实例时计划实例的blockInstances引用置空
 - PlanBlockInstance.blockTemplate -> PlanBlockTemplate  // 删除区间模板时区间实例的blockTemplate引用置空
@@ -126,13 +126,13 @@
 
 ## 五、索引设计
 
-### Category
+### PlanCategory
 - idx_category_parent (parent)  // 用于查找子类别
 - idx_category_path (path)  // 用于按路径快速查找类别
 - idx_category_level (level)  // 用于按层级查找类别
 
 ### PlanTemplate
-- idx_plan_template_category (category)  // 用于���类别查找计划模板
+- idx_plan_template_category (category)  // 用于类别查找计划模板
 - idx_plan_template_name (name)  // 用于按名称快速查找计划模板
 
 ### PlanInstance
