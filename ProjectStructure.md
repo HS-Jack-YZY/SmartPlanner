@@ -1,7 +1,4 @@
 # SmartPlanner Project Structure
-项目结构更新原则：
-1. 项目结构清晰，易于理解和维护
-2. 根据项目真实结构，调整项目结构
 
 ```
 SmartPlannerProject/
@@ -19,7 +16,16 @@ SmartPlannerProject/
 │   ├── SmartPlanner.xcodeproj/        # Xcode项目配置文件
 │   ├── SmartPlanner/                  # 源代码目录
 │   │   ├── Models/                    # 数据模型
+│   │   │   ├── CoreDataModels/       # Core Data实体模型
+│   │   │   ├── Enums/               # 枚举定义
+│   │   │   ├── Extensions/          # 模型扩展
+│   │   │   ├── Helpers/            # 辅助工具类
+│   │   │   └── Protocols/          # 协议定义
 │   │   ├── Services/                 # 服务层
+│   │   │   └── DataManager/         # 数据管理服务
+│   │   │       ├── CoreDataStack.swift    # Core Data基础设施
+│   │   │       ├── DataManager.swift      # 数据管理器
+│   │   │       └── DataManagerError.swift # 错误类型定义
 │   │   ├── SmartPlanner.xcdatamodeld/# Core Data模型
 │   │   ├── Utilities/                # 工具层
 │   │   ├── ViewModels/               # 视图模型层
@@ -35,7 +41,6 @@ SmartPlannerProject/
 ├── README.md                         # 项目说明文档
 ├── LICENSE                          # GNU General Public License v3.0
 └── .gitignore                      # Git忽略文件配置
-
 ```
 
 ## 文件说明
@@ -50,14 +55,21 @@ SmartPlannerProject/
 - `SmartPlannerDoc/CodingPrinciples.md`: 定义代码编写规范和原则
 
 ### 源代码文件
-- `SmartPlanner/SmartPlanner/SmartPlannerApp.swift`: App 生命周期管理和初始化配置
-- `SmartPlanner/SmartPlanner/ContentView.swift`: 应用程序主视图
-- `SmartPlanner/SmartPlanner/Models/`: 包含所有数据模型定义和业务逻辑
-- `SmartPlanner/SmartPlanner/Views/`: 包含所有 SwiftUI 视图组件
-- `SmartPlanner/SmartPlanner/ViewModels/`: 包含视图数据处理和业务逻辑
-- `SmartPlanner/SmartPlanner/Services/`: 包含各种服务实现
+- `SmartPlanner/SmartPlanner/Models/`: 数据模型层
+  - `CoreDataModels/`: Core Data实体模型定义
+  - `Enums/`: 枚举类型定义
+  - `Extensions/`: 模型扩展方法
+  - `Helpers/`: 模型相关辅助工具
+  - `Protocols/`: 模型协议定义
+- `SmartPlanner/SmartPlanner/Services/`: 服务层
+  - `DataManager/`: 数据管理服务
+    - `CoreDataStack.swift`: Core Data基础设施实现
+    - `DataManager.swift`: 数据管理器实现
+    - `DataManagerError.swift`: 错误类型定义
 - `SmartPlanner/SmartPlanner/Utilities/`: 包含通用工具和扩展方法
 - `SmartPlanner/SmartPlanner/SmartPlanner.xcdatamodeld/`: Core Data 数据模型定义
+- `SmartPlanner/SmartPlanner/ContentView.swift`: 应用程序主视图
+- `SmartPlanner/SmartPlanner/SmartPlannerApp.swift`: 应用程序入口和生命周期管理
 
 ### 测试文件
 - `SmartPlanner/SmartPlannerTests/`: 包含单元测试和集成测试
