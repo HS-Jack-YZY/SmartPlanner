@@ -25,40 +25,40 @@
 - [x] 创建CoreData Model文件
   - [x] 新建SmartPlanner.xcdatamodeld文件
   - [x] 配置Model Version
-- [ ] 设计PlanBlockTemplate实体
-  - [ ] 创建基础属性
-  - [ ] 设置关联关系
-- [ ] 设计PlanBlockInstance实体
-  - [ ] 创建基础属性
-  - [ ] 设置关联关系
-- [ ] 设计PlanTemplate实体
-  - [ ] 创建基础属性
-  - [ ] 设置关联关系
-- [ ] 设计PlanInstance实体
-  - [ ] 创建基础属性
-  - [ ] 设置关联关系
-- [ ] 设计Category实体
-  - [ ] 创建基础属性
-  - [ ] 设置关联关系
+- [x] 设计PlanBlockTemplate实体
+  - [x] 创建基础属性
+  - [x] 设置关联关系
+- [x] 设计PlanBlockInstance实体
+  - [x] 创建基础属性
+  - [x] 设置关联关系
+- [x] 设计PlanTemplate实体
+  - [x] 创建基础属性
+  - [x] 设置关联关系
+- [x] 设计PlanInstance实体
+  - [x] 创建基础属性
+  - [x] 设置关联关系
+- [x] 设计Category实体
+  - [x] 创建基础属性
+  - [x] 设置关联关系
 
 ### 4. 基础服务实现
-- [ ] 数据管理服务
-  - [ ] CoreData Stack实现
-  - [ ] CRUD操作封装
-  - [ ] 错误处理机制
+- [x] 数据管理服务
+  - [x] CoreData Stack实现
+  - [x] CRUD操作封装
+  - [x] 错误处理机制
 - [ ] 通知管理服务
   - [ ] 通知权限管理
   - [ ] 本地通知设置
   - [ ] 通知响应处理
 
 ## 当前开发状态
-🟡 进行中：CoreData模型设计
+🟡 进行中：通知管理服务实现
 
 ## 下一步工作计划
-1. 完成CoreData模型设计
-2. 生成NSManagedObject子类
-3. 实现CoreData Stack
-4. 编写CRUD操作的基础代码
+1. 实现通知管理服务
+2. 完成通知权限管理
+3. 实现本地通知功能
+4. 添加通知响应处理
 
 ## 问题记录
 | 问题描述 | 状态 | 解决方案 | 记录时间 |
@@ -73,9 +73,9 @@
 
 ## 里程碑
 - [ ] 第一阶段完成（预计：1周）
-  - [ ] 基础框架搭建
-  - [ ] CoreData设计完成
-  - [ ] 基础服务可用
+  - [x] 基础框架搭建
+  - [x] CoreData设计完成
+  - [x] 基础服务可用
 - [ ] 第二阶段完成（预计：1周）
   - [ ] 日历视图开发
   - [ ] 拖拽系统实现

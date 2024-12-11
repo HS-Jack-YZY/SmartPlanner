@@ -9,7 +9,7 @@ SmartPlanner/
 │   │   └── prdV1.md                   # 产品需求文档
 │   ├── Development_Progress.md         # 开发进度追踪
 │   ├── Smartplanner.md                # 项目整体说明
-│   └── AITalkPurposes.md              # 业务逻辑补充说明
+│   └── CodingPrinciples.md            # 代码编写原则
 │
 ├── SmartPlanner/                       # 主项目目录
 │   ├── SmartPlanner/                  # 源代码目录
@@ -30,6 +30,9 @@ SmartPlanner/
 │   │   │
 │   │   ├── Services/               # 服务层
 │   │   │   ├── DataManager/        # 数据管理服务
+│   │   │   │   ├── CoreDataStack.swift    # Core Data 基础设施
+│   │   │   │   ├── DataManager.swift      # 数据管理器
+│   │   │   │   └── DataManagerError.swift # 错误类型定义
 │   │   │   └── NotificationManager/# 通知管理服务
 │   │   │
 │   │   └── Utilities/              # 工具层
@@ -52,14 +55,15 @@ SmartPlanner/
 - `SmartPlannerDoc/iteration_v1/tddV1.md`: 包含系统架构、数据模型、核心类、安全、性能和测试策略
 - `SmartPlannerDoc/iteration_v1/prdV1.md`: 包含产品定位、功能需求、UI/UX设计规范和发布计划
 - `SmartPlannerDoc/Smartplanner.md`: 描述项目设计初衷、核心功能和技术架构
-- `SmartPlannerDoc/AITalkPurposes.md`: 详细说明各类业务逻辑实现方案
+- `SmartPlannerDoc/CodingPrinciples.md`: 定义代码编写规范和原则
 
 ### 源代码文件
 - `SmartPlanner/SmartPlanner/SmartPlannerApp.swift`: App 生命周期管理和初始化配置
 - `SmartPlanner/SmartPlanner/Models/`: 包含所有数据模型定义和业务逻辑
 - `SmartPlanner/SmartPlanner/Views/`: 包含所有 SwiftUI 视图组件
 - `SmartPlanner/SmartPlanner/ViewModels/`: 包含视图数据处理和业务逻辑
-- `SmartPlanner/SmartPlanner/Services/`: 包含数据持久化和系统服务
+- `SmartPlanner/SmartPlanner/Services/DataManager/`: 数据管理服务实现
+- `SmartPlanner/SmartPlanner/Services/NotificationManager/`: 通知管理服务
 - `SmartPlanner/SmartPlanner/Utilities/`: 包含通用工具和扩展方法
 
 ### 测试文件
