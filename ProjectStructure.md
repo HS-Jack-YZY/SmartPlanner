@@ -46,6 +46,25 @@ SmartPlannerProject/
 │   │   └── SmartPlannerApp.swift      # 应用程序入口
 │   │
 │   ├── SmartPlannerTests/            # 单元测试目录
+│   │   ├── Models/                   # 模型层测试
+│   │   │   ├── CoreDataTests/        # Core Data相关测试
+│   │   │   │   ├── EntityTests/     # 实体测试
+│   │   │   │   │   ├── PlanCategoryTests.swift   # 类别实体测试
+│   │   │   │   │   ├── PlanTemplateTests.swift   # 计划模板测试
+│   │   │   │   │   ├── PlanInstanceTests.swift   # 计划实例测试
+│   │   │   │   │   ├── PlanBlockTemplateTests.swift  # 区间模板测试
+│   │   │   │   │   └── PlanBlockInstanceTests.swift  # 区间实例测试
+│   │   ├── Services/                 # 服务层测试
+│   │   │   ├── CoreData/            # Core Data服务测试
+│   │   │   │   ├── CoreDataStackTests.swift     # 数据栈测试
+│   │   │   │   ├── DataManagerTests.swift       # 数据管理器测试
+│   │   │   │   └── DataManagerCRUDTests.swift   # CRUD操作测试
+│   │   ├── ViewModels/               # 视图模型测试
+│   │   ├── Views/                    # 视图测试
+│   │   ├── Helpers/                  # 辅助工具测试
+│   │   ├── TestHelpers/              # 测试辅助工具
+│   │   │   └── TestCoreDataStack.swift         # 测试用Core Data环境
+│   │   └── SmartPlannerTests.swift              # 测试入口文件
 │   └── SmartPlannerUITests/          # UI测试目录
 │
 ├── README.md                         # 项目说明文档
@@ -69,7 +88,7 @@ SmartPlannerProject/
   - `CoreDataModels/`: Core Data实体模型定义
     - `PlanCategory+CoreDataClass.swift` 和 `Properties.swift`: 类别实体及其属性
     - `PlanBlockTemplate+CoreDataClass.swift` 和 `Properties.swift`: 区间模板实体及其属性
-    - `PlanBlockInstance+CoreDataClass.swift` 和 `Properties.swift`: 区间实例实体及其属性
+    - `PlanBlockInstance+CoreDataClass.swift` 和 `Properties.swift`: 区间实例实体及其属��
     - `PlanTemplate+CoreDataClass.swift` 和 `Properties.swift`: 计划模板实体及其属性
     - `PlanInstance+CoreDataClass.swift` 和 `Properties.swift`: 计划实例实体及其属性
   - `Enums/`: 枚举类型定义
@@ -87,6 +106,25 @@ SmartPlannerProject/
 - `SmartPlanner/SmartPlanner/SmartPlannerApp.swift`: 应用程序入口和生命周期管理
 
 ### 测试文件
-- `SmartPlanner/SmartPlannerTests/`: 包含单元测试和集成测试
-- `SmartPlanner/SmartPlannerUITests/`: 包含UI自动化测试
+- `SmartPlanner/SmartPlannerTests/`           # 单元测试目录
+    ├── Models/                               # 模型层测试
+    │   └── CoreDataTests/                    # Core Data相关测试
+    │       └── EntityTests/                  # 实体测试
+    │           ├── PlanCategoryTests.swift   # 类别实体测试
+    │           ├── PlanTemplateTests.swift   # 计划模板测试
+    │           ├── PlanInstanceTests.swift   # 计划实例测试
+    │           ├── PlanBlockTemplateTests.swift  # 区间模板测试
+    │           └── PlanBlockInstanceTests.swift  # 区间实例测试
+    ├── Services/                             # 服务层测试
+    │   └── CoreData/                        # Core Data服务测试
+    │       ├── CoreDataStackTests.swift     # 数据栈测试
+    │       ├── DataManagerTests.swift       # 数据管理器测试
+    │       └── DataManagerCRUDTests.swift   # CRUD操作测试
+    ├── ViewModels/                          # 视图模型测试
+    ├── Views/                               # 视图测试
+    ├── Helpers/                             # 辅助工具测试
+    ├── TestHelpers/                         # 测试辅助工具
+    │   └── TestCoreDataStack.swift         # 测试用Core Data环境
+    └── SmartPlannerTests.swift              # 测试入口文件
+- `SmartPlanner/SmartPlannerUITests/`         # UI测试目录
 ```
