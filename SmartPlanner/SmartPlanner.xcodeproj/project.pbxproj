@@ -6,6 +6,19 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		4A36D2542D09B6670083245C /* PlanCategory+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A36D2502D09B6670083245C /* PlanCategory+CoreDataClass.swift */; };
+		4A36D2552D09B6670083245C /* PlanCategory+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A36D2512D09B6670083245C /* PlanCategory+CoreDataProperties.swift */; };
+		4A36D2A02D09B8550083245C /* PlanBlockTemplate+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A36D29A2D09B8550083245C /* PlanBlockTemplate+CoreDataClass.swift */; };
+		4A36D2A12D09B8550083245C /* PlanInstance+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A36D29C2D09B8550083245C /* PlanInstance+CoreDataClass.swift */; };
+		4A36D2A22D09B8550083245C /* PlanInstance+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A36D29D2D09B8550083245C /* PlanInstance+CoreDataProperties.swift */; };
+		4A36D2A32D09B8550083245C /* PlanBlockInstance+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A36D2982D09B8550083245C /* PlanBlockInstance+CoreDataClass.swift */; };
+		4A36D2A42D09B8550083245C /* PlanBlockInstance+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A36D2992D09B8550083245C /* PlanBlockInstance+CoreDataProperties.swift */; };
+		4A36D2A52D09B8550083245C /* PlanBlockTemplate+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A36D29B2D09B8550083245C /* PlanBlockTemplate+CoreDataProperties.swift */; };
+		4A36D2A62D09B8550083245C /* PlanTemplate+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A36D29E2D09B8550083245C /* PlanTemplate+CoreDataClass.swift */; };
+		4A36D2A72D09B8550083245C /* PlanTemplate+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A36D29F2D09B8550083245C /* PlanTemplate+CoreDataProperties.swift */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		4A36D1362D0442C40083245C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -27,6 +40,16 @@
 		4A36D1252D0442C30083245C /* SmartPlanner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SmartPlanner.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4A36D1352D0442C40083245C /* SmartPlannerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SmartPlannerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		4A36D13F2D0442C40083245C /* SmartPlannerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SmartPlannerUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		4A36D2502D09B6670083245C /* PlanCategory+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "PlanCategory+CoreDataClass.swift"; path = "SmartPlanner/Models/CoreDataModels/PlanCategory+CoreDataClass.swift"; sourceTree = "<group>"; };
+		4A36D2512D09B6670083245C /* PlanCategory+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "PlanCategory+CoreDataProperties.swift"; path = "SmartPlanner/Models/CoreDataModels/PlanCategory+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		4A36D2982D09B8550083245C /* PlanBlockInstance+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "PlanBlockInstance+CoreDataClass.swift"; path = "SmartPlanner/Models/CoreDataModels/PlanBlockInstance+CoreDataClass.swift"; sourceTree = "<group>"; };
+		4A36D2992D09B8550083245C /* PlanBlockInstance+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "PlanBlockInstance+CoreDataProperties.swift"; path = "SmartPlanner/Models/CoreDataModels/PlanBlockInstance+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		4A36D29A2D09B8550083245C /* PlanBlockTemplate+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "PlanBlockTemplate+CoreDataClass.swift"; path = "SmartPlanner/Models/CoreDataModels/PlanBlockTemplate+CoreDataClass.swift"; sourceTree = "<group>"; };
+		4A36D29B2D09B8550083245C /* PlanBlockTemplate+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "PlanBlockTemplate+CoreDataProperties.swift"; path = "SmartPlanner/Models/CoreDataModels/PlanBlockTemplate+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		4A36D29C2D09B8550083245C /* PlanInstance+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "PlanInstance+CoreDataClass.swift"; path = "SmartPlanner/Models/CoreDataModels/PlanInstance+CoreDataClass.swift"; sourceTree = "<group>"; };
+		4A36D29D2D09B8550083245C /* PlanInstance+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "PlanInstance+CoreDataProperties.swift"; path = "SmartPlanner/Models/CoreDataModels/PlanInstance+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		4A36D29E2D09B8550083245C /* PlanTemplate+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "PlanTemplate+CoreDataClass.swift"; path = "SmartPlanner/Models/CoreDataModels/PlanTemplate+CoreDataClass.swift"; sourceTree = "<group>"; };
+		4A36D29F2D09B8550083245C /* PlanTemplate+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "PlanTemplate+CoreDataProperties.swift"; path = "SmartPlanner/Models/CoreDataModels/PlanTemplate+CoreDataProperties.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -75,6 +98,16 @@
 		4A36D11C2D0442C30083245C = {
 			isa = PBXGroup;
 			children = (
+				4A36D2982D09B8550083245C /* PlanBlockInstance+CoreDataClass.swift */,
+				4A36D2992D09B8550083245C /* PlanBlockInstance+CoreDataProperties.swift */,
+				4A36D29A2D09B8550083245C /* PlanBlockTemplate+CoreDataClass.swift */,
+				4A36D29B2D09B8550083245C /* PlanBlockTemplate+CoreDataProperties.swift */,
+				4A36D29C2D09B8550083245C /* PlanInstance+CoreDataClass.swift */,
+				4A36D29D2D09B8550083245C /* PlanInstance+CoreDataProperties.swift */,
+				4A36D29E2D09B8550083245C /* PlanTemplate+CoreDataClass.swift */,
+				4A36D29F2D09B8550083245C /* PlanTemplate+CoreDataProperties.swift */,
+				4A36D2502D09B6670083245C /* PlanCategory+CoreDataClass.swift */,
+				4A36D2512D09B6670083245C /* PlanCategory+CoreDataProperties.swift */,
 				4A36D1272D0442C30083245C /* SmartPlanner */,
 				4A36D1382D0442C40083245C /* SmartPlannerTests */,
 				4A36D1422D0442C40083245C /* SmartPlannerUITests */,
@@ -243,6 +276,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4A36D2542D09B6670083245C /* PlanCategory+CoreDataClass.swift in Sources */,
+				4A36D2A02D09B8550083245C /* PlanBlockTemplate+CoreDataClass.swift in Sources */,
+				4A36D2A12D09B8550083245C /* PlanInstance+CoreDataClass.swift in Sources */,
+				4A36D2A22D09B8550083245C /* PlanInstance+CoreDataProperties.swift in Sources */,
+				4A36D2A32D09B8550083245C /* PlanBlockInstance+CoreDataClass.swift in Sources */,
+				4A36D2A42D09B8550083245C /* PlanBlockInstance+CoreDataProperties.swift in Sources */,
+				4A36D2A52D09B8550083245C /* PlanBlockTemplate+CoreDataProperties.swift in Sources */,
+				4A36D2A62D09B8550083245C /* PlanTemplate+CoreDataClass.swift in Sources */,
+				4A36D2A72D09B8550083245C /* PlanTemplate+CoreDataProperties.swift in Sources */,
+				4A36D2552D09B6670083245C /* PlanCategory+CoreDataProperties.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

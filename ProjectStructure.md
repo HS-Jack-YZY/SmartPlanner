@@ -17,6 +17,16 @@ SmartPlannerProject/
 │   ├── SmartPlanner/                  # 源代码目录
 │   │   ├── Models/                    # 数据模型
 │   │   │   ├── CoreDataModels/       # Core Data实体模型
+│   │   │   │   ├── PlanCategory+CoreDataClass.swift     # 类别实体类
+│   │   │   │   ├── PlanCategory+CoreDataProperties.swift # 类别属性定义
+│   │   │   │   ├── PlanBlockTemplate+CoreDataClass.swift     # 区间模板实体类
+│   │   │   │   ├── PlanBlockTemplate+CoreDataProperties.swift # 区间模板属性定义
+│   │   │   │   ├── PlanBlockInstance+CoreDataClass.swift     # 区间实例实体类
+│   │   │   │   ├── PlanBlockInstance+CoreDataProperties.swift # 区间实例属性定义
+│   │   │   │   ├── PlanTemplate+CoreDataClass.swift     # 计划模板实体类
+│   │   │   │   ├── PlanTemplate+CoreDataProperties.swift # 计划模板属性定义
+│   │   │   │   ├── PlanInstance+CoreDataClass.swift     # 计划实例实体类
+│   │   │   │   └── PlanInstance+CoreDataProperties.swift # 计划实例属性定义
 │   │   │   ├── Enums/               # 枚举定义
 │   │   │   ├── Extensions/          # 模型扩展
 │   │   │   ├── Helpers/            # 辅助工具类
@@ -57,6 +67,11 @@ SmartPlannerProject/
 ### 源代码文件
 - `SmartPlanner/SmartPlanner/Models/`: 数据模型层
   - `CoreDataModels/`: Core Data实体模型定义
+    - `PlanCategory+CoreDataClass.swift` 和 `Properties.swift`: 类别实体及其属性
+    - `PlanBlockTemplate+CoreDataClass.swift` 和 `Properties.swift`: 区间模板实体及其属性
+    - `PlanBlockInstance+CoreDataClass.swift` 和 `Properties.swift`: 区间实例实体及其属性
+    - `PlanTemplate+CoreDataClass.swift` 和 `Properties.swift`: 计划模板实体及其属性
+    - `PlanInstance+CoreDataClass.swift` 和 `Properties.swift`: 计划实例实体及其属性
   - `Enums/`: 枚举类型定义
   - `Extensions/`: 模型扩展方法
   - `Helpers/`: 模型相关辅助工具
@@ -74,3 +89,4 @@ SmartPlannerProject/
 ### 测试文件
 - `SmartPlanner/SmartPlannerTests/`: 包含单元测试和集成测试
 - `SmartPlanner/SmartPlannerUITests/`: 包含UI自动化测试
+```
