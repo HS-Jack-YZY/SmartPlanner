@@ -110,16 +110,64 @@
 3. 处理冲突
 
 ### 3. 通知系统
-1. 配置推送权限
+1. 配置推送��限
 2. 实现本地通知
 3. 添加提醒功能
 
 ## 第七部分：测试和优化
 
 ### 1. 单元测试
-1. 编写模型测试
-2. 测试业务逻辑
-3. 验证数据流
+1. Core Data 测试准备
+   - 创建测试用的持久化存储
+   - 配置内存数据存储
+   - 设置测试环境的 CoreDataStack
+
+2. 实体测试
+   - PlanCategory 测试
+     - 基本属性测试（id, name, color 等）
+     - 关系测试（parent-children, planTemplates）
+     - 验证规则测试（level 范围, displayOrder 有效性）
+   - PlanBlockTemplate 测试
+     - 基本属性测试
+     - 关系测试（blockInstances）
+   - PlanBlockInstance 测试
+     - 基本属性测试
+     - 关系测试（blockTemplate, planInstances）
+     - 时间范围验证
+   - PlanTemplate 测试
+     - 基本属性测试
+     - 关系测试（planCategory, planInstances）
+   - PlanInstance 测试
+     - 基本属性测试
+     - 关系测试（planTemplate, blockInstance）
+     - 时间范围验证
+
+3. 数据管理服务测试
+   - CRUD 操作测试
+     - Create：测试实体创建
+     - Read：测试实体查询
+     - Update：测试实体更新
+     - Delete：测试实体删除
+   - 批量操作测试
+   - 错误处理测试
+   - 数据一致性测试
+
+4. 测试用例编写规范
+   - 测试方法命名：test[被测试的功能]_[测试场景]_[预期结果]
+   - 每个测试用例只测试一个功能点
+   - 使用 XCTAssert 系列方法进行断言
+   - 添加详细的测试注释
+   - 测试数据使用固定的测试数据集
+
+5. 测试覆盖率要求
+   - 模型层：90% 以上
+   - 业务逻辑：80% 以上
+   - 工具类：85% 以上
+
+6. 性能测试
+   - 大数据量操作测试
+   - 并发操作测试
+   - 内存使用测试
 
 ### 2. UI 测试
 1. 创建基础测试
