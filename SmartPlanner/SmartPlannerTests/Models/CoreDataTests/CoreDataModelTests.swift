@@ -13,7 +13,7 @@ final class CoreDataModelTests: XCTestCase {
     
     override func setUp() {
         super.setUp()
-        modelBundle = Bundle(for: SmartPlannerApp.self)
+        modelBundle = Bundle(for: type(of: self))
         print("测试环境设置完成")
         print("使用的 Bundle: \(modelBundle)")
     }
@@ -124,7 +124,7 @@ final class CoreDataModelTests: XCTestCase {
                 XCTFail("添加存储失败: \(error)")
             } else {
                 print("成功创建持久化存储")
-                print("存储类型：\(store?.type ?? "")")
+                print("存储类型：\(storeDescription.type)")
                 expectation.fulfill()
             }
         }
