@@ -77,25 +77,82 @@
 
 ## 第五部分：UI 实现
 
-### 1. 基础组件
-1. 创建颜色主题
-2. 设计通用按钮
-3. 实现导航栏
+### 1. 主题系统实现
+1. 创建 Theme 目录
+2. 实现颜色主题
+   ```swift
+   enum ColorTheme {
+       static let primary = Color("PrimaryColor")
+       static let secondary = Color("SecondaryColor")
+       static let background = Color("BackgroundColor")
+       static let text = Color("TextColor")
+       // ... 其他颜色定义
+   }
+   ```
+3. 实现字体主题
+   ```swift
+   enum FontTheme {
+       static let title = Font.system(.title)
+       static let body = Font.system(.body)
+       // ... 其他字体定义
+   }
+   ```
 
-### 2. 日历视图
-1. 实现月视图
-2. 添加周视图
-3. 创建日视图
+### 2. 基础组件实现
+1. 创建按钮组件
+   ```swift
+   struct PrimaryButton: View {
+       let title: String
+       let action: () -> Void
+       
+       var body: some View {
+           Button(action: action) {
+               Text(title)
+                   .font(FontTheme.body)
+                   .foregroundColor(.white)
+                   .padding()
+                   .background(ColorTheme.primary)
+                   .cornerRadius(10)
+           }
+       }
+   }
+   ```
 
-### 3. 计划视图
-1. 创建计划列表
-2. 实现计划详情
-3. 添加编辑功能
+2. 创建列表组件
+   ```swift
+   struct PlanListItem: View {
+       let plan: Plan
+       
+       var body: some View {
+           HStack {
+               // 实现计划列表项UI
+           }
+       }
+   }
+   ```
 
-### 4. 设置视图
-1. 实现偏好设置
-2. 添加用户配置
-3. 创建关于页面
+### 3. 主要视图实现
+1. 日历视图
+   ```swift
+   struct CalendarView: View {
+       @StateObject private var viewModel: CalendarViewModel
+       
+       var body: some View {
+           // 实现日历视图UI
+       }
+   }
+   ```
+
+2. 计划视图
+   ```swift
+   struct PlanListView: View {
+       @StateObject private var viewModel: PlanListViewModel
+       
+       var body: some View {
+           // 实现计划列表视图UI
+       }
+   }
+   ```
 
 ## 第六部分：功能整合
 
@@ -110,7 +167,7 @@
 3. 处理冲突
 
 ### 3. 通知系统
-1. 配置推送��限
+1. 配置推送权限
 2. 实现本地通知
 3. 添加提醒功能
 

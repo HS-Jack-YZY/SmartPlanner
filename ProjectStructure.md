@@ -88,7 +88,7 @@ SmartPlannerProject/
   - `CoreDataModels/`: Core Data实体模型定义
     - `PlanCategory+CoreDataClass.swift` 和 `Properties.swift`: 类别实体及其属性
     - `PlanBlockTemplate+CoreDataClass.swift` 和 `Properties.swift`: 区间模板实体及其属性
-    - `PlanBlockInstance+CoreDataClass.swift` 和 `Properties.swift`: 区间实例实体及其属��
+    - `PlanBlockInstance+CoreDataClass.swift` 和 `Properties.swift`: 区间实例实体及其属性
     - `PlanTemplate+CoreDataClass.swift` 和 `Properties.swift`: 计划模板实体及其属性
     - `PlanInstance+CoreDataClass.swift` 和 `Properties.swift`: 计划实例实体及其属性
   - `Enums/`: 枚举类型定义
@@ -127,4 +127,52 @@ SmartPlannerProject/
     │   └── TestCoreDataStack.swift         # 测试用Core Data环境
     └── SmartPlannerTests.swift              # 测试入口文件
 - `SmartPlanner/SmartPlannerUITests/`         # UI测试目录
+```
+
+```
+SmartPlannerProject/
+├── SmartPlannerDoc/                    # 项目文档目录
+│   └── [保持不变...]
+│
+├── SmartPlanner/                       # 主项目目录
+│   ├── SmartPlanner.xcodeproj/        # Xcode项目配置文件
+│   ├── SmartPlanner/                  # 源代码目录
+│   │   ├── Models/                    # [保持不变...]
+│   │   ├── Services/                  # [保持不变...]
+│   │   ├── Theme/                     # 主题系统
+│   │   │   ├── ColorTheme.swift      # 颜色主题定义
+│   │   │   ├── FontTheme.swift       # 字体主题定义
+│   │   │   └── ThemeManager.swift    # 主题管理器
+│   │   ├── Components/               # UI组件
+│   │   │   ├── Buttons/             # 按钮组件
+│   │   │   │   ├── PrimaryButton.swift
+│   │   │   │   └── SecondaryButton.swift
+│   │   │   ├── Lists/              # 列表组件
+│   │   │   │   ├── PlanListItem.swift
+│   │   │   │   └── CategoryListItem.swift
+│   │   │   └── Calendar/           # 日历组件
+│   │   │       ├── CalendarCell.swift
+│   │   │       └── TimelineView.swift
+│   │   ├── Views/                   # 视图层
+│   │   │   ├── Calendar/           # 日历相关视图
+│   │   │   │   ├── DayView.swift
+│   │   │   │   ├── WeekView.swift
+│   │   │   │   └── MonthView.swift
+│   │   │   ├── Plan/              # 计划相关视图
+│   │   │   │   ├── PlanListView.swift
+│   │   │   │   └── PlanDetailView.swift
+│   │   │   └── Settings/          # 设置相关视图
+│   │   │       └── SettingsView.swift
+│   │   ├── ViewModels/            # 视图模型层
+│   │   │   ├── Calendar/          # 日历相关视图模型
+│   │   │   │   ├── DayViewModel.swift
+│   │   │   │   ├── WeekViewModel.swift
+│   │   │   │   └── MonthViewModel.swift
+│   │   │   ├── Plan/             # 计划相关视图模型
+│   │   │   │   ├── PlanListViewModel.swift
+│   │   │   │   └── PlanDetailViewModel.swift
+│   │   │   └── Settings/         # 设置相关视图模型
+│   │   │       └── SettingsViewModel.swift
+│   │   └── [其他保持不变...]
+│   └── [其他保持不变...]
 ```
