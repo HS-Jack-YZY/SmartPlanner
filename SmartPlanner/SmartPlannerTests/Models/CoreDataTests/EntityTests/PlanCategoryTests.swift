@@ -21,16 +21,35 @@ final class PlanCategoryTests: XCTestCase {
     override func setUp() {
         super.setUp()
         logger.log("开始设置测试环境...", level: .info)
-        testStack = TestCoreDataStack()
-        context = testStack.context
-        logger.log("测试环境设置完成", level: .info)
         
-        // 验证环境
-        let entityDescription = NSEntityDescription.entity(forEntityName: "PlanCategory", in: context)
-        if entityDescription == nil {
-            logger.log("无法找到 PlanCategory 实体描述", level: .error)
-        } else {
-            logger.log("找到 PlanCategory 实体描述", level: .info)
+        do {
+            // 初始化测试环境
+            testStack = try TestCoreDataStack()
+            context = testStack.context
+            
+            // 验证实体配置
+            guard let entityDescription = NSEntityDescription.entity(forEntityName: "PlanCategory", in: context) else {
+                logger.log("无法找到 PlanCategory 实体描述", level: .error)
+                XCTFail("无法找到 PlanCategory 实体描述")
+                return
+            }
+            
+            // 验证必要的属性
+            let requiredAttributes = ["id", "name", "color", "level", "isVisible", "displayOrder", "createdAt", "updatedAt"]
+            for attribute in requiredAttributes {
+                XCTAssertNotNil(entityDescription.attributesByName[attribute], "缺少必要属性: \(attribute)")
+            }
+            
+            // 验证必要的关系
+            let requiredRelationships = ["planTemplates", "parent", "children"]
+            for relationship in requiredRelationships {
+                XCTAssertNotNil(entityDescription.relationshipsByName[relationship], "缺少必要关系: \(relationship)")
+            }
+            
+            logger.log("测试环境设置完成", level: .info)
+        } catch {
+            logger.log("测试环境设置失败: \(error)", level: .error)
+            XCTFail("测试环境设置失败: \(error)")
         }
     }
     

@@ -1,6 +1,27 @@
 import CoreData
 @testable import SmartPlanner
 
+/// 测试用 Core Data 错误类型
+enum TestCoreDataError: Error {
+    case modelNotFound(String)
+    case modelLoadFailed(URL)
+    case storeCreationFailed(Error)
+    case emptyStore
+    
+    var localizedDescription: String {
+        switch self {
+        case .modelNotFound(let name):
+            return "无法找到 Core Data 模型文件: \(name).momd"
+        case .modelLoadFailed(let url):
+            return "无法加载 Core Data 模型: \(url.path)"
+        case .storeCreationFailed(let error):
+            return "无法创建持久化存储: \(error.localizedDescription)"
+        case .emptyStore:
+            return "创建持久化存储失败: store 为空"
+        }
+    }
+}
+
 /// 用于测试的 Core Data 栈
 /// 使用内存存储以提高测试速度并避免影响实际数据库
 final class TestCoreDataStack {
@@ -10,127 +31,106 @@ final class TestCoreDataStack {
     /// 日志工具
     private let logger = TestLogger.shared
     
+    /// 模型名称
+    private let modelName = "SmartPlanner"
+    
     /// 托管对象模型
-    private let model: NSManagedObjectModel = {
-        // 从主应用 Bundle 中获取模型
-        let modelName = "SmartPlanner"
+    private let model: NSManagedObjectModel
+    
+    /// 持久化存储协调器
+    private let storeCoordinator: NSPersistentStoreCoordinator
+    
+    /// 托管对象上下文
+    private(set) var context: NSManagedObjectContext
+    
+    // MARK: - Initialization
+    
+    /// 初始化测试用 Core Data 栈
+    /// - Throws: TestCoreDataError 如果初始化过程中发生错误
+    init() throws {
+        logger.log("开始初始化 TestCoreDataStack", level: .info)
+        
+        // 1. 加载模型
+        model = try TestCoreDataStack.loadModel(name: modelName)
+        
+        // 2. 创建协调器
+        storeCoordinator = NSPersistentStoreCoordinator(managedObjectModel: model)
+        
+        // 3. 设置并添加内存存储
+        try TestCoreDataStack.setupInMemoryStore(for: storeCoordinator)
+        
+        // 4. 创建上下文
+        context = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
+        context.persistentStoreCoordinator = storeCoordinator
+        context.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
+        
+        logger.log("TestCoreDataStack 初始化完成", level: .info)
+    }
+    
+    // MARK: - Private Methods
+    
+    /// 加载 Core Data 模型
+    /// - Parameter name: 模型名称
+    /// - Returns: 加载的托管对象模型
+    /// - Throws: TestCoreDataError 如果模型加载失败
+    private static func loadModel(name: String) throws -> NSManagedObjectModel {
         let bundle = Bundle(for: TestCoreDataStack.self)
         
-        guard let modelURL = bundle.url(forResource: modelName, withExtension: "momd") else {
-            TestLogger.shared.log("无法找到 Core Data 模型文件: \(modelName).momd", level: .error)
-            fatalError("无法找到 Core Data 模型文件")
+        guard let modelURL = bundle.url(forResource: name, withExtension: "momd") else {
+            throw TestCoreDataError.modelNotFound(name)
         }
         
         guard let model = NSManagedObjectModel(contentsOf: modelURL) else {
-            TestLogger.shared.log("无法加载 Core Data 模型: \(modelURL.path)", level: .error)
-            fatalError("无法加载 Core Data 模型")
+            throw TestCoreDataError.modelLoadFailed(modelURL)
         }
         
-        TestLogger.shared.log("成功加载 Core Data 模型", level: .info)
         return model
-    }()
+    }
     
-    /// 持久化存储协调器
-    private lazy var storeCoordinator: NSPersistentStoreCoordinator = {
-        logger.log("初始化持久化存储协调器", level: .debug)
-        let coordinator = NSPersistentStoreCoordinator(managedObjectModel: model)
+    /// 设置内存存储
+    /// - Parameter coordinator: 持久化存储协调器
+    /// - Throws: TestCoreDataError 如果存储创建失败
+    private static func setupInMemoryStore(for coordinator: NSPersistentStoreCoordinator) throws {
         let description = NSPersistentStoreDescription()
         description.type = NSInMemoryStoreType
         description.shouldAddStoreAsynchronously = false
         
-        // 同步添加存储
-        coordinator.addPersistentStore(with: description) { (store, error) in
+        coordinator.addPersistentStore(with: description) { store, error in
             if let error = error {
-                self.logger.log("无法创建持久化存储: \(error)", level: .error)
-                fatalError("无法创建持久化存储: \(error)")
+                fatalError("创建持久化存储失败: \(error)")
             }
-            if let store = store {
-                self.logger.log("成功创建内存存储: \(store.description)", level: .info)
+            guard store != nil else {
+                fatalError("创建持久化存储失败: store 为空")
             }
         }
-        
-        return coordinator
-    }()
-    
-    /// 托管对象上下文
-    lazy var context: NSManagedObjectContext = {
-        logger.log("初始化托管对象上下文", level: .debug)
-        let context = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
-        context.persistentStoreCoordinator = storeCoordinator
-        context.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
-        logger.log("托管对象上下文初始化完成", level: .info)
-        return context
-    }()
-    
-    // MARK: - Initialization
-    
-    init() {
-        logger.log("初始化 TestCoreDataStack", level: .info)
-        if let modelURL = Bundle(for: TestCoreDataStack.self).url(forResource: "SmartPlanner", withExtension: "momd") {
-            logger.log("找到模型文件: \(modelURL.path)", level: .debug)
-        } else {
-            logger.log("未找到模型文件", level: .error)
-        }
-        
-        logger.log("可用实体:", level: .debug)
-        model.entities.forEach { entity in
-            logger.log("- \(entity.name ?? "未命名")", level: .debug)
-            logger.log("  属性: \(entity.properties.map { $0.name })", level: .debug)
-            logger.log("  关系: \(entity.relationshipsByName.keys)", level: .debug)
-        }
-        
-        _ = context
-        logger.log("TestCoreDataStack 初始化完成", level: .info)
     }
     
-    // MARK: - Public Methods
+    // MARK: - Deinitializer
     
-    /// 保存上下文中的更改
+    deinit {
+        logger.log("TestCoreDataStack 被释放", level: .debug)
+    }
+}
+
+// MARK: - Convenience Methods
+
+extension TestCoreDataStack {
+    /// 保存上下文更改
+    /// - Throws: 如果保存失败则抛出错误
     func saveContext() throws {
         if context.hasChanges {
             logger.log("保存上下文更改", level: .debug)
-            do {
-                try context.save()
-                logger.log("上下文保存成功", level: .info)
-            } catch {
-                logger.logError(error)
-                throw error
-            }
-        } else {
-            logger.log("上下文没有需要保存的更改", level: .debug)
+            try context.save()
+            logger.log("上下文保存成功", level: .info)
         }
     }
     
-    /// 重置所有数据
-    func resetStore() {
-        logger.log("开始重置存储", level: .info)
-        let entities = model.entities
-        
-        // 删除所有实体的数据
-        entities.forEach { entity in
-            guard let entityName = entity.name else {
-                logger.log("实体名称为空", level: .warning)
-                return
-            }
-            
-            logger.log("正在重置实体: \(entityName)", level: .debug)
-            let fetchRequest: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: entityName)
-            let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
-            
-            do {
-                try storeCoordinator.execute(deleteRequest, with: context)
-                logger.log("成功重置实体: \(entityName)", level: .debug)
-            } catch {
-                logger.log("重置实体 \(entityName) 时出错: \(error)", level: .error)
-            }
-        }
-        
-        // 保存更改
-        do {
-            try context.save()
-            logger.log("存储重置完成", level: .info)
-        } catch {
-            logger.log("保存重置更改时出错: \(error)", level: .error)
+    /// 回滚上下文更改
+    func rollbackContext() {
+        if context.hasChanges {
+            logger.log("回滚上下文更改", level: .debug)
+            context.rollback()
+            logger.log("上下文回滚完成", level: .info)
         }
     }
 } 
