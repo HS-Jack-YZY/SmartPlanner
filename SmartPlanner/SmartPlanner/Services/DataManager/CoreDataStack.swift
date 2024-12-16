@@ -116,15 +116,14 @@ final class CoreDataStack {
     
     /// 处理保存错误
     private func handleSaveError(_ error: Error) {
-        print("保存上下文失败: \(error)")
+    print("保存上下文失败: \(error)")
+    
+    let nsError = error as NSError  // 安全的转换
+    if nsError.domain == NSCocoaErrorDomain,
+       nsError.code == NSManagedObjectMergeError {
         
-        // 如果是合并冲突，尝试解决
-        if let error = error as NSError,
-           error.domain == NSCocoaErrorDomain,
-           error.code == NSManagedObjectMergeError {
-            
-            // 重新获取并合并变更
-            mainContext.refreshAllObjects()
+        // 重新获取并合并变更
+        mainContext.refreshAllObjects()
         }
     }
     

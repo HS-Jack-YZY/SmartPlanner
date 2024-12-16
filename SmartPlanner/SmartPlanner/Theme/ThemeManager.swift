@@ -12,8 +12,8 @@ enum ThemeType: String, Codable {
 /// 颜色键名
 enum ColorKey: String {
     // 主要颜色
-    case primary = "PrimaryColor"
-    case secondary = "SecondaryColor"
+    case primary = "AppPrimaryColor"
+    case secondary = "AppSecondaryColor"
     
     // 背景颜色
     case background = "BackgroundColor"

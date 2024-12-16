@@ -47,7 +47,7 @@ private struct ThemeSelector: View {
                 Text("自定义主题").tag(ThemeType.custom)
             }
             .pickerStyle(.segmented)
-            .onChange(of: selectedTheme) { newValue in
+            .onChange(of: selectedTheme) { oldValue, newValue in
                 withAnimation {
                     themeManager.setTheme(newValue)
                 }
