@@ -43,7 +43,7 @@
 		4A36D2BD2D09CB4E0083245C /* Exceptions for "SmartPlanner" folder in "SmartPlannerTests" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				SmartPlanner.xcdatamodeld,
+				Models/SmartPlanner.xcdatamodeld,
 			);
 			target = 4A36D1342D0442C40083245C /* SmartPlannerTests */;
 		};
