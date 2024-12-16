@@ -14,6 +14,28 @@ final class DataManager {
         self.coreDataStack = coreDataStack
     }
     
+    // MARK: - Migration Support
+    
+    /// 检查并执行必要的数据迁移
+    func performNecessaryMigrations() async throws {
+        // 检查是否需要迁移
+        guard coreDataStack.requiresMigration() else {
+            return
+        }
+        
+        // 执行迁移
+        try await withCheckedThrowingContinuation { continuation in
+            DispatchQueue.global(qos: .userInitiated).async {
+                do {
+                    try self.coreDataStack.performLightweightMigration()
+                    continuation.resume()
+                } catch {
+                    continuation.resume(throwing: DataManagerError.migrationFailed(error))
+                }
+            }
+        }
+    }
+    
     // MARK: - CRUD Operations
     
     /// 创建新的实体对象
@@ -57,7 +79,7 @@ final class DataManager {
         }
     }
     
-    /// 异步获取实体对象
+    /// 异步获���实体对象
     func fetchAsync<T: NSManagedObject>(_ type: T.Type,
                                        predicate: NSPredicate? = nil,
                                        sortDescriptors: [NSSortDescriptor]? = nil) async throws -> [T] {
