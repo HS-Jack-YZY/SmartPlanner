@@ -12,6 +12,7 @@ enum SPLogCategory: String {
 
 /// 日志级别
 enum SPLogLevel: String {
+    case trace = "🔍 TRACE"
     case debug = "🔍 DEBUG"
     case info = "ℹ️ INFO"
     case notice = "📢 NOTICE"
@@ -66,6 +67,23 @@ final class SPLogger {
     }
     
     // MARK: - Public Methods
+    
+    /// 记录追踪信息（仅在调试模式下记录）
+    /// - Parameters:
+    ///   - message: 日志消息
+    ///   - category: 日志类别
+    ///   - file: 源文件
+    ///   - function: 函数名
+    ///   - line: 行号
+    func trace(_ message: String,
+              category: SPLogCategory = .general,
+              file: String = #file,
+              function: String = #function,
+              line: Int = #line) {
+        #if DEBUG
+        log(message, level: .trace, category: category, file: file, function: function, line: line)
+        #endif
+    }
     
     /// 记录调试信息
     /// - Parameters:
@@ -144,6 +162,8 @@ final class SPLogger {
         
         // 写入系统日志
         switch level {
+        case .trace:
+            logger.debug("\(logMessage)")
         case .debug:
             logger.debug("\(logMessage)")
         case .info:
