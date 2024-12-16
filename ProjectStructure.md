@@ -84,7 +84,7 @@
 >    - **风险评估**
 >      - 更新修改风险等级
 >      - 评估依赖变更影响
->      - 提供修改建议
+>      - 提���修改建议
 >      - 记录潜在问题
 >
 > ---
@@ -168,8 +168,8 @@ SmartPlannerProject/                # 项目根目录
 │   │   │   ├── AppIcon.appiconset/      # 应用图标
 │   │   │   ├── AccentColor.colorset/    # 强调色
 │   │   │   └── Colors/                  # 颜色资源
-│   │   │       ├── PrimaryColor.colorset
-│   │   │       ├── SecondaryColor.colorset
+│   │   │       ├── AppPrimaryColor.colorset
+│   │   │       ├── AppSecondaryColor.colorset
 │   │   │       ├── BackgroundColor.colorset
 │   │   │       ├── SecondaryBackgroundColor.colorset
 │   │   │       ├── PrimaryTextColor.colorset
@@ -389,7 +389,7 @@ graph TD
     - DataManager.swift
   - 修改风险: 低
   - 修改建议:
-    - 可以添加新的错误类型
+    - 可以添��新的错误类型
     - 保持错误描述的清晰性
     - 考虑国际化支持
 
@@ -420,7 +420,7 @@ graph TD
   - 修改建议:
     - 添加新属性时考虑数据迁移
     - 保持实体关系的一致性
-    - 考虑���询性能优化
+    - 考虑查询性能优化
 
 ### 2. 视图层依赖
 
@@ -531,7 +531,7 @@ graph TD
    - 复用已有的基础设施
    - 遵循已建立的设计模式
    - 同步更新测试用例
-   - 保持文档的及时更新
+   - 保持文档的及时���新
 
 2. **重构建议**：
    - 避免直接修改高风险文件
