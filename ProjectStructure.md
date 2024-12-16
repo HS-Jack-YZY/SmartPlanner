@@ -144,7 +144,6 @@ SmartPlannerProject/                # 项目根目录
 │   │   │       └── DataManagerError.swift # 错误类型定义
 │   │   │
 │   │   ├── Theme/              # 主题系统
-│   │   │   ├── ColorTheme.swift         # 颜色主题定义
 │   │   │   ├── FontTheme.swift          # 字体主题定义
 │   │   │   ├── ThemeManager.swift       # 主题管理器
 │   │   │   └── ThemePreview.swift       # 主题预览视图
@@ -275,29 +274,36 @@ SmartPlannerProject/                # 项目根目录
 #### 1.1 主题系统
 ```mermaid
 graph TD
-    A[ColorTheme.swift] --> B[ThemePreview.swift]
-    C[FontTheme.swift] --> B
-    D[ThemeManager.swift] --> B
-    A --> E[ContentView.swift]
-    C --> E
-    D --> E
-    D --> F[UIKit/SwiftUI]
-    A --> G[Assets.xcassets]
+    A[ThemeManager.swift] --> B[ThemePreview.swift]
+    A --> C[ContentView.swift]
+    A --> D[所有UI组件]
+    E[Assets.xcassets/Colors] --> A
+    F[FontTheme.swift] --> B
+    F --> C
+    F --> D
 ```
 
-- **ColorTheme.swift**
+- **ThemeManager.swift**
   - 依赖关系:
     - SwiftUI
+    - Combine
+    - UIKit (用于系统外观设置)
     - Assets.xcassets (颜色资源)
   - 被引用者:
     - ThemePreview.swift
     - ContentView.swift
     - 所有UI组件
-  - 修改风险: 高（多处引用）
+  - 关键功能:
+    - 主题类型管理（系统、浅色、深色、自定义）
+    - 深色模式切换
+    - 主题状态持久化
+    - 系统外观自动适配
+  - 修改风险: 高（核心功能）
   - 修改建议:
-    - 避免修改已定义的颜色常量名称
-    - 新增颜色时需同步更新 Assets.xcassets
-    - 保持颜色命名的一致性
+    - 保持主题类型枚举的稳定性
+    - 谨慎修改颜色键名定义
+    - 确保主题切换的性能
+    - 维护颜色资源的一致性
 
 - **FontTheme.swift**
   - 依赖关系:
@@ -312,19 +318,20 @@ graph TD
     - 新增字体时考虑可访问性
     - 保持字体大小的层级关系
 
-- **ThemeManager.swift**
+- **ThemePreview.swift**
   - 依赖关系:
     - SwiftUI
-    - Combine
-    - UIKit (用于系统外观设置)
-  - 被引用者:
-    - ContentView.swift
-    - 需要主题切换的视图
-  - 修改风险: 中（核心功能相对稳定）
+    - ThemeManager
+    - FontTheme
+  - 关键功能:
+    - 主题切换界面
+    - 颜色预览
+    - 字体预览
+  - 修改风险: 低（独立功能）
   - 修改建议:
-    - 保持单例模式的实现
-    - 谨慎添加新的主题相关功能
-    - 确保主题切换的性能
+    - 可以自由优化UI布局
+    - 添加新的预览功能
+    - 改进用户交互体验
 
 #### 1.2 数据层
 ```mermaid
@@ -413,24 +420,25 @@ graph TD
   - 修改建议:
     - 添加新属性时考虑数据迁移
     - 保持实体关系的一致性
-    - 考虑查询性能优化
+    - 考虑���询性能优化
 
 ### 2. 视图层依赖
 
 #### 2.1 基础组件
 ```mermaid
 graph TD
-    A[ColorTheme] --> B[Atoms组件]
+    A[ThemeManager] --> B[Atoms组件]
     C[FontTheme] --> B
     B --> D[Molecules组件]
     D --> E[Organisms组件]
-    F[ThemeManager] --> G[所有组件]
+    A --> F[所有组件]
+    G[Assets.xcassets/Colors] --> A
 ```
 
 - **Atoms 组件**
   - 依赖关系:
     - SwiftUI
-    - ColorTheme
+    - ThemeManager
     - FontTheme
   - 设计原则:
     - 保持组件的原子性
@@ -498,11 +506,10 @@ graph TD
 ### 4. 修改建议总结
 
 1. **高风险修改（需要谨慎）**：
-   - ColorTheme.swift（影响所有UI）
    - FontTheme.swift（影响所有UI）
+   - ThemeManager.swift（主题管理）
    - CoreDataStack.swift（核心数据基础）
    - CoreData 实体类（数据结构）
-   - ThemeManager.swift（主题管理）
 
 2. **中等风险修改（需要测试）**：
    - DataManager.swift（数据操作）
@@ -511,6 +518,7 @@ graph TD
    - 测试辅助工具（测试基础设施）
 
 3. **低风险修改（可以自由开发）**：
+   - ThemePreview.swift（主题预览）
    - DataManagerError.swift（错误定义）
    - Atoms 组件（基础UI）
    - 新的测试用例
