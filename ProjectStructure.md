@@ -31,6 +31,11 @@
 >    - 验证 import 语句的完整性
 >    - 确认双向依赖的必要性
 >    - 定期检查循环依赖
+>    - **记录每个关键文件的依赖信息**：
+>      - 直接依赖（import的框架和模块）
+>      - 被引用情况（哪些文件使用了该模块）
+>      - 关键功能说明
+>      - 修改风险评估
 > 
 > ### 更新步骤
 > 
@@ -77,14 +82,29 @@
 >    
 >    - **更新依赖图**
 >      - 使用 Mermaid 语法更新依赖图
->      - 确保图表反映最新状态
+>      - 确保图表反映最新��态
 >      - 添加新的依赖关系
 >      - 移除过时的依赖
+>    
+>    - **依赖说明格式**
+>      ```markdown
+>      ### 模块名称
+>      - **直接依赖**
+>        - 框架：[依赖的框架列表]
+>        - 内部模块：[依赖的内部模块]
+>      - **被引用**
+>        - [引用该模块的文件列表]
+>      - **关键功能**
+>        - [核心功能说明]
+>      - **修改风险**
+>        - 风险等级：[高/中/低]
+>        - 原因：[风险原因]
+>      ```
 >    
 >    - **风险评估**
 >      - 更新修改风险等级
 >      - 评估依赖变更影响
->      - 提���修改建议
+>      - 提供修改建议
 >      - 记录潜在问题
 >
 > ---
@@ -114,14 +134,28 @@ SmartPlannerProject/                # 项目根目录
 │   ├── SmartPlanner.xcodeproj/  # Xcode项目配置
 │   │   ├── project.pbxproj      # 项目配置文件
 │   │   ├── project.xcworkspace/ # 工作空间配置
-│   │   │   ├── contents.xcworkspacedata
+│   │   │   ��── contents.xcworkspacedata
 │   │   │   └── xcshareddata/    # 共享配置
 │   │   │       └── swiftpm/     # Swift包管理器配置
 │   │   └── xcuserdata/         # 用户特定配置
 │   │
 │   ├── SmartPlanner/            # 主项目目录
-│   │   ├── Models/              # 模型层
-│   │   │   ├── CoreDataModels/  # Core Data 实体
+│   │   ├── Application/        # 应用程序入口
+│   │   │   ├── SmartPlannerApp.swift  # 应用程序入口点
+│   │   │   └── ContentView.swift      # 主内容视图
+│   │   │
+│   │   ├── Features/           # 功能模块
+│   │   │   ├── Components/     # UI组件
+│   │   │   │   ├── Atoms/     # 原子组件
+│   │   │   │   ├── Molecules/ # 分子组件
+│   │   │   │   └── Organisms/ # 有机体组件
+│   │   │   └── Theme/         # 主题系统
+│   │   │       ├── FontTheme.swift    # 字体主题
+│   │   │       ├── ThemeManager.swift # 主题管理
+│   │   │       └── ThemePreview.swift # 主题预览
+│   │   │
+│   │   ├── Models/            # 数据模型
+│   │   │   ├── CoreDataModels/  # Core Data实体
 │   │   │   │   ├── PlanCategory+CoreDataClass.swift
 │   │   │   │   ├── PlanCategory+CoreDataProperties.swift
 │   │   │   │   ├── PlanTemplate+CoreDataClass.swift
@@ -132,85 +166,56 @@ SmartPlannerProject/                # 项目根目录
 │   │   │   │   ├── PlanBlockTemplate+CoreDataProperties.swift
 │   │   │   │   ├── PlanBlockInstance+CoreDataClass.swift
 │   │   │   │   └── PlanBlockInstance+CoreDataProperties.swift
-│   │   │   ├── Enums/          # 枚举定义
-│   │   │   ├── Extensions/     # 模型扩展
-│   │   │   ├── Helpers/        # 辅助工具类
-│   │   │   └── Protocols/      # 协议定义
+│   │   │   └── SmartPlanner.xcdatamodeld/  # Core Data模型文件
 │   │   │
-│   │   ├── Services/           # 服务层
-│   │   │   └── DataManager/    # 数据管理服务
+│   │   ├── Resources/         # 资源文件
+│   │   │   ├── Assets.xcassets/  # 资源目录
+│   │   │   │   ├── AppIcon.appiconset/      # 应用图标
+│   │   │   │   ├── AccentColor.colorset/    # 强调色
+│   │   │   │   └── Colors/                  # 颜色资源
+│   │   │   │       ├── AppPrimaryColor.colorset
+│   │   │   │       ├── AppSecondaryColor.colorset
+│   │   │   │       ├── BackgroundColor.colorset
+│   │   │   │       ├── SecondaryBackgroundColor.colorset
+│   │   │   │       ├── PrimaryTextColor.colorset
+│   │   │   │       ├��─ SecondaryTextColor.colorset
+│   │   │   │       ├── WorkBlockColor.colorset
+│   │   │   │       ├── PersonalBlockColor.colorset
+│   │   │   │       ├── SuccessColor.colorset
+│   │   │   │       ├── WarningColor.colorset
+│   │   │   │       └── ErrorColor.colorset
+│   │   │   └── Preview Content/  # 预览资源
+│   │   │       └── Preview Assets.xcassets
+│   │   │
+│   │   ├── Services/          # 服务层
+│   │   │   └── DataManager/   # 数据管理服务
 │   │   │       ├── CoreDataStack.swift   # Core Data基础设施
 │   │   │       ├── DataManager.swift     # 数据管理器
 │   │   │       └── DataManagerError.swift # 错误类型定义
 │   │   │
-│   │   ├── Theme/              # 主题系统
-│   │   │   ├── FontTheme.swift          # 字体主题定义
-│   │   │   ├── ThemeManager.swift       # 主题管理器
-│   │   │   └── ThemePreview.swift       # 主题预览视图
-│   │   │
-│   │   ├── Components/         # 组件
-│   │   │   ├── Atoms/         # 原子组件
-│   │   │   │   └── Inputs/    # 输入组件
-│   │   │   ├── Molecules/     # 分子组件
-│   │   │   │   ├── Cards/     # 卡片组件
-│   │   │   │   └── ListItems/ # 列表项组件
-│   │   │   ├── Organisms/     # 有机体组件
-│   │   │   │   ├── Calendar/  # 日历组件
-│   │   │   │   └── Forms/     # 表单组件
-│   │   │   └── Foundations/   # 基础组件
-│   │   │       └── Styles/    # 样式定义
-│   │   │
-│   │   ├── Utilities/         # 工具层
-│   │   ├── ViewModels/        # 视图模型层
-│   │   ├── Views/             # 视图层
-│   │   │
-│   │   ├── Assets.xcassets/   # 资源文件
-│   │   │   ├── AppIcon.appiconset/      # 应用图标
-│   │   │   ├── AccentColor.colorset/    # 强调色
-│   │   │   └── Colors/                  # 颜色资源
-│   │   │       ├── AppPrimaryColor.colorset
-│   │   │       ├── AppSecondaryColor.colorset
-│   │   │       ├── BackgroundColor.colorset
-│   │   │       ├── SecondaryBackgroundColor.colorset
-│   │   │       ├── PrimaryTextColor.colorset
-│   │   │       ├── SecondaryTextColor.colorset
-│   │   │       ├── WorkBlockColor.colorset
-│   │   │       ├── PersonalBlockColor.colorset
-│   │   │       ├── SuccessColor.colorset
-│   │   │       ├── WarningColor.colorset
-│   │   │       └── ErrorColor.colorset
-│   │   │
-│   │   ├── Preview Content/   # 预览内容
-│   │   │   └── Preview Assets.xcassets
-│   │   │
-│   │   ├── SmartPlanner.xcdatamodeld/  # Core Data模型文件
-│   │   │   └── SmartPlanner.xcdatamodel # 数据模型定义
-│   │   │       └── contents             # 数据模型内容
-│   │   │
-│   │   ├── ContentView.swift           # 主内容视图
-│   │   └── SmartPlannerApp.swift       # 应用程序入口
+│   │   └── Utilities/         # 工具类
+│   │       └── Logger/        # 日志工具
+│   │           └── SPLogger.swift  # 日志管理器
 │   │
-│   ├── SmartPlannerTests/              # 单元测试目录
-│   │   ├── Models/                     # 模型测试
-│   │   │   └── CoreDataTests/          # Core Data测试
-│   │   │       ├── CoreDataModelTests.swift # 核心数据模型测试
-│   │   │       └── EntityTests/        # 实体测试
+│   ├── SmartPlannerTests/     # 单元测试
+│   │   ├── Features/          # 功能测试
+│   │   │   └── Theme/         # 主题测试
+│   │   │       └── ThemeTests.swift
+│   │   ├── Models/           # 模型测试
+│   │   │   └── CoreDataTests/  # Core Data测试
+│   │   │       ├── CoreDataModelTests.swift
+│   │   │       └── EntityTests/
 │   │   │           └── PlanCategoryTests.swift
-│   │   ├── Services/                   # 服务测试
-│   │   │   └── CoreData/              # Core Data服务测试
-│   │   ├── Theme/                     # 主题系统测试
-│   │   │   └── ThemeTests.swift       # 主题功能测试
-│   │   ├── Views/                     # 视图测试
-│   │   ├── ViewModels/                # 视图模型测试
-│   │   ├── Helpers/                   # 辅助工具测试
-│   │   ├── TestHelpers/               # 测试辅助工具
-│   │   │   ├── TestLogger.swift       # 测试日志工具
-│   │   │   └── TestCoreDataStack.swift # 测试数据栈
-│   │   └── SmartPlannerTests.swift    # 测试入口文件
+│   │   ├── Services/         # 服务测试
+│   │   │   └── CoreData/     # Core Data服务测试
+│   │   ├── TestHelpers/      # 测试辅助工具
+│   │   │   ├── TestLogger.swift
+│   │   │   └── TestCoreDataStack.swift
+│   │   └── SmartPlannerTests.swift  # 测试入口
 │   │
-│   └── SmartPlannerUITests/           # UI测试目录
-│       ├── SmartPlannerUITests.swift          # UI测试用例
-│       └── SmartPlannerUITestsLaunchTests.swift # 启动测试
+│   └── SmartPlannerUITests/   # UI测试
+│       ├── SmartPlannerUITests.swift
+│       └── SmartPlannerUITestsLaunchTests.swift
 ```
 
 ## 文件命名规范
@@ -239,7 +244,7 @@ SmartPlannerProject/                # 项目根目录
 2. **Services**
    - 数据持久化服务
    - Core Data 基础设施
-   - 错误处理机制
+   - 错误处���机制
 
 3. **Theme**
    - 颜色主题管理
@@ -271,7 +276,16 @@ SmartPlannerProject/                # 项目根目录
 
 ### 1. 核心依赖
 
-#### 1.1 主题系统
+#### 1.1 应用层依赖
+```mermaid
+graph TD
+    A[SmartPlannerApp.swift] --> B[ContentView.swift]
+    B --> C[Features/Components]
+    B --> D[Features/Theme]
+    E[DataManager] --> B
+```
+
+#### 1.2 主题系统
 ```mermaid
 graph TD
     A[ThemeManager.swift] --> B[ThemePreview.swift]
@@ -283,274 +297,190 @@ graph TD
     F --> D
 ```
 
-- **ThemeManager.swift**
-  - 依赖关系:
-    - SwiftUI
-    - Combine
-    - UIKit (用于系统外观设置)
-    - Assets.xcassets (颜色资源)
-  - 被引用者:
-    - ThemePreview.swift
-    - ContentView.swift
-    - 所有UI组件
-  - 关键功能:
-    - 主题类型管理（系统、浅色、深色、自定义）
-    - 深色模式切换
-    - 主题状态持久化
-    - 系统外观自动适配
-  - 修改风险: 高（核心功能）
-  - 修改建议:
-    - 保持主题类型枚举的稳定性
-    - 谨慎修改颜色键名定义
-    - 确保主题切换的性能
-    - 维护颜色资源的一致性
-
-- **FontTheme.swift**
-  - 依赖关系:
-    - SwiftUI
-  - 被引用者:
-    - ThemePreview.swift
-    - ContentView.swift
-    - 所有UI组件
-  - 修改风险: 高（多处引用）
-  - 修改建议:
-    - 避免修改已定义的字体常量名称
-    - 新增字体时考虑可访问性
-    - 保持字体大小的层级关系
-
-- **ThemePreview.swift**
-  - 依赖关系:
-    - SwiftUI
-    - ThemeManager
-    - FontTheme
-  - 关键功能:
-    - 主题切换界面
-    - 颜色预览
-    - 字体预览
-  - 修改风险: 低（独立功能）
-  - 修改建议:
-    - 可以自由优化UI布局
-    - 添加新的预览功能
-    - 改进用户交互体验
-
-#### 1.2 数据层
+#### 1.3 数据层
 ```mermaid
 graph TD
     A[CoreDataStack.swift] --> B[DataManager.swift]
     C[DataManagerError.swift] --> B
     B --> D[ContentView.swift]
-    B --> E[ViewModels]
+    B --> E[Features/Components]
     A --> F[SmartPlanner.xcdatamodeld]
-    G[CoreData实体类] --> B
-    G --> H[EntityTests]
+    G[CoreDataModels] --> B
 ```
 
-- **CoreDataStack.swift**
-  - 依赖关系:
-    - CoreData
-    - SmartPlanner.xcdatamodeld
-  - 被引用者:
-    - DataManager.swift
-    - TestCoreDataStack.swift
-  - 关键功能:
-    - 管理持久化容器
-    - 提供主线程和后台线程上下文
-    - 处理数据存储错误
-  - 修改风险: 高（核心基础设施）
-  - 修改建议:
-    - 保持单例模式的实现
-    - 谨慎修改错误处理逻辑
-    - 维护线程安全性
+### 2. 组件依赖
 
-- **DataManager.swift**
-  - 依赖关系:
-    - CoreData
-    - Combine
-    - CoreDataStack.swift
-    - DataManagerError.swift
-  - 被引用者:
-    - ViewModels
-    - Views
-    - 测试文件
-  - 关键功能:
-    - CRUD 操作封装
-    - 异步数据操作支持
-    - 后台任务处理
-  - 修改风险: 中（接口稳定）
-  - 修改建议:
-    - 保持 API 接口稳定
-    - 可以添加新的查询方法
-    - 优化批量操作性能
-
-- **DataManagerError.swift**
-  - 依赖关系:
-    - Foundation
-  - 被引用者:
-    - DataManager.swift
-  - 修改风险: 低
-  - 修改建议:
-    - 可以添��新的错误类型
-    - 保持错误描述的清晰性
-    - 考虑国际化支持
-
-#### 1.3 数据模型
+#### 2.1 UI组件层次
 ```mermaid
 graph TD
-    A[PlanCategory] --> B[PlanTemplate]
-    B --> C[PlanInstance]
-    D[PlanBlockTemplate] --> B
-    E[PlanBlockInstance] --> C
-    F[CoreDataStack] --> G[所有实体类]
+    A[Features/Components/Atoms] --> B[Features/Components/Molecules]
+    B --> C[Features/Components/Organisms]
+    D[Features/Theme] --> E[所有组件]
 ```
-
-- **CoreData 实体类**
-  - 依赖关系:
-    - CoreData
-    - 相关联的其他实体类
-  - 被引用者:
-    - DataManager.swift
-    - 实体测试文件
-    - 相关视图模型
-  - 实体关系:
-    - PlanCategory (1) -> (n) PlanTemplate
-    - PlanTemplate (1) -> (n) PlanInstance
-    - PlanTemplate (1) -> (n) PlanBlockTemplate
-    - PlanInstance (1) -> (n) PlanBlockInstance
-  - 修改风险: 高（数据结构核心）
-  - 修改建议:
-    - 添加新属性时考虑数据迁移
-    - 保持实体关系的一致性
-    - 考虑查询性能优化
-
-### 2. 视图层依赖
-
-#### 2.1 基础组件
-```mermaid
-graph TD
-    A[ThemeManager] --> B[Atoms组件]
-    C[FontTheme] --> B
-    B --> D[Molecules组件]
-    D --> E[Organisms组件]
-    A --> F[所有组件]
-    G[Assets.xcassets/Colors] --> A
-```
-
-- **Atoms 组件**
-  - 依赖关系:
-    - SwiftUI
-    - ThemeManager
-    - FontTheme
-  - 设计原则:
-    - 保持组件的原子性
-    - 统一的样式系统
-    - 可复用性优先
-  - 修改建议:
-    - 组件接口保持稳定
-    - 支持主题切换
-    - 添加必要的自定义选项
-
-- **Molecules 组件**
-  - 依赖关系:
-    - Atoms 组件
-    - 业务逻辑接口
-  - 设计原则:
-    - 组合原子组件
-    - 处理简单的业务逻辑
-    - 保持组件独立性
-  - 修改建议:
-    - 明确组件职责
-    - 避免过度耦合
-    - 考虑性能优化
-
-- **Organisms 组件**
-  - 依赖关系:
-    - Molecules 组件
-    - 业务逻辑
-    - 数据模型
-  - 设计原则:
-    - 实现完整的业务功能
-    - 管理复杂的状态
-    - 处理用户交互
-  - 修改建议:
-    - 合理拆分大型组件
-    - 实现必要的缓存机制
-    - 优化重绘性能
 
 ### 3. 测试依赖
 
-#### 3.1 测试辅助工具
+#### 3.1 测试工具
 ```mermaid
 graph TD
     A[TestCoreDataStack] --> B[CoreDataModelTests]
     A --> C[EntityTests]
-    D[TestLogger] --> B
-    D --> C
-    E[CoreDataStack] --> A
+    D[TestLogger] --> E[所有测试模块]
 ```
 
-- **TestCoreDataStack.swift**
-  - 依赖关系:
-    - CoreData
-    - CoreDataStack
-  - 被引用者:
-    - 所有 CoreData 相关测试
-  - 关键功能:
-    - 提供内存数据存储
-    - 隔离测试环境
-    - 支持数据重置
-  - 修改建议:
-    - 保持测试隔离性
-    - 添加性能测试支持
-    - 完善错误模拟
+### 4. 修改风险评估
 
-### 4. 修改建议总结
+1. **高风险模块**：
+   - `Application/`
+     - SmartPlannerApp.swift（应用入口点）
+     - ContentView.swift（主视图）
+   - `Features/Theme/`
+     - ThemeManager.swift（主题管理）
+   - `Services/DataManager/`
+     - CoreDataStack.swift（数据层核心）
+   - `Models/CoreDataModels/`（数据实体）
 
-1. **高风险修改（需要谨慎）**：
-   - FontTheme.swift（影响所有UI）
-   - ThemeManager.swift（主题管理）
-   - CoreDataStack.swift（核心数据基础）
-   - CoreData 实体类（数据结构）
+2. **中等风险模块**：
+   - `Features/Components/`（UI组件）
+   - `Resources/Assets.xcassets/`（资源文件）
+   - `Utilities/Logger/`（日志工具）
 
-2. **中等风险修改（需要测试）**：
-   - DataManager.swift（数据操作）
-   - Molecules 组件（UI组合）
-   - Organisms 组件（业务功能）
-   - 测试辅助工具（测试基础设施）
-
-3. **低风险修改（可以自由开发）**：
-   - ThemePreview.swift（主题预览）
-   - DataManagerError.swift（错误定义）
-   - Atoms 组件（基础UI）
-   - 新的测试用例
-   - 文档更新
+3. **低风险模块**：
+   - `SmartPlannerTests/`（测试代码）
+   - `SmartPlannerUITests/`（UI测试）
+   - 文档文件
 
 ### 5. 开发建议
 
 1. **新功能开发**：
-   - 优先开发独立性强的新组件
-   - 复用已有的基础设施
-   - 遵循已建立的设计模式
+   - 在 `Features/` 下创建新的功能模块
+   - 遵循组件化开发模式
+   - 确保主题系统的一致性
    - 同步更新测试用例
-   - 保持文档的及时���新
 
-2. **重构建议**：
-   - 避免直接修改高风险文件
-   - 使用适配器模式处理改动
-   - 保持向后兼容性
-   - 分步进行重构
-   - 确保测试覆盖率
+2. **代码组织**：
+   - 保持目录结构清���
+   - 遵循 MVVM 架构模式
+   - 合理使用依赖注入
+   - 避免循环依赖
 
 3. **测试策略**：
-   - 高风险文件的修改需要全面测试
-   - 新组件开发需要同步编写测试
-   - 使用测试辅助工具提高测试效率
-   - 包含性能测试
-   - 模拟各种错误情况
+   - 单元测试覆盖核心逻辑
+   - UI测试关注关键流程
+   - 使用 TestHelpers 提高测试效率
+   - 保持测试代码的可维护性
 
 4. **性能优化**：
-   - 注意 Core Data 查询性能
-   - 优化 UI 组件重绘
-   - 合理使用后台操作
+   - 监控 Core Data 性能
+   - 优化资源加载
+   - 注意内存管理
    - 实现必要的缓存机制
-   - 监控内存使用
-```
+
+## 核心模块依赖说明
+
+### Application 模块
+
+#### SmartPlannerApp.swift
+- **直接依赖**
+  - 框架：SwiftUI
+  - 内部模块：ContentView
+- **被引用**：无（应用入口点）
+- **关键功能**
+  - 应用程序生命周期管理
+  - 全局状态初始化
+- **修改风险**：高（影响整个应用）
+
+#### ContentView.swift
+- **直接依赖**
+  - 框架：SwiftUI
+  - 内部模块：
+    - Features/Theme
+    - Features/Components
+    - DataManager
+- **被引用**
+  - SmartPlannerApp.swift
+- **关键功能**
+  - 主视图结构
+  - 导航管理
+- **修改风险**：高（核心UI结构）
+
+### Services 模块
+
+#### DataManager.swift
+- **直接依赖**
+  - 框架：CoreData, Combine
+  - 内部模块：
+    - CoreDataStack
+    - DataManagerError
+- **被引用**
+  - ContentView
+  - Features/Components
+  - 测试文件
+- **关键功能**
+  - CRUD 操作
+  - 数据持久化
+  - 异步数据处理
+- **修改风险**：高（数据层核心）
+
+#### CoreDataStack.swift
+- **直接依赖**
+  - 框架：CoreData
+  - 内部模块：SmartPlanner.xcdatamodeld
+- **被引用**
+  - DataManager
+  - TestCoreDataStack
+- **关键功能**
+  - 持久化存储管理
+  - 上下文管理
+- **修改风险**：高（数据基础设施）
+
+### Features 模块
+
+#### ThemeManager.swift
+- **直接依赖**
+  - 框架：SwiftUI, Combine
+  - 资源：Assets.xcassets/Colors
+- **被引用**
+  - ContentView
+  - 所有UI组件
+- **关键功能**
+  - 主题切换
+  - 颜色管理
+  - 深色模式支持
+- **修改风险**：高（影响所有UI）
+
+#### FontTheme.swift
+- **直接依赖**
+  - 框架：SwiftUI
+- **被引用**
+  - ThemeManager
+  - UI组件
+- **关键功能**
+  - 字体定义
+  - 文本样式
+- **修改风险**：中（UI风格）
+
+### Models 模块
+
+#### CoreData 实体
+- **直接依赖**
+  - 框架：CoreData
+- **被引用**
+  - DataManager
+  - 实体测试
+- **关键功能**
+  - 数据结构定义
+  - 关系映射
+- **修改风险**：高（数据模型）
+
+### Utilities 模块
+
+#### SPLogger.swift
+- **直接依赖**
+  - 框架：Foundation, os.log
+- **被引用**
+  - 全局使用
+- **关键功能**
+  - 日志记录
+  - 调试支持
+- **修改风险**：低（工具类）
