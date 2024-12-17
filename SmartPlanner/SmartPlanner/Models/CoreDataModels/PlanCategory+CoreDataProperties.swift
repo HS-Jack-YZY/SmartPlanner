@@ -16,7 +16,7 @@ extension PlanCategory {
         return NSFetchRequest<PlanCategory>(entityName: "PlanCategory")
     }
 
-    @NSManaged public var color: String?
+    @NSManaged public var color: String
     @NSManaged public var createdAt: Date?
     @NSManaged public var deletedAt: Date?
     @NSManaged public var displayOrder: Int16

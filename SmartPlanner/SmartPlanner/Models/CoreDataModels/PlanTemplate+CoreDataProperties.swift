@@ -16,7 +16,7 @@ extension PlanTemplate {
         return NSFetchRequest<PlanTemplate>(entityName: "PlanTemplate")
     }
 
-    @NSManaged public var color: String?
+    @NSManaged public var color: String
     @NSManaged public var createdAt: Date?
     @NSManaged public var deletedAt: Date?
     @NSManaged public var difficulty: Int16

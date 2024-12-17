@@ -11,7 +11,7 @@
         <relationship name="planInstances" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="PlanInstance" inverseName="blockInstance" inverseEntity="PlanInstance"/>
     </entity>
     <entity name="PlanBlockTemplate" representedClassName=".PlanBlockTemplate" syncable="YES">
-        <attribute name="color" optional="YES" attributeType="String"/>
+        <attribute name="color" attributeType="String" defaultValueString="#808080FF"/>
         <attribute name="createdAt" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="deletedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="desc" optional="YES" attributeType="String"/>
@@ -22,7 +22,7 @@
         <relationship name="blockInstances" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="PlanBlockInstance" inverseName="blockTemplate" inverseEntity="PlanBlockInstance"/>
     </entity>
     <entity name="PlanCategory" representedClassName=".PlanCategory" syncable="YES">
-        <attribute name="color" optional="YES" attributeType="String"/>
+        <attribute name="color" attributeType="String" defaultValueString="#808080FF"/>
         <attribute name="createdAt" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="deletedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="displayOrder" optional="YES" attributeType="Integer 16" minValueString="0" defaultValueString="0" usesScalarValueType="YES"/>
@@ -52,7 +52,7 @@
         <relationship name="planTemplate" maxCount="1" deletionRule="Nullify" destinationEntity="PlanTemplate" inverseName="planInstances" inverseEntity="PlanTemplate"/>
     </entity>
     <entity name="PlanTemplate" representedClassName=".PlanTemplate" syncable="YES">
-        <attribute name="color" optional="YES" attributeType="String"/>
+        <attribute name="color" attributeType="String" defaultValueString="#808080FF"/>
         <attribute name="createdAt" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="deletedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="difficulty" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
