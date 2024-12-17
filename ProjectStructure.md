@@ -33,7 +33,7 @@
 >    - 定期检查循环依赖
 >    - **记录每个关键文件的依赖信息**：
 >      - 直接依赖（import的框架和模块）
->      - 被引用情况（哪些文件使用了该模块）
+>      - 被引用情况（哪些文���使用了该模块）
 >      - 关键功能说明
 >      - 修改风险评估
 > 
@@ -82,7 +82,7 @@
 >    
 >    - **更新依赖图**
 >      - 使用 Mermaid 语法更新依赖图
->      - 确保图表反映最新��态
+>      - 确保图表反映最新状态
 >      - 添加新的依赖关系
 >      - 移除过时的依赖
 >    
@@ -125,19 +125,16 @@ SmartPlannerProject/                # 项目根目录
 │   ├── GitCommitPrinciple.md     # Git提交规范
 │   ├── CodingPrinciples.md       # 编码规范
 │   └── iteration_v1/             # 第一轮迭代文档
-│       ├── DevelopmentGuideV1.md # 开发指南
-│       ├── DatabaseDesignV1.md   # 数据库设计文档
-│       ├── prdV1.md             # 产品需求文档
-│       └── tddV1.md             # 技术设计文档
+│       ├── DevelopmentGuideV1.md        # 开发指南
+│       ├── DatabaseDesignV1.md          # 数据库设计文档
+│       ├── DataValidationImplementationPlan.md  # 数据验证实现计划
+│       ├── ValidationRulesRecord.md     # 验证规则记录
+│       ├── prdV1.md                     # 产品需求文档
+│       └── tddV1.md                     # 技术设计文档
 │
 ├── SmartPlanner/                 # Xcode项目目录
 │   ├── SmartPlanner.xcodeproj/  # Xcode项目配置
-│   │   ├── project.pbxproj      # 项目配置文件
-│   │   ├── project.xcworkspace/ # 工作空间配置
-│   │   │   ��── contents.xcworkspacedata
-│   │   │   └── xcshareddata/    # 共享配置
-│   │   │       └── swiftpm/     # Swift包管理器配置
-│   │   └── xcuserdata/         # 用户特定配置
+│   │   └── project.pbxproj      # 项目配置文件
 │   │
 │   ├── SmartPlanner/            # 主项目目录
 │   │   ├── Application/        # 应用程序入口
@@ -166,6 +163,12 @@ SmartPlannerProject/                # 项目根目录
 │   │   │   │   ├── PlanBlockTemplate+CoreDataProperties.swift
 │   │   │   │   ├── PlanBlockInstance+CoreDataClass.swift
 │   │   │   │   └── PlanBlockInstance+CoreDataProperties.swift
+│   │   │   ├── Validation/     # 数据验证
+│   │   │   │   ├── PlanCategory+Validation.swift
+│   │   │   │   ├── PlanTemplate+Validation.swift
+│   │   │   │   ├── PlanInstance+Validation.swift
+│   │   │   │   ├── PlanBlockTemplate+Validation.swift
+│   │   │   │   └── PlanBlockInstance+Validation.swift
 │   │   │   └── SmartPlanner.xcdatamodeld/  # Core Data模型文件
 │   │   │
 │   │   ├── Resources/         # 资源文件
@@ -178,7 +181,7 @@ SmartPlannerProject/                # 项目根目录
 │   │   │   │       ├── BackgroundColor.colorset
 │   │   │   │       ├── SecondaryBackgroundColor.colorset
 │   │   │   │       ├── PrimaryTextColor.colorset
-│   │   │   │       ├��─ SecondaryTextColor.colorset
+│   │   │   │       ├── SecondaryTextColor.colorset
 │   │   │   │       ├── WorkBlockColor.colorset
 │   │   │   │       ├── PersonalBlockColor.colorset
 │   │   │   │       ├── SuccessColor.colorset
@@ -191,7 +194,11 @@ SmartPlannerProject/                # 项目根目录
 │   │   │   └── DataManager/   # 数据管理服务
 │   │   │       ├── CoreDataStack.swift   # Core Data基础设施
 │   │   │       ├── DataManager.swift     # 数据管理器
-│   │   │       └── DataManagerError.swift # 错误类型定义
+│   │   │       ├── DataManagerError.swift # 错误类型定义
+│   │   │       └── Validation/           # 验证服务
+│   │   │           ├── ValidationError.swift    # 验证错误
+│   │   │           ├── ValidationProtocols.swift # 验证协议
+│   │   │           └── ValidationRules.swift    # 验证规则
 │   │   │
 │   │   └── Utilities/         # 工具类
 │   │       └── Logger/        # 日志工具
@@ -244,7 +251,7 @@ SmartPlannerProject/                # 项目根目录
 2. **Services**
    - 数据持久化服务
    - Core Data 基础设施
-   - 错误处���机制
+   - 错误处理机制
 
 3. **Theme**
    - 颜色主题管理
@@ -283,6 +290,7 @@ graph TD
     B --> C[Features/Components]
     B --> D[Features/Theme]
     E[DataManager] --> B
+    F[ValidationService] --> E
 ```
 
 #### 1.2 主题系统
@@ -302,20 +310,36 @@ graph TD
 graph TD
     A[CoreDataStack.swift] --> B[DataManager.swift]
     C[DataManagerError.swift] --> B
-    B --> D[ContentView.swift]
-    B --> E[Features/Components]
-    A --> F[SmartPlanner.xcdatamodeld]
-    G[CoreDataModels] --> B
+    D[ValidationService] --> B
+    B --> E[ContentView.swift]
+    B --> F[Features/Components]
+    A --> G[SmartPlanner.xcdatamodeld]
+    H[CoreDataModels] --> B
+    I[ValidationRules] --> D
+    J[ValidationProtocols] --> D
+    K[ValidationError] --> D
 ```
 
-### 2. 组件依赖
+### 2. 验证系统依赖
 
-#### 2.1 UI组件层次
+#### 2.1 验证服务
 ```mermaid
 graph TD
-    A[Features/Components/Atoms] --> B[Features/Components/Molecules]
-    B --> C[Features/Components/Organisms]
-    D[Features/Theme] --> E[所有组件]
+    A[ValidationService] --> B[ValidationRules]
+    A --> C[ValidationProtocols]
+    A --> D[ValidationError]
+    E[EntityValidation] --> B
+    F[CoreDataModels] --> E
+```
+
+#### 2.2 实体验证
+```mermaid
+graph TD
+    A[PlanCategory+Validation] --> B[ValidationProtocols]
+    C[PlanTemplate+Validation] --> B
+    D[PlanInstance+Validation] --> B
+    E[PlanBlockTemplate+Validation] --> B
+    F[PlanBlockInstance+Validation] --> B
 ```
 
 ### 3. 测试依赖
@@ -328,59 +352,67 @@ graph TD
     D[TestLogger] --> E[所有测试模块]
 ```
 
-### 4. 修改风险评估
+### 4. 核心模块依赖说明
 
-1. **高风险模块**：
-   - `Application/`
-     - SmartPlannerApp.swift（应用入口点）
-     - ContentView.swift（主视图）
-   - `Features/Theme/`
-     - ThemeManager.swift（主题管理）
-   - `Services/DataManager/`
-     - CoreDataStack.swift（数据层核心）
-   - `Models/CoreDataModels/`（数据实体）
+#### ValidationService
+- **直接依赖**
+  - 框架：Foundation, CoreData
+  - 内部模块：
+    - ValidationRules
+    - ValidationProtocols
+    - ValidationError
+    - CoreDataModels
+- **被引用**
+  - DataManager
+  - EntityValidation扩展
+- **关键功能**
+  - 数据验证规则管理
+  - 验证执行
+  - 错误处理
+- **修改风险**：高（影响数据完整性）
 
-2. **中等风险模块**：
-   - `Features/Components/`（UI组件）
-   - `Resources/Assets.xcassets/`（资源文件）
-   - `Utilities/Logger/`（日志工具）
+#### ValidationRules
+- **直接依赖**
+  - 框架：Foundation, CoreData
+  - 内部模块：ValidationProtocols
+- **被引用**
+  - ValidationService
+  - EntityValidation扩展
+- **关键功能**
+  - 定义验证规则
+  - 规则执行逻辑
+- **修改风险**：中（规则变更影响验证）
 
-3. **低风险模块**：
-   - `SmartPlannerTests/`（测试代码）
-   - `SmartPlannerUITests/`（UI测试）
-   - 文档文件
+#### ValidationProtocols
+- **直接依赖**
+  - 框架：Foundation, CoreData
+- **被引用**
+  - ValidationService
+  - ValidationRules
+  - EntityValidation扩展
+- **关键功能**
+  - 定义验证接口
+  - 统一验证行为
+- **修改风险**：高（接口变更影响全局）
 
-### 5. 开发建议
+#### EntityValidation扩展
+- **直接依赖**
+  - 框架：Foundation, CoreData
+  - 内部模块：
+    - ValidationProtocols
+    - ValidationRules
+- **被引用**
+  - 各个Core Data实体
+- **关键功能**
+  - 实体特定验证逻辑
+  - 自定义验证规则
+- **修改风险**：中（影响特定实体）
 
-1. **新功能开发**：
-   - 在 `Features/` 下创建新的功能模块
-   - 遵循组件化开发模式
-   - 确保主题系统的一致性
-   - 同步更新测试用例
+### 5. 其他核心模块依赖
 
-2. **代码组织**：
-   - 保持目录结构清���
-   - 遵循 MVVM 架构模式
-   - 合理使用依赖注入
-   - 避免循环依赖
+#### Application 模块
 
-3. **测试策略**：
-   - 单元测试覆盖核心逻辑
-   - UI测试关注关键流程
-   - 使用 TestHelpers 提高测试效率
-   - 保持测试代码的可维护性
-
-4. **性能优化**：
-   - 监控 Core Data 性能
-   - 优化资源加载
-   - 注意内存管理
-   - 实现必要的缓存机制
-
-## 核心模块依赖说明
-
-### Application 模块
-
-#### SmartPlannerApp.swift
+##### SmartPlannerApp.swift
 - **直接依赖**
   - 框架：SwiftUI
   - 内部模块：ContentView
@@ -390,7 +422,7 @@ graph TD
   - 全局状态初始化
 - **修改风险**：高（影响整个应用）
 
-#### ContentView.swift
+##### ContentView.swift
 - **直接依赖**
   - 框架：SwiftUI
   - 内部模块：
@@ -404,14 +436,15 @@ graph TD
   - 导航管理
 - **修改风险**：高（核心UI结构）
 
-### Services 模块
+#### Services 模块
 
-#### DataManager.swift
+##### DataManager.swift
 - **直接依赖**
   - 框架：CoreData, Combine
   - 内部模块：
     - CoreDataStack
     - DataManagerError
+    - ValidationService
 - **被引用**
   - ContentView
   - Features/Components
@@ -420,9 +453,10 @@ graph TD
   - CRUD 操作
   - 数据持久化
   - 异步数据处理
+  - 数据验证
 - **修改风险**：高（数据层核心）
 
-#### CoreDataStack.swift
+##### CoreDataStack.swift
 - **直接依赖**
   - 框架：CoreData
   - 内部模块：SmartPlanner.xcdatamodeld
@@ -434,9 +468,9 @@ graph TD
   - 上下文管理
 - **修改风险**：高（数据基础设施）
 
-### Features 模块
+#### Features 模块
 
-#### ThemeManager.swift
+##### ThemeManager.swift
 - **直接依赖**
   - 框架：SwiftUI, Combine
   - 资源：Assets.xcassets/Colors
@@ -449,7 +483,7 @@ graph TD
   - 深色模式支持
 - **修改风险**：高（影响所有UI）
 
-#### FontTheme.swift
+##### FontTheme.swift
 - **直接依赖**
   - 框架：SwiftUI
 - **被引用**
@@ -460,22 +494,27 @@ graph TD
   - 文本样式
 - **修改风险**：中（UI风格）
 
-### Models 模块
+#### Models 模块
 
-#### CoreData 实体
+##### CoreData 实体
 - **直接依赖**
-  - 框架：CoreData
+  - 框架：CoreData, Foundation
+  - 内部模块：
+    - ValidationProtocols
+    - ValidationRules
 - **被引用**
   - DataManager
+  - ValidationService
   - 实体测试
 - **关键功能**
   - 数据结构定义
   - 关系映射
+  - 数据验证
 - **修改风险**：高（数据模型）
 
-### Utilities 模块
+#### Utilities 模块
 
-#### SPLogger.swift
+##### SPLogger.swift
 - **直接依赖**
   - 框架：Foundation, os.log
 - **被引用**
@@ -483,4 +522,62 @@ graph TD
 - **关键功能**
   - 日志记录
   - 调试支持
+  - 性能监控
 - **修改风险**：低（工具类）
+
+### 6. 修改风险评估
+
+1. **高风险模块**：
+   - `Application/`
+     - SmartPlannerApp.swift（应用入口点）
+     - ContentView.swift（主视图）
+   - `Features/Theme/`
+     - ThemeManager.swift（主题管理）
+   - `Services/DataManager/`
+     - CoreDataStack.swift（数据层核心）
+     - DataManager.swift（数据管理）
+     - ValidationService（数据验证）
+   - `Models/CoreDataModels/`（数据实体）
+   - `Models/Validation/`（验证规则）
+
+2. **中等风险模块**：
+   - `Features/Components/`（UI组件）
+   - `Resources/Assets.xcassets/`（资源文件）
+   - `Services/DataManager/Validation/`（验证规则）
+   - `Models/Validation/`（实体验证扩展）
+
+3. **低风险模块**：
+   - `Utilities/Logger/`（日志工具）
+   - `SmartPlannerTests/`（测试代码）
+   - `SmartPlannerUITests/`（UI测试）
+   - 文档文件
+
+### 7. 开发建议
+
+1. **新功能开发**：
+   - 在 `Features/` 下创建新的功能模块
+   - 遵循组件化开发模式
+   - 确保主题系统的一致性
+   - 同步更新测试用例
+   - 实现相应的验证规则
+
+2. **代码组织**：
+   - 保持目录结构清晰
+   - 遵循 MVVM 架构模式
+   - 合理使用依赖注入
+   - 避免循环依赖
+   - 分离验证逻辑
+
+3. **测试策略**：
+   - 单元测试覆盖核心逻辑
+   - UI测试关注关键流程
+   - 使用 TestHelpers 提高测试效率
+   - 保持测试代码的可维护性
+   - 验证规则测试覆盖
+
+4. **性能优化**：
+   - 监控 Core Data 性能
+   - 优化资源加载
+   - 注意内存管理
+   - 实现必要的缓存机制
+   - 优化验证性能
