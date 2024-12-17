@@ -16,15 +16,15 @@ extension PlanBlockTemplate {
         return NSFetchRequest<PlanBlockTemplate>(entityName: "PlanBlockTemplate")
     }
 
-    @NSManaged public var color: String?
-    @NSManaged public var createdAt: Date?
+    @NSManaged public var color: String
+    @NSManaged public var createdAt: Date
     @NSManaged public var deletedAt: Date?
     @NSManaged public var desc: String?
-    @NSManaged public var id: UUID?
+    @NSManaged public var id: UUID
     @NSManaged public var isVisible: Bool
-    @NSManaged public var name: String?
-    @NSManaged public var updatedAt: Date?
-    @NSManaged public var blockInstances: NSSet?
+    @NSManaged public var name: String
+    @NSManaged public var updatedAt: Date
+    @NSManaged public var blockInstances: Set<PlanBlockInstance>
 
 }
 

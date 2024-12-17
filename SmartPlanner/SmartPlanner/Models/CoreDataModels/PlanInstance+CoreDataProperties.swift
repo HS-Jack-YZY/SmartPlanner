@@ -16,19 +16,19 @@ extension PlanInstance {
         return NSFetchRequest<PlanInstance>(entityName: "PlanInstance")
     }
 
-    @NSManaged public var createdAt: Date?
+    @NSManaged public var createdAt: Date
     @NSManaged public var deletedAt: Date?
     @NSManaged public var difficulty: Int16
     @NSManaged public var duration: Int32
-    @NSManaged public var endTime: Date?
-    @NSManaged public var id: UUID?
+    @NSManaged public var endTime: Date
+    @NSManaged public var id: UUID
     @NSManaged public var isReminderEnabled: Bool
     @NSManaged public var priority: Int16
     @NSManaged public var reminderTime: Int32
-    @NSManaged public var startTime: Date?
-    @NSManaged public var updatedAt: Date?
-    @NSManaged public var blockInstance: PlanBlockInstance?
-    @NSManaged public var planTemplate: PlanTemplate?
+    @NSManaged public var startTime: Date
+    @NSManaged public var updatedAt: Date
+    @NSManaged public var blockInstance: PlanBlockInstance
+    @NSManaged public var planTemplate: PlanTemplate
 
 }
 
