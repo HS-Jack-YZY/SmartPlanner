@@ -8,13 +8,21 @@
 import SwiftUI
 
 struct ContentView: View {
+    // MARK: - Properties
+    
+    @State private var selectedDate = Date()
+    
+    // MARK: - Body
+    
     var body: some View {
-        NavigationView {
-            ThemePreview()
-        }
+        SPCalendarView(selectedDate: $selectedDate)
     }
 }
 
-#Preview {
-    ContentView()
+// MARK: - Preview
+
+struct ContentView_Previews: PreviewProvider {
+    static var previews: some View {
+        ContentView()
+    }
 }
