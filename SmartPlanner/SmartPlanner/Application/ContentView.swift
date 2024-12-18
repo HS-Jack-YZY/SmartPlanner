@@ -11,6 +11,7 @@ struct ContentView: View {
     // MARK: - Properties
     
     @State private var selectedDate = Date()
+    @EnvironmentObject private var themeManager: ThemeManager
     
     // MARK: - Body
     
@@ -24,5 +25,6 @@ struct ContentView: View {
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView()
+            .environmentObject(ThemeManager.shared)
     }
 }

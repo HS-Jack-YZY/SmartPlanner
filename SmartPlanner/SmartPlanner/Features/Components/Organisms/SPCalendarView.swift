@@ -6,6 +6,7 @@ struct SPCalendarView: View {
     
     @Binding var selectedDate: Date
     @State private var currentMonth: Date
+    @EnvironmentObject private var themeManager: ThemeManager
     
     // MARK: - Initialization
     
@@ -20,28 +21,29 @@ struct SPCalendarView: View {
         VStack(spacing: 0) {
             CalendarViewRepresentable(
                 selectedDate: $selectedDate,
-                currentMonth: $currentMonth
+                currentMonth: $currentMonth,
+                themeManager: themeManager
             )
             
             // 底部工具栏
             HStack {
                 Button(action: scrollToToday) {
                     Text("今天")
-                        .foregroundColor(.red)
+                        .foregroundColor(themeManager.getThemeColor(.calendarToolbarTint))
                 }
                 
                 Spacer()
                 
                 Button(action: {}) {
                     Text("日历")
-                        .foregroundColor(.red)
+                        .foregroundColor(themeManager.getThemeColor(.calendarToolbarTint))
                 }
                 
                 Spacer()
                 
                 Button(action: {}) {
                     Text("收件箱")
-                        .foregroundColor(.red)
+                        .foregroundColor(themeManager.getThemeColor(.calendarToolbarTint))
                 }
             }
             .padding(.horizontal, 50)
@@ -64,6 +66,7 @@ struct SPCalendarView: View {
 private struct CalendarViewRepresentable: UIViewRepresentable {
     @Binding var selectedDate: Date
     @Binding var currentMonth: Date
+    let themeManager: ThemeManager
     
     func makeUIView(context: Context) -> UICalendarView {
         let calendarView = UICalendarView()
@@ -74,10 +77,14 @@ private struct CalendarViewRepresentable: UIViewRepresentable {
         
         // 配置选择行为
         let dateSelection = UICalendarSelectionSingleDate(delegate: context.coordinator)
+        dateSelection.selectedDate = DateHelper.dateComponents(from: selectedDate)
         calendarView.selectionBehavior = dateSelection
         
         // 设置可见月份
         calendarView.visibleDateComponents = DateHelper.dateComponents(from: currentMonth, components: [.year, .month])
+        
+        // 配置外观
+        configureAppearance(calendarView)
         
         return calendarView
     }
@@ -89,12 +96,23 @@ private struct CalendarViewRepresentable: UIViewRepresentable {
         // 更新选中日期
         if let selectionBehavior = uiView.selectionBehavior as? UICalendarSelectionSingleDate {
             let selectedComponents = DateHelper.dateComponents(from: selectedDate)
-            selectionBehavior.setSelected(selectedComponents, animated: true)
+            selectionBehavior.selectedDate = selectedComponents
         }
+        
+        // 更新外观
+        configureAppearance(uiView)
     }
     
     func makeCoordinator() -> Coordinator {
         Coordinator(parent: self)
+    }
+    
+    // MARK: - Private Methods
+    
+    private func configureAppearance(_ calendarView: UICalendarView) {
+        // 设置基本颜色
+        calendarView.tintColor = UIColor(themeManager.getThemeColor(.calendarSelectedBackground))
+        calendarView.backgroundColor = UIColor(themeManager.getThemeColor(.background))
     }
     
     // MARK: - Coordinator
@@ -117,10 +135,23 @@ private struct CalendarViewRepresentable: UIViewRepresentable {
         
         // 装饰视图
         func calendarView(_ calendarView: UICalendarView, decorationFor dateComponents: DateComponents) -> UICalendarView.Decoration? {
-            // 这里可以添加节日、农历等装饰
-            if let date = DateHelper.date(from: dateComponents),
-               DateHelper.isToday(date) {
-                return .default(color: .red)
+            if let date = DateHelper.date(from: dateComponents) {
+                // 今天日期
+                if DateHelper.isToday(date) {
+                    return .default(color: UIColor(parent.themeManager.getThemeColor(.calendarTodayText)))
+                }
+                
+                // 周末日期
+                if let weekday = dateComponents.weekday, weekday == 1 || weekday == 7 {
+                    return .default(color: UIColor(parent.themeManager.getThemeColor(.calendarWeekendText)))
+                }
+                
+                // 非当前月份
+                if let month = dateComponents.month,
+                   let currentMonth = DateHelper.calendar.dateComponents([.month], from: parent.currentMonth).month,
+                   month != currentMonth {
+                    return .default(color: UIColor(parent.themeManager.getThemeColor(.calendarOutOfMonthText)))
+                }
             }
             return nil
         }
@@ -132,5 +163,6 @@ private struct CalendarViewRepresentable: UIViewRepresentable {
 struct SPCalendarView_Previews: PreviewProvider {
     static var previews: some View {
         SPCalendarView(selectedDate: .constant(Date()))
+            .environmentObject(ThemeManager.shared)
     }
-} 
+}

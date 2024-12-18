@@ -32,6 +32,13 @@ enum ColorKey: String {
     case warning = "WarningColor"
     case error = "ErrorColor"
     
+    // 日历颜色
+    case calendarSelectedBackground = "CalendarSelectedBackgroundColor"
+    case calendarTodayText = "CalendarTodayTextColor"
+    case calendarWeekendText = "CalendarWeekendTextColor"
+    case calendarOutOfMonthText = "CalendarOutOfMonthTextColor"
+    case calendarToolbarTint = "CalendarToolbarTintColor"
+    
     /// 获取颜色
     var color: Color {
         Color(rawValue, bundle: .main)
