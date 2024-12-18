@@ -13,6 +13,13 @@ struct SmartPlannerApp: App {
     
     @StateObject private var themeManager = ThemeManager.shared
     
+    // MARK: - Initialization
+    
+    init() {
+        // 确保使用系统语言
+        UserDefaults.standard.register(defaults: ["AppleLanguages": Bundle.main.preferredLocalizations])
+    }
+    
     // MARK: - Body
     
     var body: some Scene {

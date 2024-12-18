@@ -1,39 +1,51 @@
 import Foundation
 
 enum DateHelper {
-    /// 共享日历实例
-    static let calendar: Calendar = {
+    // MARK: - Properties
+    
+    /// 私有日历实例
+    private static var _calendar: Calendar = {
         var calendar = Calendar(identifier: .gregorian)
-        calendar.locale = Locale(identifier: "zh_CN")
+        calendar.locale = Locale.current
         return calendar
     }()
+    
+    /// 公开的日历实例
+    static var calendar: Calendar {
+        get { _calendar }
+        set { _calendar = newValue }
+    }
+    
+    // MARK: - Public Methods
     
     /// 获取年份
     static func year(from date: Date) -> Int {
         calendar.component(.year, from: date)
     }
     
-    /// 获取中文月份
+    /// 获取本地化月份
     static func chineseMonth(from date: Date) -> String {
-        let month = calendar.component(.month, from: date)
-        let chineseMonths = ["一月", "二月", "三月", "四月", "五月", "六月",
-                            "七月", "八月", "九月", "十月", "十一月", "十二月"]
-        return chineseMonths[month - 1]
+        let formatter = DateFormatter()
+        formatter.calendar = calendar
+        formatter.locale = calendar.locale
+        formatter.dateFormat = "MMMM"
+        return formatter.string(from: date)
     }
     
     /// 格式化日期标题（如：周三 12月18日）
     static func formatDayHeader(_ date: Date) -> String {
-        let weekday = calendar.component(.weekday, from: date)
-        let month = calendar.component(.month, from: date)
-        let day = calendar.component(.day, from: date)
-        
-        let weekdays = ["周日", "周一", "周二", "周三", "周四", "周五", "周六"]
-        return "\(weekdays[weekday-1]) \(month)月\(day)日"
+        let formatter = DateFormatter()
+        formatter.calendar = calendar
+        formatter.locale = calendar.locale
+        formatter.dateFormat = "EEEE MMM d日"
+        return formatter.string(from: date)
     }
     
     /// 格式化当前时间（如：17:11）
     static func formatCurrentTime() -> String {
         let formatter = DateFormatter()
+        formatter.calendar = calendar
+        formatter.locale = calendar.locale
         formatter.dateFormat = "HH:mm"
         return formatter.string(from: Date())
     }
