@@ -33,7 +33,7 @@
 >    - 定期检查循环依赖
 >    - **记录每个关键文件的依赖信息**：
 >      - 直接依赖（import的框架和模块）
->      - 被引用情况（哪些文���使用了该模块）
+>      - 被引用情况（哪些文件使用了该模块）
 >      - 关键功能说明
 >      - 修改风险评估
 > 
@@ -205,25 +205,73 @@ SmartPlannerProject/                # 项目根目录
 │   │           └── SPLogger.swift  # 日志管理器
 │   │
 │   ├── SmartPlannerTests/     # 单元测试
-│   │   ├── Features/          # 功能测试
-│   │   │   └── Theme/         # 主题测试
-│   │   │       └── ThemeTests.swift
-│   │   ├── Models/           # 模型测试
-│   │   │   └── CoreDataTests/  # Core Data测试
-│   │   │       ├── CoreDataModelTests.swift
-│   │   │       └── EntityTests/
-│   │   │           └── PlanCategoryTests.swift
-│   │   ├── Services/         # 服务测试
-│   │   │   └── CoreData/     # Core Data服务测试
-│   │   ├── TestHelpers/      # 测试辅助工具
-│   │   │   ├── TestLogger.swift
-│   │   │   └── TestCoreDataStack.swift
-│   │   └── SmartPlannerTests.swift  # 测试入口
-│   │
 │   └── SmartPlannerUITests/   # UI测试
 │       ├── SmartPlannerUITests.swift
 │       └── SmartPlannerUITestsLaunchTests.swift
 ```
+
+## 依赖关系
+
+### 1. 核心依赖
+
+#### Application 模块
+- **SmartPlannerApp.swift**
+  - 直接依赖：SwiftUI
+  - 被引用：无（应用入口点）
+  - 关键功能：应用程序生命周期管理
+  - 修改风险：高
+
+- **ContentView.swift**
+  - 直接依赖：SwiftUI
+  - 被引用：SmartPlannerApp
+  - 关键功能：主视图结构
+  - 修改风险：高
+
+#### Services 模块
+- **DataManager**
+  - 直接依赖：CoreData, Combine
+  - 被引用：ContentView, Components
+  - 关键功能：数据管理和持久化
+  - 修改风险：高
+
+- **CoreDataStack**
+  - 直接依赖：CoreData
+  - 被引用：DataManager
+  - 关键功能：Core Data基础设施
+  - 修改风险：高
+
+#### Features/Theme 模块
+- **ThemeManager**
+  - 直接依赖：SwiftUI, Combine
+  - 被引用：ContentView, Components
+  - 关键功能：主题管理
+  - 修改风险：中
+
+- **FontTheme**
+  - 直接依赖：SwiftUI
+  - 被引用：ThemeManager
+  - 关键功能：字体定义
+  - 修改风险：低
+
+#### Models 模块
+- **CoreDataModels**
+  - 直接依赖：Foundation, CoreData
+  - 被引用：DataManager, ValidationService
+  - 关键功能：数据结构定义
+  - 修改风险：高
+
+- **Validation**
+  - 直接依赖：Foundation, CoreData
+  - 被引用：DataManager
+  - 关键功能：数据验证
+  - 修改风险：中
+
+#### Utilities 模块
+- **SPLogger**
+  - 直接依赖：Foundation, OSLog
+  - 被引用：全局使用
+  - 关键功能：日志记录
+  - 修改风险：低
 
 ## 文件命名规范
 
