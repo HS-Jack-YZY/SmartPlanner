@@ -1,68 +1,27 @@
 import SwiftUI
+import UIKit
 
 struct SPCalendarView: View {
     // MARK: - Properties
     
     @Binding var selectedDate: Date
     @State private var currentMonth: Date
-    @State private var months: [Date] = []
-    @State private var scrollOffset: CGFloat = 0
     
     // MARK: - Initialization
     
     init(selectedDate: Binding<Date>) {
         self._selectedDate = selectedDate
         self._currentMonth = State(initialValue: selectedDate.wrappedValue)
-        self._months = State(initialValue: [])
     }
     
     // MARK: - Body
     
     var body: some View {
         VStack(spacing: 0) {
-            // 日历头部
-            SPCalendarHeaderView(
-                currentDate: currentMonth,
-                onPreviousMonth: previousMonth,
-                onNextMonth: nextMonth
+            CalendarViewRepresentable(
+                selectedDate: $selectedDate,
+                currentMonth: $currentMonth
             )
-            
-            // 星期标题行
-            HStack(spacing: 0) {
-                ForEach(DateHelper.weekdaySymbols(), id: \.self) { symbol in
-                    Text(symbol)
-                        .font(.system(size: 12))
-                        .foregroundColor(.gray)
-                        .frame(maxWidth: .infinity)
-                }
-            }
-            .padding(.horizontal)
-            .padding(.vertical, 5)
-            
-            Divider()
-            
-            // 滚动视图
-            ScrollView(.vertical, showsIndicators: false) {
-                LazyVStack(spacing: 0, pinnedViews: []) {
-                    ForEach(months, id: \.self) { month in
-                        MonthView(
-                            month: month,
-                            selectedDate: $selectedDate,
-                            currentMonth: $currentMonth
-                        )
-                        .background(GeometryReader { proxy in
-                            Color.clear.preference(
-                                key: ScrollOffsetPreferenceKey.self,
-                                value: proxy.frame(in: .named("scroll")).minY
-                            )
-                        })
-                    }
-                }
-            }
-            .coordinateSpace(name: "scroll")
-            .onPreferenceChange(ScrollOffsetPreferenceKey.self) { value in
-                scrollOffset = value
-            }
             
             // 底部工具栏
             HStack {
@@ -88,41 +47,9 @@ struct SPCalendarView: View {
             .padding(.horizontal, 50)
             .padding(.vertical, 10)
         }
-        .onAppear {
-            setupMonths()
-        }
     }
     
     // MARK: - Private Methods
-    
-    private func setupMonths() {
-        let numberOfMonths = 12
-        var newMonths: [Date] = []
-        
-        for i in -numberOfMonths...numberOfMonths {
-            if let date = DateHelper.calendar.date(byAdding: .month, value: i, to: currentMonth) {
-                newMonths.append(date)
-            }
-        }
-        
-        months = newMonths.sorted()
-    }
-    
-    private func previousMonth() {
-        withAnimation {
-            if let date = DateHelper.calendar.date(byAdding: .month, value: -1, to: currentMonth) {
-                currentMonth = date
-            }
-        }
-    }
-    
-    private func nextMonth() {
-        withAnimation {
-            if let date = DateHelper.calendar.date(byAdding: .month, value: 1, to: currentMonth) {
-                currentMonth = date
-            }
-        }
-    }
     
     private func scrollToToday() {
         withAnimation {
@@ -132,84 +59,71 @@ struct SPCalendarView: View {
     }
 }
 
-// MARK: - MonthView
+// MARK: - CalendarViewRepresentable
 
-private struct MonthView: View {
-    let month: Date
+private struct CalendarViewRepresentable: UIViewRepresentable {
     @Binding var selectedDate: Date
     @Binding var currentMonth: Date
     
-    var body: some View {
-        VStack(spacing: 0) {
-            // 日期网格
-            LazyVGrid(
-                columns: Array(repeating: GridItem(.flexible(), spacing: 0), count: 7),
-                spacing: 0
-            ) {
-                let daysWithOffset = DateHelper.getDaysInMonth(for: month)
-                let offset = daysWithOffset.first?.offset ?? 0
-                
-                // 添加空白占位
-                ForEach(0..<offset, id: \.self) { _ in
-                    Color.clear
-                        .frame(height: 60)
-                }
-                
-                // 添加日期
-                ForEach(daysWithOffset, id: \.date) { dayInfo in
-                    if dayInfo === daysWithOffset.first {
-                        // 第一天，显示月份标题
-                        VStack(spacing: 4) {
-                            Text(DateHelper.monthTitle(for: month))
-                                .font(.system(size: 20, weight: .bold))
-                                .foregroundColor(.red)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .padding(.leading)
-                                .offset(y: -30)
-                            
-                            SPCalendarDayView(
-                                date: dayInfo.date,
-                                isSelected: DateHelper.calendar.isDate(dayInfo.date, inSameDayAs: selectedDate),
-                                isToday: DateHelper.isToday(dayInfo.date),
-                                isInCurrentMonth: true
-                            )
-                        }
-                        .onTapGesture {
-                            withAnimation {
-                                selectedDate = dayInfo.date
-                                currentMonth = month
-                            }
-                        }
-                    } else {
-                        SPCalendarDayView(
-                            date: dayInfo.date,
-                            isSelected: DateHelper.calendar.isDate(dayInfo.date, inSameDayAs: selectedDate),
-                            isToday: DateHelper.isToday(dayInfo.date),
-                            isInCurrentMonth: true
-                        )
-                        .onTapGesture {
-                            withAnimation {
-                                selectedDate = dayInfo.date
-                                currentMonth = month
-                            }
-                        }
-                    }
-                }
-            }
-            
-            Divider()
-                .padding(.vertical, 20)
-        }
-        .background(Color(UIColor.systemBackground))
+    func makeUIView(context: Context) -> UICalendarView {
+        let calendarView = UICalendarView()
+        calendarView.calendar = DateHelper.calendar
+        calendarView.locale = .current
+        calendarView.fontDesign = .rounded
+        calendarView.delegate = context.coordinator
+        
+        // 配置选择行为
+        let dateSelection = UICalendarSelectionSingleDate(delegate: context.coordinator)
+        calendarView.selectionBehavior = dateSelection
+        
+        // 设置可见月份
+        calendarView.visibleDateComponents = DateHelper.dateComponents(from: currentMonth, components: [.year, .month])
+        
+        return calendarView
     }
-}
-
-// MARK: - ScrollOffsetPreferenceKey
-
-private struct ScrollOffsetPreferenceKey: PreferenceKey {
-    static var defaultValue: CGFloat = 0
-    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
-        value = nextValue()
+    
+    func updateUIView(_ uiView: UICalendarView, context: Context) {
+        // 更新可见月份
+        uiView.visibleDateComponents = DateHelper.dateComponents(from: currentMonth, components: [.year, .month])
+        
+        // 更新选中日期
+        if let selectionBehavior = uiView.selectionBehavior as? UICalendarSelectionSingleDate {
+            let selectedComponents = DateHelper.dateComponents(from: selectedDate)
+            selectionBehavior.setSelected(selectedComponents, animated: true)
+        }
+    }
+    
+    func makeCoordinator() -> Coordinator {
+        Coordinator(parent: self)
+    }
+    
+    // MARK: - Coordinator
+    
+    class Coordinator: NSObject, UICalendarViewDelegate, UICalendarSelectionSingleDateDelegate {
+        var parent: CalendarViewRepresentable
+        
+        init(parent: CalendarViewRepresentable) {
+            self.parent = parent
+        }
+        
+        // 日期选择回调
+        func dateSelection(_ selection: UICalendarSelectionSingleDate, didSelectDate dateComponents: DateComponents?) {
+            if let dateComponents = dateComponents,
+               let selectedDate = DateHelper.date(from: dateComponents) {
+                parent.selectedDate = selectedDate
+                parent.currentMonth = selectedDate
+            }
+        }
+        
+        // 装饰视图
+        func calendarView(_ calendarView: UICalendarView, decorationFor dateComponents: DateComponents) -> UICalendarView.Decoration? {
+            // 这里可以添加节日、农历等装饰
+            if let date = DateHelper.date(from: dateComponents),
+               DateHelper.isToday(date) {
+                return .default(color: .red)
+            }
+            return nil
+        }
     }
 }
 
