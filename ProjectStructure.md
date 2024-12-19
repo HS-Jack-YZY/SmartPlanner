@@ -33,7 +33,7 @@
 >    - 定期检查循环依赖
 >    - **记录每个关键文件的依赖信息**：
 >      - 直接依赖（import的框架和模块）
->      - 被引用情况（哪些文件使用了该模块）
+>      - 被引用情况（哪些文���使用了该模块）
 >      - 关键功能说明
 >      - 修改风险评估
 > 
@@ -145,7 +145,11 @@ SmartPlannerProject/                # 项目根目录
 │   │   │   ├── Components/     # UI组件
 │   │   │   │   ├── Atoms/     # 原子组件
 │   │   │   │   ├── Molecules/ # 分子组件
+│   │   │   │   │   └── SPCalendarToolbar.swift  # 日历工具栏
 │   │   │   │   └── Organisms/ # 有机体组件
+│   │   │   │       ├── SPCalendarView.swift     # 日历视图
+│   │   │   │       ├── SPDayTimelineView.swift  # 日视图
+│   │   │   │       └── SPMonthCalendarView.swift # 月视图
 │   │   │   └── Theme/         # 主题系统
 │   │   │       ├── FontTheme.swift    # 字体主题
 │   │   │       ├── ThemeManager.swift # 主题管理
@@ -184,23 +188,35 @@ SmartPlannerProject/                # 项目根目录
 │   │   │   │       ├── SecondaryTextColor.colorset
 │   │   │   │       ├── WorkBlockColor.colorset
 │   │   │   │       ├── PersonalBlockColor.colorset
+│   │   │   │       ├── CalendarOutOfMonthTextColor.colorset
+│   │   │   │       ├── CalendarSelectedBackgroundColor.colorset
+│   │   │   │       ├── CalendarTodayTextColor.colorset
+│   │   │   │       ├── CalendarToolbarTintColor.colorset
+│   │   │   │       ├── CalendarWeekendTextColor.colorset
 │   │   │   │       ├── SuccessColor.colorset
 │   │   │   │       ├── WarningColor.colorset
 │   │   │   │       └── ErrorColor.colorset
+│   │   │   ├── Localizations/  # 本地化资源
+│   │   │   │   ├── en.lproj/
+│   │   │   │   └── zh-Hans.lproj/
 │   │   │   └── Preview Content/  # 预览资源
 │   │   │       └── Preview Assets.xcassets
 │   │   │
 │   │   ├── Services/          # 服务层
-│   │   │   └── DataManager/   # 数据管理服务
-│   │   │       ├── CoreDataStack.swift   # Core Data基础设施
-│   │   │       ├── DataManager.swift     # 数据管理器
-│   │   │       ├── DataManagerError.swift # 错误类型定义
-│   │   │       └── Validation/           # 验证服务
-│   │   │           ├── ValidationError.swift    # 验证错误
-│   │   │           ├── ValidationProtocols.swift # 验证协议
-│   │   │           └── ValidationRules.swift    # 验证规则
+│   │   │   ├── DataManager/   # 数据管理服务
+│   │   │   │   ├── CoreDataStack.swift   # Core Data基础设施
+│   │   │   │   ├── DataManager.swift     # 数据管理器
+│   │   │   │   ├── DataManagerError.swift # 错误类型定义
+│   │   │   │   └── Validation/           # 验证服务
+│   │   │   │       ├── ValidationError.swift    # 验证错误
+│   │   │   │       ├── ValidationProtocols.swift # 验证协议
+│   │   │   │       └── ValidationRules.swift    # 验证规则
+│   │   │   └── Localization/  # 本地化服务
+│   │   │       └── LanguageManager.swift  # 语言管理器
 │   │   │
 │   │   └── Utilities/         # 工具类
+│   │       ├── Date/          # 日期工具
+│   │       │   └── DateHelper.swift  # 日期辅助工具
 │   │       └── Logger/        # 日志工具
 │   │           └── SPLogger.swift  # 日志管理器
 │   │
