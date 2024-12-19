@@ -6,35 +6,30 @@ struct SPCalendarView: View {
     @Binding var selectedDate: Date
     @Binding var isShowingDayView: Bool
     @State private var currentMonth: Date
-    @State private var months: [Date] = []
     @EnvironmentObject private var themeManager: ThemeManager
     @Environment(\.dismiss) private var dismiss
+    
+    private let calendar = Calendar.current
     
     // MARK: - Initialization
     
     init(selectedDate: Binding<Date>, isShowingDayView: Binding<Bool>) {
         self._selectedDate = selectedDate
         self._isShowingDayView = isShowingDayView
-        self._currentMonth = State(initialValue: selectedDate.wrappedValue)
+        
+        // 确保初始月份是当前选择日期所在的月份
+        let date = selectedDate.wrappedValue
+        let components = Calendar.current.dateComponents([.year, .month], from: date)
+        let monthStart = Calendar.current.date(from: components) ?? date
+        self._currentMonth = State(initialValue: monthStart)
     }
     
     // MARK: - Helper Methods
     
-    private func generateMonths() {
-        let calendar = Calendar.current
-        months = (-12...12).compactMap { offset in
-            calendar.date(byAdding: .month, value: offset, to: currentMonth)
-        }
-    }
-    
     private func onMonthAppear(_ month: Date) {
-        let calendar = Calendar.current
         if !calendar.isDate(month, equalTo: currentMonth, toGranularity: .month) {
-            currentMonth = month
-            // 当滚动到边界月份时，重新生成月份数组
-            if calendar.dateComponents([.month], from: months.first ?? Date(), to: month).month ?? 0 <= 3 ||
-               calendar.dateComponents([.month], from: month, to: months.last ?? Date()).month ?? 0 <= 3 {
-                generateMonths()
+            withAnimation {
+                currentMonth = month
             }
         }
     }
@@ -46,7 +41,9 @@ struct SPCalendarView: View {
             VStack(spacing: 0) {
                 // 导航栏
                 SPCalendarNavigationBar(
-                    onDismiss: { dismiss() }
+                    onDismiss: { dismiss() },
+                    isShowingDayView: isShowingDayView,
+                    currentMonth: $currentMonth
                 )
                 
                 // 内容视图
@@ -54,36 +51,24 @@ struct SPCalendarView: View {
                     // 日视图
                     SPDayTimelineView(selectedDate: $selectedDate)
                 } else {
-                    // 月视图
-                    ScrollView {
-                        LazyVStack(spacing: 0) {
-                            ForEach(months, id: \.self) { month in
-                                SPMonthCalendarView(month: month)
-                                    .id(month)
-                                    .onAppear {
-                                        onMonthAppear(month)
-                                    }
-                            }
+                    // 月视图 - 使用单个SPMonthCalendarView实例
+                    SPMonthCalendarView(month: currentMonth)
+                        .onChange(of: currentMonth) { _, newMonth in
+                            onMonthAppear(newMonth)
                         }
-                    }
                 }
             }
             .navigationBarHidden(true)
-            .onAppear {
-                generateMonths()
-            }
         }
     }
 }
 
 // MARK: - Preview
 
-struct SPCalendarView_Previews: PreviewProvider {
-    static var previews: some View {
-        SPCalendarView(
-            selectedDate: .constant(Date()),
-            isShowingDayView: .constant(false)
-        )
-        .environmentObject(ThemeManager.shared)
-    }
+#Preview {
+    SPCalendarView(
+        selectedDate: .constant(Date()),
+        isShowingDayView: .constant(false)
+    )
+    .environmentObject(ThemeManager.shared)
 }
