@@ -6,6 +6,7 @@ struct SPCalendarView: View {
     @Binding var selectedDate: Date
     @Binding var isShowingDayView: Bool
     @State private var currentMonth: Date
+    @State private var months: [Date] = []
     @EnvironmentObject private var themeManager: ThemeManager
     @Environment(\.dismiss) private var dismiss
     
@@ -17,57 +18,59 @@ struct SPCalendarView: View {
         self._currentMonth = State(initialValue: selectedDate.wrappedValue)
     }
     
+    // MARK: - Helper Methods
+    
+    private func generateMonths() {
+        let calendar = Calendar.current
+        months = (-12...12).compactMap { offset in
+            calendar.date(byAdding: .month, value: offset, to: currentMonth)
+        }
+    }
+    
+    private func onMonthAppear(_ month: Date) {
+        let calendar = Calendar.current
+        if !calendar.isDate(month, equalTo: currentMonth, toGranularity: .month) {
+            currentMonth = month
+            // 当滚动到边界月份时，重新生成月份数组
+            if calendar.dateComponents([.month], from: months.first ?? Date(), to: month).month ?? 0 <= 3 ||
+               calendar.dateComponents([.month], from: month, to: months.last ?? Date()).month ?? 0 <= 3 {
+                generateMonths()
+            }
+        }
+    }
+    
     // MARK: - Body
     
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
+                // 导航栏
+                SPCalendarNavigationBar(
+                    onDismiss: { dismiss() }
+                )
+                
+                // 内容视图
                 if isShowingDayView {
                     // 日视图
                     SPDayTimelineView(selectedDate: $selectedDate)
                 } else {
                     // 月视图
-                    SPMonthCalendarView(
-                        selectedDate: $selectedDate,
-                        currentMonth: $currentMonth
-                    )
+                    ScrollView {
+                        LazyVStack(spacing: 0) {
+                            ForEach(months, id: \.self) { month in
+                                SPMonthCalendarView(month: month)
+                                    .id(month)
+                                    .onAppear {
+                                        onMonthAppear(month)
+                                    }
+                            }
+                        }
+                    }
                 }
             }
-            .navigationBarTitleDisplayMode(.large)
-            .toolbar {
-                // 左侧返回按钮和年份
-                ToolbarItem(placement: .topBarLeading) {
-                    HStack {
-                        Button(action: { dismiss() }) {
-                            Image(systemName: "chevron.left")
-                                .foregroundColor(themeManager.getThemeColor(.calendarToolbarTint))
-                        }
-                        Text("\(DateHelper.year(from: currentMonth))年")
-                            .font(FontTheme.title2)
-                            .foregroundColor(themeManager.getThemeColor(.calendarToolbarTint))
-                    }
-                }
-                
-                // 中间月份标题
-                ToolbarItem(placement: .principal) {
-                    Text(DateHelper.chineseMonth(from: currentMonth))
-                        .font(FontTheme.largeTitle)
-                        .foregroundColor(.primary)
-                }
-                
-                // 右侧按钮组
-                ToolbarItem(placement: .topBarTrailing) {
-                    HStack(spacing: 20) {
-                        Button(action: {}) {
-                            Image(systemName: "magnifyingglass")
-                                .foregroundColor(themeManager.getThemeColor(.calendarToolbarTint))
-                        }
-                        Button(action: {}) {
-                            Image(systemName: "plus")
-                                .foregroundColor(themeManager.getThemeColor(.calendarToolbarTint))
-                        }
-                    }
-                }
+            .navigationBarHidden(true)
+            .onAppear {
+                generateMonths()
             }
         }
     }

@@ -1,125 +1,171 @@
 import SwiftUI
-import UIKit
 
 struct SPMonthCalendarView: View {
     // MARK: - Properties
     
-    @Binding var selectedDate: Date
-    @Binding var currentMonth: Date
     @EnvironmentObject private var themeManager: ThemeManager
+    @State private var selectedDate: Date?
+    
+    private let calendar: Calendar
+    private let daysInWeek = 7
+    private let weekdays = Calendar.current.shortWeekdaySymbols.rotateLeft(by: 1) // 从周一开始
+    private let month: Date
+    private let cellHeight: CGFloat = 80 // 固定单元格高度
+    private let today = Date() // 当前日期
     
     // MARK: - Initialization
     
-    init(selectedDate: Binding<Date>, currentMonth: Binding<Date>) {
-        self._selectedDate = selectedDate
-        self._currentMonth = currentMonth
+    init(month: Date = Date()) {
+        self.month = month
+        self.calendar = Calendar.current
+    }
+    
+    // MARK: - Helper Methods
+    
+    private func isToday(_ date: Date) -> Bool {
+        calendar.isDate(date, inSameDayAs: today)
+    }
+    
+    private func isCurrentMonth(_ date: Date) -> Bool {
+        calendar.isDate(date, equalTo: today, toGranularity: .month)
+    }
+    
+    private func daysInMonth() -> [Date?] {
+        let interval = calendar.dateInterval(of: .month, for: month)!
+        let firstDay = interval.start
+        
+        // 获取月份第一天是周几（0���������周日）
+        let firstWeekday = calendar.component(.weekday, from: firstDay)
+        // 调整为周一开始（1是周一）
+        let adjustedFirstWeekday = (firstWeekday + 5) % 7 + 1
+        
+        let daysCount = calendar.range(of: .day, in: .month, for: month)!.count
+        
+        var dates: [Date?] = Array(repeating: nil, count: 42)
+        
+        // 只添加当前月的日期
+        for day in 0..<daysCount {
+            if let date = calendar.date(byAdding: .day, value: day, to: firstDay) {
+                let index = day + adjustedFirstWeekday - 1
+                if index < 42 {
+                    dates[index] = date
+                }
+            }
+        }
+        
+        return dates
+    }
+    
+    private func monthString(from date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "MMM"
+        return formatter.string(from: date)
+    }
+    
+    private func getFirstDayIndex() -> Int? {
+        return daysInMonth().firstIndex { $0 != nil }
+    }
+    
+    private func getDatesForRow(_ row: Int) -> [Date?] {
+        let startIndex = row * daysInWeek
+        let dates = daysInMonth()
+        return Array(dates[startIndex..<startIndex + daysInWeek])
+    }
+    
+    private func getTotalRows() -> Int {
+        let dates = daysInMonth()
+        let lastDateIndex = dates.lastIndex { $0 != nil } ?? 0
+        return (lastDateIndex / daysInWeek) + 1
     }
     
     // MARK: - Body
     
     var body: some View {
-        CalendarViewRepresentable(
-            selectedDate: $selectedDate,
-            currentMonth: $currentMonth,
-            themeManager: themeManager
-        )
+        VStack(spacing: 0) {
+            // 星期标题行
+            HStack(spacing: 0) {
+                ForEach(weekdays, id: \.self) { weekday in
+                    Text(weekday)
+                        .frame(maxWidth: .infinity)
+                        .foregroundColor(themeManager.getThemeColor(.secondaryText))
+                        .font(.caption)
+                }
+            }
+            .padding(.bottom, 8)
+            
+            Grid(horizontalSpacing: 0, verticalSpacing: 0) {
+                // 月份标题行
+                GridRow {
+                    ForEach(0..<daysInWeek) { index in
+                        if let firstDayIndex = getFirstDayIndex(), index == firstDayIndex {
+                            VStack(spacing: 0) {
+                                Spacer()
+                                    .frame(height: cellHeight / 2)
+                                
+                                Text(monthString(from: month))
+                                    .frame(maxWidth: .infinity)
+                                    .foregroundColor(isCurrentMonth(month) ? 
+                                        themeManager.getThemeColor(.calendarTodayText) :
+                                        themeManager.getThemeColor(.primaryText))
+                                    .font(.headline)
+                                    .padding(.bottom, 8)
+                            }
+                            .frame(height: cellHeight)
+                        } else {
+                            Color.clear
+                                .frame(height: cellHeight)
+                        }
+                    }
+                }
+                
+                // 日期网格
+                let totalRows = getTotalRows()
+                ForEach(0..<totalRows) { row in
+                    GridRow {
+                        ForEach(getDatesForRow(row), id: \.self) { date in
+                            if let currentDate = date {
+                                VStack(spacing: 0) {
+                                    ZStack {
+                                        if isToday(currentDate) {
+                                            Circle()
+                                                .fill(themeManager.getThemeColor(.calendarTodayText))
+                                                .frame(width: 30, height: 30)
+                                        }
+                                        
+                                        Text("\(calendar.component(.day, from: currentDate))")
+                                            .foregroundColor(isToday(currentDate) ?
+                                                .white :
+                                                themeManager.getThemeColor(.primaryText))
+                                            .font(isToday(currentDate) ? .headline : .body)
+                                    }
+                                    .frame(height: 46)  // 固定日期部分高度
+                                    
+                                    Rectangle()
+                                        .fill(Color.black)
+                                        .frame(height: 30)  // 固定指示器高度
+                                        .padding(.horizontal, 8)
+                                }
+                                .frame(height: cellHeight)
+                            } else {
+                                Color.clear
+                                    .frame(height: cellHeight)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        .padding()
     }
 }
 
-// MARK: - CalendarViewRepresentable
+// MARK: - Helper Methods
 
-private struct CalendarViewRepresentable: UIViewRepresentable {
-    @Binding var selectedDate: Date
-    @Binding var currentMonth: Date
-    let themeManager: ThemeManager
-    
-    func makeUIView(context: Context) -> UICalendarView {
-        let calendarView = UICalendarView()
-        calendarView.calendar = DateHelper.calendar
-        calendarView.locale = .current
-        calendarView.fontDesign = .rounded
-        calendarView.delegate = context.coordinator
-        
-        // 配置选择行为
-        let dateSelection = UICalendarSelectionSingleDate(delegate: context.coordinator)
-        dateSelection.selectedDate = DateHelper.dateComponents(from: selectedDate)
-        calendarView.selectionBehavior = dateSelection
-        
-        // 设置可见月份
-        calendarView.visibleDateComponents = DateHelper.dateComponents(from: currentMonth, components: [.year, .month])
-        
-        // 配置外观
-        configureAppearance(calendarView)
-        
-        return calendarView
-    }
-    
-    func updateUIView(_ uiView: UICalendarView, context: Context) {
-        // 更新可见月份
-        uiView.visibleDateComponents = DateHelper.dateComponents(from: currentMonth, components: [.year, .month])
-        
-        // 更新选中日期
-        if let selectionBehavior = uiView.selectionBehavior as? UICalendarSelectionSingleDate {
-            let selectedComponents = DateHelper.dateComponents(from: selectedDate)
-            selectionBehavior.selectedDate = selectedComponents
-        }
-        
-        // 更新外观
-        configureAppearance(uiView)
-    }
-    
-    func makeCoordinator() -> Coordinator {
-        Coordinator(parent: self)
-    }
-    
-    // MARK: - Private Methods
-    
-    private func configureAppearance(_ calendarView: UICalendarView) {
-        // 设置基本颜色
-        calendarView.tintColor = UIColor(themeManager.getThemeColor(.calendarSelectedBackground))
-        calendarView.backgroundColor = UIColor(themeManager.getThemeColor(.background))
-    }
-    
-    // MARK: - Coordinator
-    
-    class Coordinator: NSObject, UICalendarViewDelegate, UICalendarSelectionSingleDateDelegate {
-        var parent: CalendarViewRepresentable
-        
-        init(parent: CalendarViewRepresentable) {
-            self.parent = parent
-        }
-        
-        // 日期选择回调
-        func dateSelection(_ selection: UICalendarSelectionSingleDate, didSelectDate dateComponents: DateComponents?) {
-            if let dateComponents = dateComponents,
-               let selectedDate = DateHelper.date(from: dateComponents) {
-                parent.selectedDate = selectedDate
-                parent.currentMonth = selectedDate
-            }
-        }
-        
-        // 装饰视图
-        func calendarView(_ calendarView: UICalendarView, decorationFor dateComponents: DateComponents) -> UICalendarView.Decoration? {
-            if let date = DateHelper.date(from: dateComponents) {
-                // 今天日期
-                if DateHelper.isToday(date) {
-                    return .default(color: UIColor(parent.themeManager.getThemeColor(.calendarTodayText)))
-                }
-                
-                // 周末日期
-                if let weekday = dateComponents.weekday, weekday == 1 || weekday == 7 {
-                    return .default(color: UIColor(parent.themeManager.getThemeColor(.calendarWeekendText)))
-                }
-                
-                // 非当前月份
-                if let month = dateComponents.month,
-                   let currentMonth = DateHelper.calendar.dateComponents([.month], from: parent.currentMonth).month,
-                   month != currentMonth {
-                    return .default(color: UIColor(parent.themeManager.getThemeColor(.calendarOutOfMonthText)))
-                }
-            }
-            return nil
-        }
+extension Array {
+    func rotateLeft(by: Int) -> [Element] {
+        guard count > 0, by > 0 else { return self }
+        let by = by % count
+        return Array(self[by...] + self[..<by])
     }
 }
 
@@ -128,22 +174,21 @@ private struct CalendarViewRepresentable: UIViewRepresentable {
 struct SPMonthCalendarView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
-            // 当前月份预览
-            SPMonthCalendarView(
-                selectedDate: .constant(Date()),
-                currentMonth: .constant(Date())
-            )
-            .environmentObject(ThemeManager.shared)
-            .previewDisplayName("当前月份")
+            // 当前月份（浅色主题）
+            SPMonthCalendarView()
+                .environmentObject(ThemeManager.shared)
+                .previewDisplayName("当前月份")
             
-            // 深色模式预览
-            SPMonthCalendarView(
-                selectedDate: .constant(Date()),
-                currentMonth: .constant(Date())
-            )
-            .environmentObject(ThemeManager.shared)
-            .preferredColorScheme(.dark)
-            .previewDisplayName("深色模式")
+            // 下个月（浅色主题）
+            SPMonthCalendarView(month: Calendar.current.date(byAdding: .month, value: 1, to: Date())!)
+                .environmentObject(ThemeManager.shared)
+                .previewDisplayName("下个月（浅色）")
+            
+            // 下个月（深色主题）
+            SPMonthCalendarView(month: Calendar.current.date(byAdding: .month, value: 1, to: Date())!)
+                .environmentObject(ThemeManager.shared)
+                .preferredColorScheme(.dark)
+                .previewDisplayName("下个月（深色）")
         }
     }
-} 
+}
