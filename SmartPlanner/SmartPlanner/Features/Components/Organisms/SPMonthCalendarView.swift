@@ -5,17 +5,19 @@ struct SPMonthCalendarView: View {
     
     @EnvironmentObject private var themeManager: ThemeManager
     @State private var selectedDate: Date?
+    let month: Date
+    let onDateSelected: (Date) -> Void
     
     private let calendar: Calendar
     private let daysInWeek = 7
-    private let month: Date
     private let cellHeight: CGFloat = 80 // 固定单元格高度
     private let today = Date() // 当前日期
     
     // MARK: - Initialization
     
-    init(month: Date = Date()) {
+    init(month: Date = Date(), onDateSelected: @escaping (Date) -> Void) {
         self.month = month
+        self.onDateSelected = onDateSelected
         self.calendar = Calendar.current
     }
     
@@ -26,7 +28,7 @@ struct SPMonthCalendarView: View {
     }
     
     private func isCurrentMonth(_ date: Date) -> Bool {
-        calendar.isDate(date, equalTo: today, toGranularity: .month)
+        calendar.isDate(date, equalTo: month, toGranularity: .month)
     }
     
     private func daysInMonth() -> [Date?] {
@@ -127,6 +129,9 @@ struct SPMonthCalendarView: View {
                                             .font(isToday(currentDate) ? .headline : .body)
                                     }
                                     .frame(height: 46)  // 固定日期部分高度
+                                    .onTapGesture {
+                                        onDateSelected(currentDate)
+                                    }
                                     
                                     Rectangle()
                                         .fill(Color.black)
@@ -153,17 +158,23 @@ struct SPMonthCalendarView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
             // 当前月份（浅色主题）
-            SPMonthCalendarView()
+            SPMonthCalendarView(onDateSelected: { _ in })
                 .environmentObject(ThemeManager.shared)
                 .previewDisplayName("当前月份")
             
             // 下个月（浅色主题）
-            SPMonthCalendarView(month: Calendar.current.date(byAdding: .month, value: 1, to: Date())!)
+            SPMonthCalendarView(
+                month: Calendar.current.date(byAdding: .month, value: 1, to: Date())!,
+                onDateSelected: { _ in }
+            )
                 .environmentObject(ThemeManager.shared)
                 .previewDisplayName("下个月（浅色）")
             
             // 下个月（深色主题）
-            SPMonthCalendarView(month: Calendar.current.date(byAdding: .month, value: 1, to: Date())!)
+            SPMonthCalendarView(
+                month: Calendar.current.date(byAdding: .month, value: 1, to: Date())!,
+                onDateSelected: { _ in }
+            )
                 .environmentObject(ThemeManager.shared)
                 .preferredColorScheme(.dark)
                 .previewDisplayName("下个月（深色）")

@@ -16,7 +16,19 @@ struct SPCalendarView: View {
             SPDayTimelineView(selectedDate: $selectedDate)
         } else {
             // 月视图
-            SPMonthCalendarView(month: selectedDate)
+            SPMonthCalendarView(
+                month: selectedDate,
+                onDateSelected: handleDateSelected
+            )
+        }
+    }
+    
+    // MARK: - Private Methods
+    
+    private func handleDateSelected(_ date: Date) {
+        selectedDate = date
+        withAnimation(.easeInOut(duration: 0.3)) {
+            isShowingDayView = true
         }
     }
 }
