@@ -17,9 +17,16 @@ struct SPCalendarNavigationBar: View {
             // 导航栏内容
             HStack {
                 // 当前年月显示
-                Text(monthYearString(from: currentMonth))
-                    .foregroundColor(themeManager.getThemeColor(.primaryText))
-                    .font(.headline)
+                HStack(spacing: 4) {
+                    Text(monthString(from: currentMonth))
+                        .foregroundColor(themeManager.getThemeColor(.primaryText))
+                        .font(.headline)
+                    
+                    Text(yearString(from: currentMonth))
+                        .foregroundColor(themeManager.getThemeColor(.secondaryText))
+                        .font(.subheadline)
+                }
+                .animation(.easeInOut, value: currentMonth)
                 
                 Spacer()
             }
@@ -59,9 +66,15 @@ struct SPCalendarNavigationBar: View {
     
     // MARK: - Helper Methods
     
-    private func monthYearString(from date: Date) -> String {
+    private func monthString(from date: Date) -> String {
         let formatter = DateFormatter()
-        formatter.dateFormat = "MMMM yyyy"
+        formatter.dateFormat = "MMMM"
+        return formatter.string(from: date)
+    }
+    
+    private func yearString(from date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy"
         return formatter.string(from: date)
     }
 }

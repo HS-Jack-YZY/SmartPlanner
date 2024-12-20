@@ -13,6 +13,7 @@ struct SPScrollableMonthCalendarView: View {
     private let calendar = Calendar.current
     private let initialMonthRange = (-2...2)
     private let batchSize = 3
+    private let monthHeight: CGFloat = 400 // 预估的月视图高度
     
     // MARK: - Initialization
     
@@ -58,7 +59,8 @@ struct SPScrollableMonthCalendarView: View {
         }
     }
     
-    private func handleMonthAppearance(_ month: Date) {
+    private func handleMonthAppearance(_ month: Date, geometry: GeometryProxy) {
+        // 加载更多月份
         if month == visibleMonths.last {
             loadMoreMonths(direction: .forward)
         } else if month == visibleMonths.first {
@@ -66,8 +68,15 @@ struct SPScrollableMonthCalendarView: View {
         }
         
         // 更新当前月份
-        if calendar.isDate(month, equalTo: currentMonth, toGranularity: .month) {
-            currentMonth = month
+        let frame = geometry.frame(in: .global)
+        let screenHeight = UIScreen.main.bounds.height
+        let screenCenter = screenHeight / 2
+        
+        // 如果月份视图的中心点接近屏幕中心，则更新当前月份
+        if abs(frame.midY - screenCenter) < monthHeight / 3 {
+            if !calendar.isDate(month, equalTo: currentMonth, toGranularity: .month) {
+                currentMonth = month
+            }
         }
     }
     
@@ -80,9 +89,14 @@ struct SPScrollableMonthCalendarView: View {
                     ForEach(visibleMonths, id: \.self) { month in
                         SPMonthCalendarView(month: month)
                             .id(month)
-                            .onAppear {
-                                handleMonthAppearance(month)
-                            }
+                            .background(
+                                GeometryReader { geometry in
+                                    Color.clear
+                                        .onAppear {
+                                            handleMonthAppearance(month, geometry: geometry)
+                                        }
+                                }
+                            )
                     }
                 }
             }
