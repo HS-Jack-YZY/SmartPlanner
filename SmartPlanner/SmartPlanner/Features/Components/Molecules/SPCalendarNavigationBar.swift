@@ -325,6 +325,11 @@ struct SPCalendarNavigationBar: View {
         }
         .background(themeManager.getThemeColor(.secondaryBackground))
         .animation(.easeInOut, value: isEditing)
+        .onChange(of: currentMonth) { newValue in
+            editingDate = newValue
+            lastDragMonthDate = newValue
+            lastDragYearDate = newValue
+        }
     }
 }
 
