@@ -6,6 +6,7 @@ struct SPCalendarView: View {
     @Binding var selectedDate: Date
     @Binding var isShowingDayView: Bool
     @State private var currentMonth: Date
+    @State private var isEditingDate: Bool = false
     @EnvironmentObject private var themeManager: ThemeManager
     
     // MARK: - Initialization
@@ -24,26 +25,43 @@ struct SPCalendarView: View {
         }
     }
     
+    private func handleDateSelected(_ date: Date) {
+        currentMonth = date
+    }
+    
     // MARK: - Body
     
     var body: some View {
-        VStack(spacing: 0) {
-            // 导航栏
-            SPCalendarNavigationBar(
-                onPreviousMonth: { moveMonth(by: -1) },
-                onNextMonth: { moveMonth(by: 1) },
-                currentMonth: currentMonth
-            )
+        ZStack {
+            // 背景点击区域
+            if isEditingDate {
+                Color.black.opacity(0.01) // 几乎透明的背景
+                    .onTapGesture {
+                        isEditingDate = false
+                    }
+            }
             
-            // 内容视图
-            if isShowingDayView {
-                // 日视图
-                SPDayTimelineView(selectedDate: $selectedDate)
-            } else {
-                // 月视图
-                SPMonthCalendarView(month: currentMonth)
+            VStack(spacing: 0) {
+                // 导航栏
+                SPCalendarNavigationBar(
+                    currentMonth: currentMonth,
+                    isEditing: $isEditingDate,
+                    onPreviousMonth: { moveMonth(by: -1) },
+                    onNextMonth: { moveMonth(by: 1) },
+                    onDateSelected: handleDateSelected
+                )
+                
+                // 内容视图
+                if isShowingDayView {
+                    // 日视图
+                    SPDayTimelineView(selectedDate: $selectedDate)
+                } else {
+                    // 月视图
+                    SPMonthCalendarView(month: currentMonth)
+                }
             }
         }
+        .animation(.easeInOut, value: isEditingDate)
     }
 }
 
