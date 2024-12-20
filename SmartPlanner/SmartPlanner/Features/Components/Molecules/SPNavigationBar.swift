@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct SPCalendarNavigationBar: View {
+struct SPNavigationBar: View {
     // MARK: - Properties
     
     let onPreviousMonth: () -> Void
@@ -345,11 +345,11 @@ extension Array {
 
 // MARK: - Preview
 
-struct SPCalendarNavigationBar_Previews: PreviewProvider {
+struct SPNavigationBar_Previews: PreviewProvider {
     static var previews: some View {
         Group {
             // 浅色模式预览
-            SPCalendarNavigationBar(
+            SPNavigationBar(
                 currentMonth: Date(),
                 isEditing: .constant(false),
                 onPreviousMonth: {},
@@ -360,7 +360,7 @@ struct SPCalendarNavigationBar_Previews: PreviewProvider {
             .previewDisplayName("浅色模式")
             
             // 深色模式预览
-            SPCalendarNavigationBar(
+            SPNavigationBar(
                 currentMonth: Date(),
                 isEditing: .constant(false),
                 onPreviousMonth: {},

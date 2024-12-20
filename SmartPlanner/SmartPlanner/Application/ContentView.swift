@@ -23,7 +23,7 @@ struct ContentView: View {
             // 主视图容器
             VStack(spacing: 0) {
                 // 导航栏
-                SPCalendarNavigationBar(
+                SPNavigationBar(
                     currentMonth: selectedDate,
                     isEditing: $isEditingDate,
                     onPreviousMonth: { moveMonth(by: -1) },
