@@ -12,26 +12,25 @@ struct ContentView: View {
     
     @State private var selectedDate = Date()
     @State private var isShowingDayView = false
+    @State private var selectedTab = 0
     @EnvironmentObject private var themeManager: ThemeManager
     
     // MARK: - Body
     
     var body: some View {
-        ZStack(alignment: .bottom) {
+        ZStack {
             // 主视图
             SPCalendarView(
                 selectedDate: $selectedDate,
                 isShowingDayView: $isShowingDayView
             )
             
-            // 底部工具栏
-            SPCalendarToolbar(
-                isShowingDayView: isShowingDayView,
-                onTodayButtonTapped: scrollToToday,
-                onViewModeButtonTapped: { isShowingDayView.toggle() },
-                onInboxButtonTapped: {}
-            )
-            .padding(.bottom, 16)
+            // 底部工具栏（始终在最顶层）
+            VStack {
+                Spacer()
+                SPBottomToolbar(selectedTab: $selectedTab)
+            }
+            .ignoresSafeArea(.container, edges: .bottom)
         }
     }
     
