@@ -19,7 +19,7 @@ struct ContentView: View {
     // MARK: - Body
     
     var body: some View {
-        ZStack {
+        ZStack(alignment: .top) {
             // 主视图容器
             VStack(spacing: 0) {
                 // 导航栏
@@ -28,14 +28,28 @@ struct ContentView: View {
                     isEditing: $isEditingDate,
                     onPreviousMonth: { moveMonth(by: -1) },
                     onNextMonth: { moveMonth(by: 1) },
-                    onDateSelected: handleDateSelected
+                    onDateSelected: { date, shouldExitEditing in
+                        handleDateSelected(date, shouldExitEditing: shouldExitEditing)
+                    }
                 )
                 
-                // 内容视图
-                SPCalendarView(
-                    selectedDate: $selectedDate,
-                    isShowingDayView: $isShowingDayView
-                )
+                ZStack {
+                    // 内容视图
+                    SPCalendarView(
+                        selectedDate: $selectedDate,
+                        isShowingDayView: $isShowingDayView
+                    )
+                    
+                    // 编辑模式遮罩层（只覆盖内容区域）
+                    if isEditingDate {
+                        Color.black.opacity(0.01) // 几乎透明的遮罩
+                            .onTapGesture {
+                                withAnimation(.easeOut(duration: 0.2)) {
+                                    isEditingDate = false
+                                }
+                            }
+                    }
+                }
             }
             
             // 底部工具栏（始终在最顶层）
@@ -55,9 +69,13 @@ struct ContentView: View {
         }
     }
     
-    private func handleDateSelected(_ date: Date) {
+    private func handleDateSelected(_ date: Date, shouldExitEditing: Bool) {
         selectedDate = date
-        isEditingDate = false
+        if shouldExitEditing {
+            withAnimation(.easeOut(duration: 0.2)) {
+                isEditingDate = false
+            }
+        }
     }
     
     private func scrollToToday() {

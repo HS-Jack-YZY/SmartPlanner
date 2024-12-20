@@ -6,7 +6,7 @@ struct SPNavigationBar: View {
     let onPreviousMonth: () -> Void
     let onNextMonth: () -> Void
     let currentMonth: Date
-    let onDateSelected: (Date) -> Void
+    let onDateSelected: (Date, Bool) -> Void
     
     @Binding var isEditing: Bool
     @EnvironmentObject private var themeManager: ThemeManager
@@ -30,7 +30,7 @@ struct SPNavigationBar: View {
     
     // MARK: - Initialization
     
-    init(currentMonth: Date, isEditing: Binding<Bool>, onPreviousMonth: @escaping () -> Void, onNextMonth: @escaping () -> Void, onDateSelected: @escaping (Date) -> Void) {
+    init(currentMonth: Date, isEditing: Binding<Bool>, onPreviousMonth: @escaping () -> Void, onNextMonth: @escaping () -> Void, onDateSelected: @escaping (Date, Bool) -> Void) {
         self.currentMonth = currentMonth
         self._isEditing = isEditing
         self.onPreviousMonth = onPreviousMonth
@@ -81,7 +81,7 @@ struct SPNavigationBar: View {
                     isDraggingMonth = false
                     monthDragVelocity = 0
                 }
-                onDateSelected(newDate)
+                onDateSelected(newDate, false)
                 lastDragMonthDate = newDate
             }
         } else {
@@ -92,7 +92,7 @@ struct SPNavigationBar: View {
                     isDraggingYear = false
                     yearDragVelocity = 0
                 }
-                onDateSelected(newDate)
+                onDateSelected(newDate, false)
                 lastDragYearDate = newDate
             }
         }
@@ -225,7 +225,7 @@ struct SPNavigationBar: View {
                         .onTapGesture {
                             withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
                                 editingDate = date
-                                onDateSelected(date)
+                                onDateSelected(date, false)
                                 lastDragMonthDate = date
                                 monthDragOffset = 0
                                 isDraggingMonth = false
@@ -276,7 +276,7 @@ struct SPNavigationBar: View {
                         .onTapGesture {
                             withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
                                 editingDate = date
-                                onDateSelected(date)
+                                onDateSelected(date, false)
                                 lastDragYearDate = date
                                 yearDragOffset = 0
                                 isDraggingYear = false
@@ -321,7 +321,7 @@ struct SPNavigationBar: View {
             
             // 底部分隔线
             Divider()
-                .background(themeManager.getThemeColor(.calendarToolbarTint).opacity(0.2))
+                .background(themeManager.getThemeColor(.secondaryText).opacity(0.2))
         }
         .background(themeManager.getThemeColor(.secondaryBackground))
         .animation(.easeInOut, value: isEditing)
@@ -354,7 +354,7 @@ struct SPNavigationBar_Previews: PreviewProvider {
                 isEditing: .constant(false),
                 onPreviousMonth: {},
                 onNextMonth: {},
-                onDateSelected: { _ in }
+                onDateSelected: { _, _ in }
             )
             .environmentObject(ThemeManager.shared)
             .previewDisplayName("浅色模式")
@@ -365,7 +365,7 @@ struct SPNavigationBar_Previews: PreviewProvider {
                 isEditing: .constant(false),
                 onPreviousMonth: {},
                 onNextMonth: {},
-                onDateSelected: { _ in }
+                onDateSelected: { _, _ in }
             )
             .environmentObject(ThemeManager.shared)
             .preferredColorScheme(.dark)

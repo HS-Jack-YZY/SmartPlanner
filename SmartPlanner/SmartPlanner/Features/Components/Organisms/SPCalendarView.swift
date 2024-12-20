@@ -11,16 +11,19 @@ struct SPCalendarView: View {
     
     var body: some View {
         // 内容视图
-        if isShowingDayView {
-            // 日视图
-            SPDayTimelineView(selectedDate: $selectedDate)
-        } else {
-            // 月视图
-            SPMonthCalendarView(
-                month: selectedDate,
-                onDateSelected: handleDateSelected
-            )
+        ScrollView {
+            if isShowingDayView {
+                // 日视图
+                SPDayTimelineView(selectedDate: $selectedDate)
+            } else {
+                // 月视图
+                SPMonthCalendarView(
+                    month: selectedDate,
+                    onDateSelected: handleDateSelected
+                )
+            }
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
     }
     
     // MARK: - Private Methods
