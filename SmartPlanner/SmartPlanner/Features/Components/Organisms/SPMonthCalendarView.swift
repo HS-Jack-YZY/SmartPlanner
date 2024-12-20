@@ -8,7 +8,6 @@ struct SPMonthCalendarView: View {
     
     private let calendar: Calendar
     private let daysInWeek = 7
-    private let weekdays = Calendar.current.shortWeekdaySymbols.rotateLeft(by: 1) // 从周一开始
     private let month: Date
     private let cellHeight: CGFloat = 80 // 固定单元格高度
     private let today = Date() // 当前日期
@@ -34,7 +33,7 @@ struct SPMonthCalendarView: View {
         let interval = calendar.dateInterval(of: .month, for: month)!
         let firstDay = interval.start
         
-        // 获取月份第一天是周几（0���������周日）
+        // 获取月份第一天是周几（0是周日）
         let firstWeekday = calendar.component(.weekday, from: firstDay)
         // 调整为周一开始（1是周一）
         let adjustedFirstWeekday = (firstWeekday + 5) % 7 + 1
@@ -82,17 +81,6 @@ struct SPMonthCalendarView: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            // 星期标题行
-            HStack(spacing: 0) {
-                ForEach(weekdays, id: \.self) { weekday in
-                    Text(weekday)
-                        .frame(maxWidth: .infinity)
-                        .foregroundColor(themeManager.getThemeColor(.secondaryText))
-                        .font(.caption)
-                }
-            }
-            .padding(.bottom, 8)
-            
             Grid(horizontalSpacing: 0, verticalSpacing: 0) {
                 // 月份标题行
                 GridRow {
@@ -156,16 +144,6 @@ struct SPMonthCalendarView: View {
             }
         }
         .padding()
-    }
-}
-
-// MARK: - Helper Methods
-
-extension Array {
-    func rotateLeft(by: Int) -> [Element] {
-        guard count > 0, by > 0 else { return self }
-        let by = by % count
-        return Array(self[by...] + self[..<by])
     }
 }
 

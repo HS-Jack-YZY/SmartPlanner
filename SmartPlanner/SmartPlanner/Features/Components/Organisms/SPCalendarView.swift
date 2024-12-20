@@ -7,7 +7,6 @@ struct SPCalendarView: View {
     @Binding var isShowingDayView: Bool
     @State private var currentMonth: Date
     @EnvironmentObject private var themeManager: ThemeManager
-    @Environment(\.dismiss) private var dismiss
     
     // MARK: - Initialization
     
@@ -17,26 +16,33 @@ struct SPCalendarView: View {
         self._currentMonth = State(initialValue: selectedDate.wrappedValue)
     }
     
+    // MARK: - Helper Methods
+    
+    private func moveMonth(by value: Int) {
+        if let newDate = Calendar.current.date(byAdding: .month, value: value, to: currentMonth) {
+            currentMonth = newDate
+        }
+    }
+    
     // MARK: - Body
     
     var body: some View {
-        NavigationStack {
-            VStack(spacing: 0) {
-                // 导航栏
-                SPCalendarNavigationBar(
-                    onDismiss: { dismiss() }
-                )
-                
-                // 内容视图
-                if isShowingDayView {
-                    // 日视图
-                    SPDayTimelineView(selectedDate: $selectedDate)
-                } else {
-                    // 月视图
-                    SPMonthCalendarView(month: currentMonth)
-                }
+        VStack(spacing: 0) {
+            // 导航栏
+            SPCalendarNavigationBar(
+                onPreviousMonth: { moveMonth(by: -1) },
+                onNextMonth: { moveMonth(by: 1) },
+                currentMonth: currentMonth
+            )
+            
+            // 内容视图
+            if isShowingDayView {
+                // 日视图
+                SPDayTimelineView(selectedDate: $selectedDate)
+            } else {
+                // 月视图
+                SPMonthCalendarView(month: currentMonth)
             }
-            .navigationBarHidden(true)
         }
     }
 }
