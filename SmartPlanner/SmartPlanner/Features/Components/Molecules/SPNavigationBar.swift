@@ -345,31 +345,27 @@ extension Array {
 
 // MARK: - Preview
 
-struct SPNavigationBar_Previews: PreviewProvider {
-    static var previews: some View {
-        Group {
-            // 浅色模式预览
-            SPNavigationBar(
-                currentMonth: Date(),
-                isEditing: .constant(false),
-                onPreviousMonth: {},
-                onNextMonth: {},
-                onDateSelected: { _, _ in }
-            )
-            .environmentObject(ThemeManager.shared)
-            .previewDisplayName("浅色模式")
-            
-            // 深色模式预览
-            SPNavigationBar(
-                currentMonth: Date(),
-                isEditing: .constant(false),
-                onPreviousMonth: {},
-                onNextMonth: {},
-                onDateSelected: { _, _ in }
-            )
-            .environmentObject(ThemeManager.shared)
-            .preferredColorScheme(.dark)
-            .previewDisplayName("深色模式")
-        }
-    }
+#Preview("浅色模式") {
+    // 浅色模式预览
+    SPNavigationBar(
+        currentMonth: Date(),
+        isEditing: .constant(false),
+        onPreviousMonth: {},
+        onNextMonth: {},
+        onDateSelected: { _, _ in }
+    )
+    .environmentObject(ThemeManager.shared)
+}
+
+#Preview("深色模式") {
+    // 深色模式预览
+    SPNavigationBar(
+        currentMonth: Date(),
+        isEditing: .constant(false),
+        onPreviousMonth: {},
+        onNextMonth: {},
+        onDateSelected: { _, _ in }
+    )
+    .environmentObject(ThemeManager.shared)
+    .preferredColorScheme(.dark)
 } 

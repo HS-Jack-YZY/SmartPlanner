@@ -97,24 +97,21 @@ struct SPDayTimelineView: View {
 } 
 
 // MARK: - Preview
-struct SPDayTimelineView_Previews: PreviewProvider {
-    static var previews: some View {
-        Group {
-            // 今天的预览
-            SPDayTimelineView(selectedDate: .constant(Date()))
-                .environmentObject(ThemeManager.shared)
-                .previewDisplayName("今天")
-            
-            // 明天的预览
-            SPDayTimelineView(selectedDate: .constant(Calendar.current.date(byAdding: .day, value: 1, to: Date())!))
-                .environmentObject(ThemeManager.shared)
-                .preferredColorScheme(.dark)
-                .previewDisplayName("明天（深色模式）")
-            
-            // 昨天的预览
-            SPDayTimelineView(selectedDate: .constant(Calendar.current.date(byAdding: .day, value: -1, to: Date())!))
-                .environmentObject(ThemeManager.shared)
-                .previewDisplayName("昨天")
-        }
-    }
+#Preview("今天") {
+    // 今天的预览
+    SPDayTimelineView(selectedDate: .constant(Date()))
+        .environmentObject(ThemeManager.shared)
+}
+
+#Preview("明天（深色模式）") {
+    // 明天的预览
+    SPDayTimelineView(selectedDate: .constant(Calendar.current.date(byAdding: .day, value: 1, to: Date())!))
+        .environmentObject(ThemeManager.shared)
+        .preferredColorScheme(.dark)
+}
+
+#Preview("昨天") {
+    // 昨天的预览
+    SPDayTimelineView(selectedDate: .constant(Calendar.current.date(byAdding: .day, value: -1, to: Date())!))
+        .environmentObject(ThemeManager.shared)
 } 

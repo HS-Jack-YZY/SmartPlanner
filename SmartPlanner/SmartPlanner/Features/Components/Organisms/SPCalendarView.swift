@@ -38,12 +38,10 @@ struct SPCalendarView: View {
 
 // MARK: - Preview
 
-struct SPCalendarView_Previews: PreviewProvider {
-    static var previews: some View {
-        SPCalendarView(
-            selectedDate: .constant(Date()),
-            isShowingDayView: .constant(false)
-        )
-        .environmentObject(ThemeManager.shared)
-    }
+#Preview {
+    SPCalendarView(
+        selectedDate: .constant(Date()),
+        isShowingDayView: .constant(false)
+    )
+    .environmentObject(ThemeManager.shared)
 }

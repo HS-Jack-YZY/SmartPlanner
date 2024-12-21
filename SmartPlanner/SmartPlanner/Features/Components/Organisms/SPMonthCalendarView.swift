@@ -154,30 +154,27 @@ struct SPMonthCalendarView: View {
 
 // MARK: - Preview
 
-struct SPMonthCalendarView_Previews: PreviewProvider {
-    static var previews: some View {
-        Group {
-            // 当前月份（浅色主题）
-            SPMonthCalendarView(onDateSelected: { _ in })
-                .environmentObject(ThemeManager.shared)
-                .previewDisplayName("当前月份")
-            
-            // 下个月（浅色主题）
-            SPMonthCalendarView(
-                month: Calendar.current.date(byAdding: .month, value: 1, to: Date())!,
-                onDateSelected: { _ in }
-            )
-                .environmentObject(ThemeManager.shared)
-                .previewDisplayName("下个月（浅色）")
-            
-            // 下个月（深色主题）
-            SPMonthCalendarView(
-                month: Calendar.current.date(byAdding: .month, value: 1, to: Date())!,
-                onDateSelected: { _ in }
-            )
-                .environmentObject(ThemeManager.shared)
-                .preferredColorScheme(.dark)
-                .previewDisplayName("下个月（深色）")
-        }
-    }
+#Preview("当前月份") {
+    // 当前月份（浅色主题）
+    SPMonthCalendarView(onDateSelected: { _ in })
+        .environmentObject(ThemeManager.shared)
+}
+
+#Preview("下个月（浅色）") {
+    // 下个月（浅色主题）
+    SPMonthCalendarView(
+        month: Calendar.current.date(byAdding: .month, value: 1, to: Date())!,
+        onDateSelected: { _ in }
+    )
+    .environmentObject(ThemeManager.shared)
+}
+
+#Preview("下个月（深色）") {
+    // 下个月（深色主题）
+    SPMonthCalendarView(
+        month: Calendar.current.date(byAdding: .month, value: 1, to: Date())!,
+        onDateSelected: { _ in }
+    )
+    .environmentObject(ThemeManager.shared)
+    .preferredColorScheme(.dark)
 }

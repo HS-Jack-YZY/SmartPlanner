@@ -56,20 +56,15 @@ struct SPBottomToolbar: View {
 
 // MARK: - Preview
 
-struct SPBottomToolbar_Previews: PreviewProvider {
-    static var previews: some View {
-        Group {
-            // 浅色模式预览
-            SPBottomToolbar(selectedTab: .constant(0))
-                .environmentObject(ThemeManager.shared)
-                .previewDisplayName("浅色模式")
-            
-            // 深色模式预览
-            SPBottomToolbar(selectedTab: .constant(1))
-                .environmentObject(ThemeManager.shared)
-                .preferredColorScheme(.dark)
-                .previewDisplayName("深色模式")
-        }
-        .previewLayout(.sizeThatFits)
-    }
+#Preview("浅色模式", traits: .sizeThatFitsLayout) {
+    // 浅色模式预览
+    SPBottomToolbar(selectedTab: .constant(0))
+        .environmentObject(ThemeManager.shared)
+}
+
+#Preview("深色模式", traits: .sizeThatFitsLayout) {
+    // 深色模式预览
+    SPBottomToolbar(selectedTab: .constant(1))
+        .environmentObject(ThemeManager.shared)
+        .preferredColorScheme(.dark)
 } 

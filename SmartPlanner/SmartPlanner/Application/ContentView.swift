@@ -85,9 +85,7 @@ struct ContentView: View {
 
 // MARK: - Preview
 
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView()
-            .environmentObject(ThemeManager.shared)
-    }
+#Preview {
+    ContentView()
+        .environmentObject(ThemeManager.shared)
 }
