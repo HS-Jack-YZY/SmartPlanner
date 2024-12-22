@@ -23,7 +23,7 @@ struct SPNavigationBar: View {
     @State private var lastDragYearDate: Date = Date()
     @State private var weekDates: [Date] = []
     
-    private let weekdays = Calendar.current.veryShortWeekdaySymbols.rotateLeft(by: 1)
+    private let weekdays = Calendar.current.shortWeekdaySymbols.rotateLeft(by: 1)
     private let calendar = Calendar.current
     private let navigationHeight: CGFloat = 88
     private let itemWidth: CGFloat = UIScreen.main.bounds.width / 5
@@ -51,7 +51,7 @@ struct SPNavigationBar: View {
     private func updateWeekDates() {
         let calendar = Calendar.current
         
-        // 获取选中日期是周几（1是周日，2是周一，依此类推）
+        // 获取选中日期是周几（1是周日，2是周一，依���类推）
         let weekday = calendar.component(.weekday, from: currentMonth)
         // 计算到周一的偏移量（如果是周日，需要往前推6天）
         let daysToMonday = weekday == 1 ? -6 : -(weekday - 2)
