@@ -26,10 +26,16 @@ struct ContentView: View {
                 SPNavigationBar(
                     currentMonth: selectedDate,
                     isEditing: $isEditingDate,
+                    viewMode: isShowingDayView ? .day : .month,
                     onPreviousMonth: { moveMonth(by: -1) },
                     onNextMonth: { moveMonth(by: 1) },
                     onDateSelected: { date, shouldExitEditing in
                         handleDateSelected(date, shouldExitEditing: shouldExitEditing)
+                    },
+                    onBackToMonth: {
+                        withAnimation(.easeInOut(duration: 0.3)) {
+                            isShowingDayView = false
+                        }
                     }
                 )
                 

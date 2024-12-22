@@ -7,6 +7,8 @@ struct SPNavigationBar: View {
     let onNextMonth: () -> Void
     let currentMonth: Date
     let onDateSelected: (Date, Bool) -> Void
+    let viewMode: CalendarViewMode
+    let onBackToMonth: () -> Void
     
     @Binding var isEditing: Bool
     @EnvironmentObject private var themeManager: ThemeManager
@@ -19,8 +21,9 @@ struct SPNavigationBar: View {
     @State private var yearDragVelocity: CGFloat = 0
     @State private var lastDragMonthDate: Date = Date()
     @State private var lastDragYearDate: Date = Date()
+    @State private var weekDates: [Date] = []
     
-    private let weekdays = Calendar.current.shortWeekdaySymbols.rotateLeft(by: 1)
+    private let weekdays = Calendar.current.veryShortWeekdaySymbols.rotateLeft(by: 1)
     private let calendar = Calendar.current
     private let navigationHeight: CGFloat = 88
     private let itemWidth: CGFloat = UIScreen.main.bounds.width / 5
@@ -30,18 +33,34 @@ struct SPNavigationBar: View {
     
     // MARK: - Initialization
     
-    init(currentMonth: Date, isEditing: Binding<Bool>, onPreviousMonth: @escaping () -> Void, onNextMonth: @escaping () -> Void, onDateSelected: @escaping (Date, Bool) -> Void) {
+    init(currentMonth: Date, isEditing: Binding<Bool>, viewMode: CalendarViewMode, onPreviousMonth: @escaping () -> Void, onNextMonth: @escaping () -> Void, onDateSelected: @escaping (Date, Bool) -> Void, onBackToMonth: @escaping () -> Void) {
         self.currentMonth = currentMonth
         self._isEditing = isEditing
+        self.viewMode = viewMode
         self.onPreviousMonth = onPreviousMonth
         self.onNextMonth = onNextMonth
         self.onDateSelected = onDateSelected
+        self.onBackToMonth = onBackToMonth
         self._editingDate = State(initialValue: currentMonth)
         self._lastDragMonthDate = State(initialValue: currentMonth)
         self._lastDragYearDate = State(initialValue: currentMonth)
     }
     
     // MARK: - Helper Methods
+    
+    private func updateWeekDates() {
+        let calendar = Calendar.current
+        
+        // 获取选中日期是周几（1是周日，2是周一，依此类推）
+        let weekday = calendar.component(.weekday, from: currentMonth)
+        // 计算到周一的偏移量（如果是周日，需要往前推6天）
+        let daysToMonday = weekday == 1 ? -6 : -(weekday - 2)
+        
+        // 从周一开始生成一周的日期
+        weekDates = (0...6).compactMap { dayOffset in
+            calendar.date(byAdding: .day, value: daysToMonday + dayOffset, to: currentMonth)
+        }
+    }
     
     private func formatMonth(_ date: Date, isEditing: Bool = false) -> String {
         let formatter = DateFormatter()
@@ -125,6 +144,45 @@ struct SPNavigationBar: View {
     }
     
     // MARK: - Views
+    
+    private var dayView: some View {
+        VStack(spacing: 0) {
+            // 顶部导航栏
+            HStack {
+                // 返回按钮
+                Button(action: onBackToMonth) {
+                    Image(systemName: "chevron.left")
+                        .imageScale(.large)
+                        .foregroundColor(themeManager.getThemeColor(.primaryText))
+                }
+                .padding(.leading, 16)
+                
+                Spacer()
+            }
+            .frame(height: 28)
+            
+            // 日期滚动视图
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 12) {
+                    ForEach(weekDates, id: \.self) { date in
+                        DayCell(
+                            date: date,
+                            isSelected: calendar.isDate(date, inSameDayAs: currentMonth),
+                            themeManager: themeManager
+                        )
+                        .onTapGesture {
+                            onDateSelected(date, false)
+                        }
+                    }
+                }
+                .padding(.horizontal)
+            }
+        }
+        .frame(height: navigationHeight)
+        .onAppear {
+            updateWeekDates()
+        }
+    }
     
     private var normalView: some View {
         VStack(spacing: 0) {
@@ -313,7 +371,9 @@ struct SPNavigationBar: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            if isEditing {
+            if viewMode == .day {
+                dayView
+            } else if isEditing {
                 editingView
             } else {
                 normalView
@@ -329,8 +389,84 @@ struct SPNavigationBar: View {
             editingDate = newValue
             lastDragMonthDate = newValue
             lastDragYearDate = newValue
+            if viewMode == .day {
+                updateWeekDates()
+            }
         }
     }
+}
+
+// MARK: - Supporting Views
+
+private struct DayCell: View {
+    let date: Date
+    let isSelected: Bool
+    let themeManager: ThemeManager
+    private let calendar = Calendar.current
+    
+    private var isToday: Bool {
+        calendar.isDateInToday(date)
+    }
+    
+    private var dayNumber: String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "d"
+        return formatter.string(from: date)
+    }
+    
+    private var weekday: String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "EEE"
+        return formatter.string(from: date)
+    }
+    
+    private var textColor: Color {
+        if isSelected {
+            return .white
+        } else if isToday {
+            return .red
+        } else {
+            return themeManager.getThemeColor(.primaryText)
+        }
+    }
+    
+    private var backgroundFill: Color {
+        if isToday && isSelected {
+            return .red
+        } else if isSelected {
+            return themeManager.getThemeColor(.primaryText)
+        } else {
+            return .clear
+        }
+    }
+    
+    var body: some View {
+        VStack(spacing: 2) {
+            // 星期标题
+            Text(weekday)
+                .font(.system(size: 13, weight: .regular))
+                .foregroundColor(themeManager.getThemeColor(.secondaryText))
+            
+            // 日期数字（带圆圈背景）
+            Text(dayNumber)
+                .font(.system(size: 17, weight: .semibold))
+                .foregroundColor(textColor)
+                .frame(width: 32, height: 32)
+                .background(
+                    Circle()
+                        .fill(backgroundFill)
+                )
+        }
+        .frame(width: 44, height: 64)
+    }
+}
+
+// MARK: - Enums
+
+enum CalendarViewMode {
+    case day
+    case week
+    case month
 }
 
 // MARK: - Helper Methods
@@ -350,9 +486,11 @@ extension Array {
     SPNavigationBar(
         currentMonth: Date(),
         isEditing: .constant(false),
+        viewMode: .month,
         onPreviousMonth: {},
         onNextMonth: {},
-        onDateSelected: { _, _ in }
+        onDateSelected: { _, _ in },
+        onBackToMonth: {}
     )
     .environmentObject(ThemeManager.shared)
 }
@@ -362,9 +500,11 @@ extension Array {
     SPNavigationBar(
         currentMonth: Date(),
         isEditing: .constant(false),
+        viewMode: .month,
         onPreviousMonth: {},
         onNextMonth: {},
-        onDateSelected: { _, _ in }
+        onDateSelected: { _, _ in },
+        onBackToMonth: {}
     )
     .environmentObject(ThemeManager.shared)
     .preferredColorScheme(.dark)
