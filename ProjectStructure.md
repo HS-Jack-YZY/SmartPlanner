@@ -33,7 +33,7 @@
 >    - 定期检查循环依赖
 >    - **记录每个关键文件的依赖信息**：
 >      - 直接依赖（import的框架和模块）
->      - 被引用情况（哪些文���使用了该模块）
+>      - 被引用情况（哪些文件使用了该模块）
 >      - 关键功能说明
 >      - 修改风险评估
 > 
@@ -113,13 +113,11 @@
 
 ```
 SmartPlannerProject/                # 项目根目录
-├── .git/                          # Git版本控制目录
-├── .gitignore                     # Git忽略配置文件
 ├── LICENSE                        # 开源许可证
 ├── README.md                      # 项目说明文档
 ├── ProjectStructure.md            # 项目结构文档
 │
-├── SmartPlannerDoc/               # 项目文档
+├── SmartPlannerDoc/              # 项目文档
 │   ├── Development_Progress.md    # 开发进度记录
 │   ├── Smartplanner.md           # 项目概述
 │   ├── GitCommitPrinciple.md     # Git提交规范
@@ -145,11 +143,14 @@ SmartPlannerProject/                # 项目根目录
 │   │   │   ├── Components/     # UI组件
 │   │   │   │   ├── Atoms/     # 原子组件
 │   │   │   │   ├── Molecules/ # 分子组件
-│   │   │   │   │   └── SPCalendarToolbar.swift  # 日历工具栏
+│   │   │   │   │   ├── SPTimelineHeaderView.swift  # 时间线头部视图
+│   │   │   │   │   ├── SPBottomToolbar.swift      # 底部工具栏
+│   │   │   │   │   └── SPNavigationBar.swift      # 导航栏
 │   │   │   │   └── Organisms/ # 有机体组件
-│   │   │   │       ├── SPCalendarView.swift     # 日历视图
-│   │   │   │       ├── SPDayTimelineView.swift  # 日视图
-│   │   │   │       └── SPMonthCalendarView.swift # 月视图
+│   │   │   │       ├── SPCalendarView.swift       # 日历视图
+│   │   │   │       ├── SPDayTimelineView.swift    # 日视图
+│   │   │   │       ├── SPMonthCalendarView.swift  # 月视图
+│   │   │   │       └── SPTimelineContentView.swift # 时间线内容视图
 │   │   │   └── Theme/         # 主题系统
 │   │   │       ├── FontTheme.swift    # 字体主题
 │   │   │       ├── ThemeManager.swift # 主题管理
@@ -212,7 +213,7 @@ SmartPlannerProject/                # 项目根目录
 │   │   │   │       ├── ValidationProtocols.swift # 验证协议
 │   │   │   │       └── ValidationRules.swift    # 验证规则
 │   │   │   └── Localization/  # 本地化服务
-│   │   │       └── LanguageManager.swift  # 语言管理器
+│   │   │       └── LanguageManager.swift  # 语言管��器
 │   │   │
 │   │   └── Utilities/         # 工具类
 │   │       ├── Date/          # 日期工具
@@ -273,7 +274,7 @@ SmartPlannerProject/                # 项目根目录
 - **CoreDataModels**
   - 直接依赖：Foundation, CoreData
   - 被引用：DataManager, ValidationService
-  - 关键功能：数据结构定义
+  - 关键功���：数据结构定义
   - 修改风险：高
 
 - **Validation**
@@ -449,7 +450,7 @@ graph TD
 
 #### ValidationProtocols
 - **直接依赖**
-  - 框架：Foundation, CoreData
+  - 框���：Foundation, CoreData
 - **被引用**
   - ValidationService
   - ValidationRules
