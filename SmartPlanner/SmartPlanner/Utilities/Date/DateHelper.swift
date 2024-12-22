@@ -32,12 +32,30 @@ enum DateHelper {
         return formatter.string(from: date)
     }
     
+    /// 获取月份简写（如：Jan）
+    static func formatShortMonth(_ date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.calendar = calendar
+        formatter.locale = Locale(identifier: "en_US") // 使用英文简写
+        formatter.dateFormat = "MMM"
+        return formatter.string(from: date)
+    }
+    
     /// 格式化日期标题（如：周三 12月18日）
     static func formatDayHeader(_ date: Date) -> String {
         let formatter = DateFormatter()
         formatter.calendar = calendar
         formatter.locale = calendar.locale
         formatter.dateFormat = "EEEE MMM d日"
+        return formatter.string(from: date)
+    }
+    
+    /// 格式化星期几（如：周三）
+    static func formatWeekday(_ date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.calendar = calendar
+        formatter.locale = calendar.locale
+        formatter.dateFormat = "EEEE"
         return formatter.string(from: date)
     }
     
