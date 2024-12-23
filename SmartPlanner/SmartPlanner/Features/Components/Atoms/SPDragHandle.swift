@@ -112,8 +112,8 @@ struct SPDragHandle: View {
             // 添加手势
             .gesture(dragGesture)
             // 添加无障碍支持
-            .accessibilityLabel("拖动手柄")
-            .accessibilityHint("上下拖动以展开或关闭面板")
+            .accessibilityLabel("Drag handle")
+            .accessibilityHint("Drag up or down to expand or close panel")
             .accessibilityAddTraits(.allowsDirectInteraction)
     }
 }
