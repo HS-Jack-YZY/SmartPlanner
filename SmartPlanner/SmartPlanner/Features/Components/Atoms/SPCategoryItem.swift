@@ -15,8 +15,8 @@ struct SPCategoryItem: View {
     let color: Color            // 类别颜色
     let level: Int16            // 层级深度（0-5）
     let isVisible: Bool         // 是否可见
-    let displayOrder: Int16     // 显示顺序
-    let parentId: UUID?         // 父类别ID（可选）
+    let displayOrder: Int16     // 显示顺序（同级别内排序，值越小越靠前）
+    let parentId: UUID?         // 父类别ID（可选，level=0时为nil）
     
     // UI 状态
     let isExpanded: Bool        // 是否展开子列表
@@ -47,6 +47,20 @@ struct SPCategoryItem: View {
     
     // MARK: - Initialization
     
+    /// 初始化类别项
+    /// - Parameters:
+    ///   - id: 类别唯一标识
+    ///   - name: 类别名称
+    ///   - color: 类别颜色
+    ///   - level: 层级深度（0-5），0表示根类别
+    ///   - isVisible: 是否可见
+    ///   - displayOrder: 显示顺序（在同一层级内，值越小越靠前）
+    ///   - parentId: 父类别ID（level=0时为nil）
+    ///   - isExpanded: 是否展开子列表
+    ///   - showArrow: 是否显示箭头
+    ///   - childCount: 子类别数量
+    ///   - onToggleExpand: 展开/折叠回调
+    ///   - onSelect: 选中回调
     init(
         id: UUID,
         name: String,
@@ -110,7 +124,7 @@ struct SPCategoryItem: View {
         }
     }
     
-    /// 箭��图标视图
+    /// 箭头图标视图
     private var arrowIcon: some View {
         Group {
             if showArrow && childCount > 0 {

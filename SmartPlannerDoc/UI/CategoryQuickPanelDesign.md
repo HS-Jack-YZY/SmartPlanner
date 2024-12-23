@@ -37,10 +37,10 @@
   id: UUID                 // 类别唯一标识
   name: String            // 类别名称
   color: Color            // 类别颜色
-  level: Int16            // 层级深度（0-5）
+  level: Int16            // 层级深度（0-5，0表示根类别）
   isVisible: Bool         // 是否可见
-  displayOrder: Int16     // 显示顺序
-  parentId: UUID?         // 父类别ID（可选）
+  displayOrder: Int16     // 显示顺序（同级别内排序，值越小越靠前）
+  parentId: UUID?         // 父类别ID（level=0时为nil）
   
   // UI 状态
   isExpanded: Bool        // 是否展开子列表
@@ -50,14 +50,19 @@
   // 回调函数
   onToggleExpand: (() -> Void)?  // 展开/折叠回调
   onSelect: (() -> Void)?        // 选中回调
-  
-  // 布局常量
-  itemHeight: CGFloat = 44       // 项目高度
-  colorIndicatorSize: CGFloat = 12 // 颜色指示器大小
-  levelIndent: CGFloat = 20      // 层级缩进宽度
-  horizontalPadding: CGFloat = 16 // 水平内边距
-  spacing: CGFloat = 8           // 元素间距
   ```
+- **排序规则**：
+  1. 根类别排序（level = 0）：
+     - 按 displayOrder 升序排列
+     - displayOrder 相同时，按 name 排序
+  2. 子类别排序：
+     - 在同一父类别下，按 displayOrder 升序排列
+     - displayOrder 相同时，按 name 排序
+  3. 层级关系：
+     - 子类别始终跟随其父类别显示
+     - 父类别折叠时，所有子类别隐藏
+     - 展开时按排序规则显示子类别
+
 - **依赖关系**：
   - ThemeManager：主题管理
   - SwiftUI.Color：颜色处理
@@ -111,7 +116,7 @@
 ### 3. 第三阶段：容器组件（Organisms）
 
 #### SPCategoryQuickPanel（优先级：P2）
-- **功能**：快捷面板容器
+- **功能**：���捷面板容器
 - **职责**：
   - 整体布局管理
   - 面板状态控制
@@ -172,7 +177,7 @@ Features/
    - 添加辅助功能
 
 3. **第三阶段（P2）**
-   - 整合所有组件
+   - 整��所有组件
    - 实现完整交互
    - 状态管理和持久化
 
@@ -308,7 +313,7 @@ Features/
 ## 六、状态管理
 
 ### 1. 面板状态
-- 折叠状态：隐藏
+- ���叠状态：隐藏
 - 展开状态：显示
 - 过渡状态：动画中
 
@@ -379,7 +384,7 @@ Features/
 - 性能优化建议
 
 ### 1.1.0 (2024-12-21)
-- 添加组件结构设计
+- 添加组���结构设计
 - 细化组件职责划分
 - 完善文件组织结构
 - 补充组件交互细节
