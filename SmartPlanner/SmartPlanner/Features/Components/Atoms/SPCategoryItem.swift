@@ -182,81 +182,77 @@ struct SPCategoryItem: View {
 
 // MARK: - Preview Provider
 
-struct SPCategoryItem_Previews: PreviewProvider {
-    static var previews: some View {
-        Group {
-            // 默认状态预览
-            VStack(spacing: 0) {
-                SPCategoryItem(
-                    id: UUID(),
-                    name: "工作",
-                    color: .blue,
-                    isExpanded: true,
-                    childCount: 3,
-                    onToggleExpand: {
-                        print("Toggle 工作")
-                    },
-                    onSelect: {
-                        print("Select 工作")
-                    }
-                )
-                
-                SPCategoryItem(
-                    id: UUID(),
-                    name: "会议",
-                    color: .purple,
-                    level: 1,
-                    displayOrder: 1,
-                    childCount: 2,
-                    onToggleExpand: {
-                        print("Toggle 会议")
-                    },
-                    onSelect: {
-                        print("Select 会议")
-                    }
-                )
-                
-                SPCategoryItem(
-                    id: UUID(),
-                    name: "周会",
-                    color: .green,
-                    level: 2,
-                    displayOrder: 2,
-                    onSelect: {
-                        print("Select 周会")
-                    }
-                )
-                
-                SPCategoryItem(
-                    id: UUID(),
-                    name: "休息",
-                    color: .orange,
-                    isVisible: false,
-                    showArrow: false,
-                    onSelect: {
-                        print("Select 休息")
-                    }
-                )
+#Preview("默认状态") {
+    // 默认状态预览
+    VStack(spacing: 0) {
+        SPCategoryItem(
+            id: UUID(),
+            name: "工作",
+            color: .blue,
+            isExpanded: true,
+            childCount: 3,
+            onToggleExpand: {
+                print("Toggle 工作")
+            },
+            onSelect: {
+                print("Select 工作")
             }
-            .environmentObject(ThemeManager.shared)
-            .previewDisplayName("默认状态")
-            
-            // 深色模式预览
-            SPCategoryItem(
-                id: UUID(),
-                name: "工作",
-                color: .blue,
-                childCount: 3,
-                onToggleExpand: {
-                    print("Toggle 工作")
-                },
-                onSelect: {
-                    print("Select 工作")
-                }
-            )
-            .environmentObject(ThemeManager.shared)
-            .preferredColorScheme(.dark)
-            .previewDisplayName("深色模式")
-        }
+        )
+        
+        SPCategoryItem(
+            id: UUID(),
+            name: "会议",
+            color: .purple,
+            level: 1,
+            displayOrder: 1,
+            childCount: 2,
+            onToggleExpand: {
+                print("Toggle 会议")
+            },
+            onSelect: {
+                print("Select 会议")
+            }
+        )
+        
+        SPCategoryItem(
+            id: UUID(),
+            name: "周会",
+            color: .green,
+            level: 2,
+            displayOrder: 2,
+            onSelect: {
+                print("Select 周会")
+            }
+        )
+        
+        SPCategoryItem(
+            id: UUID(),
+            name: "休息",
+            color: .orange,
+            isVisible: false,
+            showArrow: false,
+            onSelect: {
+                print("Select 休息")
+            }
+        )
     }
+    .environmentObject(ThemeManager.shared)
+}
+
+#Preview("深色模式") {
+    // 深色模式预览
+    SPCategoryItem(
+        id: UUID(),
+        name: "工作",
+        color: .blue,
+        childCount: 3,
+        onToggleExpand: {
+            print("Toggle 工作")
+        },
+        onSelect: {
+            print("Select 工作")
+        }
+    )
+    .environmentObject(ThemeManager.shared)
+    .preferredColorScheme(.dark)
 } 

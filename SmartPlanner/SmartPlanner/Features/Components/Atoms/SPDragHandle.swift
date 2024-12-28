@@ -120,27 +120,25 @@ struct SPDragHandle: View {
 
 // MARK: - Preview Provider
 
-struct SPDragHandle_Previews: PreviewProvider {
-    static var previews: some View {
-        VStack {
-            SPDragHandle { translation in
-                print("Dragging: \(translation)")
-            } onDragEnd: { velocity, distance in
-                print("Drag ended with velocity: \(velocity), distance: \(distance)")
-            }
+#Preview("默认状态") {
+    VStack {
+        SPDragHandle { translation in
+            print("Dragging: \(translation)")
+        } onDragEnd: { velocity, distance in
+            print("Drag ended with velocity: \(velocity), distance: \(distance)")
         }
-        .frame(maxWidth: .infinity)
-        .background(Color(.systemBackground))
-        .environmentObject(ThemeManager.shared)
-        .previewDisplayName("默认状态")
-        
-        VStack {
-            SPDragHandle(enableHaptics: false)
-        }
-        .frame(maxWidth: .infinity)
-        .background(Color(.systemBackground))
-        .environmentObject(ThemeManager.shared)
-        .preferredColorScheme(.dark)
-        .previewDisplayName("深色模式")
     }
+    .frame(maxWidth: .infinity)
+    .background(Color(.systemBackground))
+    .environmentObject(ThemeManager.shared)
+}
+
+#Preview("深色模式") {
+    VStack {
+        SPDragHandle(enableHaptics: false)
+    }
+    .frame(maxWidth: .infinity)
+    .background(Color(.systemBackground))
+    .environmentObject(ThemeManager.shared)
+    .preferredColorScheme(.dark)
 }

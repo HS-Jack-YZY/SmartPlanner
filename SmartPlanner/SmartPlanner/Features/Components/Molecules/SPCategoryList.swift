@@ -198,92 +198,88 @@ struct SPCategoryList: View {
 
 // MARK: - Preview Provider
 
-struct SPCategoryList_Previews: PreviewProvider {
-    static var previews: some View {
-        Group {
-            // With data
-            SPCategoryList(
-                categories: {
-                    let weeklyId = UUID()
-                    let meetingsId = UUID()
-                    let workId = UUID()
-                    
-                    return [
-                        CategoryData(
-                            id: workId,
-                            name: "Work",
-                            color: .blue,
-                            level: 0,
-                            isVisible: true,
-                            displayOrder: 0,
-                            parentId: nil,
-                            isExpanded: true,
-                            childIds: [meetingsId]
-                        ),
-                        CategoryData(
-                            id: meetingsId,
-                            name: "Meetings",
-                            color: .purple,
-                            level: 1,
-                            isVisible: true,
-                            displayOrder: 0,
-                            parentId: workId,
-                            isExpanded: false,
-                            childIds: [weeklyId]
-                        ),
-                        CategoryData(
-                            id: weeklyId,
-                            name: "Weekly",
-                            color: .green,
-                            level: 2,
-                            isVisible: true,
-                            displayOrder: 0,
-                            parentId: meetingsId,
-                            isExpanded: false,
-                            childIds: []
-                        ),
-                        CategoryData(
-                            id: UUID(),
-                            name: "Personal",
-                            color: .orange,
-                            level: 0,
-                            isVisible: true,
-                            displayOrder: 1,
-                            parentId: nil,
-                            isExpanded: false,
-                            childIds: []
-                        )
-                    ]
-                }()
-            )
-            .environmentObject(ThemeManager.shared)
-            .previewDisplayName("With Data")
+#Preview("With Data", traits: .sizeThatFitsLayout) {
+    // With data
+    SPCategoryList(
+        categories: {
+            let weeklyId = UUID()
+            let meetingsId = UUID()
+            let workId = UUID()
             
-            // Empty state
-            SPCategoryList(categories: [])
-                .environmentObject(ThemeManager.shared)
-                .previewDisplayName("Empty State")
-            
-            // Dark mode
-            SPCategoryList(
-                categories: [
-                    CategoryData(
-                        id: UUID(),
-                        name: "Work",
-                        color: .blue,
-                        level: 0,
-                        isVisible: true,
-                        displayOrder: 0,
-                        parentId: nil,
-                        isExpanded: false,
-                        childIds: []
-                    )
-                ]
+            return [
+                CategoryData(
+                    id: workId,
+                    name: "Work",
+                    color: .blue,
+                    level: 0,
+                    isVisible: true,
+                    displayOrder: 0,
+                    parentId: nil,
+                    isExpanded: true,
+                    childIds: [meetingsId]
+                ),
+                CategoryData(
+                    id: meetingsId,
+                    name: "Meetings",
+                    color: .purple,
+                    level: 1,
+                    isVisible: true,
+                    displayOrder: 0,
+                    parentId: workId,
+                    isExpanded: false,
+                    childIds: [weeklyId]
+                ),
+                CategoryData(
+                    id: weeklyId,
+                    name: "Weekly",
+                    color: .green,
+                    level: 2,
+                    isVisible: true,
+                    displayOrder: 0,
+                    parentId: meetingsId,
+                    isExpanded: false,
+                    childIds: []
+                ),
+                CategoryData(
+                    id: UUID(),
+                    name: "Personal",
+                    color: .orange,
+                    level: 0,
+                    isVisible: true,
+                    displayOrder: 1,
+                    parentId: nil,
+                    isExpanded: false,
+                    childIds: []
+                )
+            ]
+        }()
+    )
+    .environmentObject(ThemeManager.shared)
+}
+
+#Preview("Empty State", traits: .sizeThatFitsLayout) {
+    // Empty state
+    SPCategoryList(categories: [])
+        .environmentObject(ThemeManager.shared)
+}
+
+#Preview("Dark Mode", traits: .sizeThatFitsLayout) {
+    // Dark mode
+    SPCategoryList(
+        categories: [
+            CategoryData(
+                id: UUID(),
+                name: "Work",
+                color: .blue,
+                level: 0,
+                isVisible: true,
+                displayOrder: 0,
+                parentId: nil,
+                isExpanded: false,
+                childIds: []
             )
-            .environmentObject(ThemeManager.shared)
-            .preferredColorScheme(.dark)
-            .previewDisplayName("Dark Mode")
-        }
-        .previewLayout(.sizeThatFits)
-    }
+        ]
+    )
+    .environmentObject(ThemeManager.shared)
+    .preferredColorScheme(.dark)
 } 
