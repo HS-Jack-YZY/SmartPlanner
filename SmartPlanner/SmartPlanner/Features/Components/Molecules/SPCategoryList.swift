@@ -34,6 +34,9 @@ struct SPCategoryList: View {
     /// Category data model
     @State private var categories: [CategoryData]
     
+    /// Category expansion states cache
+    @State private var expansionStates: [UUID: Bool] = [:]
+    
     /// Category selection callback
     private let onSelectCategory: ((CategoryData) -> Void)?
     
@@ -59,41 +62,35 @@ struct SPCategoryList: View {
         _categories = State(initialValue: categories)
         self.onSelectCategory = onSelectCategory
         self.onToggleExpand = onToggleExpand
+        
+        // Initialize expansion states
+        var initialStates: [UUID: Bool] = [:]
+        for category in categories {
+            initialStates[category.id] = category.isExpanded
+        }
+        _expansionStates = State(initialValue: initialStates)
     }
     
     // MARK: - Private Methods
     
     /// Toggle category expansion state
     private func toggleCategory(_ targetCategory: CategoryData) {
-        categories = updateCategoryExpansion(in: categories, targetId: targetCategory.id)
-        if let updatedCategory = findCategory(id: targetCategory.id, in: categories) {
+        // Update expansion state
+        expansionStates[targetCategory.id] = !(expansionStates[targetCategory.id] ?? false)
+        
+        // Update category
+        if let index = categories.firstIndex(where: { $0.id == targetCategory.id }) {
+            var updatedCategory = categories[index]
+            updatedCategory.isExpanded = expansionStates[targetCategory.id] ?? false
+            categories[index] = updatedCategory
             onToggleExpand?(updatedCategory)
         }
-    }
-    
-    /// Update category expansion state recursively
-    private func updateCategoryExpansion(in categories: [CategoryData], targetId: UUID) -> [CategoryData] {
-        var updatedCategories = categories
-        
-        for index in updatedCategories.indices {
-            if updatedCategories[index].id == targetId {
-                updatedCategories[index].toggleExpansion()
-                return updatedCategories
-            }
-        }
-        
-        return updatedCategories
-    }
-    
-    /// Find category by id
-    private func findCategory(id: UUID, in categories: [CategoryData]) -> CategoryData? {
-        categories.first { $0.id == id }
     }
     
     /// Get children for a category
     private func getChildren(for category: CategoryData) -> [CategoryData] {
         category.childIds.compactMap { childId in
-            findCategory(id: childId, in: categories)
+            categories.first { $0.id == childId }
         }.sorted { $0.displayOrder < $1.displayOrder }
     }
     
@@ -110,7 +107,7 @@ struct SPCategoryList: View {
             result.append(category)
             
             // Add visible children if expanded
-            if category.isExpanded {
+            if expansionStates[category.id] ?? false {
                 result.append(contentsOf: getVisibleChildren(category))
             }
         }
@@ -128,7 +125,7 @@ struct SPCategoryList: View {
             result.append(child)
             
             // Recursively add children if expanded
-            if child.isExpanded {
+            if expansionStates[child.id] ?? false {
                 result.append(contentsOf: getVisibleChildren(child))
             }
         }
@@ -176,7 +173,7 @@ struct SPCategoryList: View {
                                 isVisible: category.isVisible,
                                 displayOrder: category.displayOrder,
                                 parentId: category.parentId,
-                                isExpanded: category.isExpanded,
+                                isExpanded: expansionStates[category.id] ?? false,
                                 showArrow: !category.childIds.isEmpty,
                                 childCount: category.childIds.count,
                                 onToggleExpand: {
@@ -202,11 +199,21 @@ struct SPCategoryList: View {
     // With data
     SPCategoryList(
         categories: {
-            let weeklyId = UUID()
-            let meetingsId = UUID()
             let workId = UUID()
+            let meetingsId = UUID()
+            let weeklyId = UUID()
+            let monthlyId = UUID()
+            let projectsId = UUID()
+            let projectAId = UUID()
+            let projectBId = UUID()
+            let personalId = UUID()
+            let fitnessId = UUID()
+            let yogaId = UUID()
+            let studyId = UUID()
+            let languageId = UUID()
             
             return [
+                // Work Category
                 CategoryData(
                     id: workId,
                     name: "Work",
@@ -216,8 +223,9 @@ struct SPCategoryList: View {
                     displayOrder: 0,
                     parentId: nil,
                     isExpanded: true,
-                    childIds: [meetingsId]
+                    childIds: [meetingsId, projectsId]
                 ),
+                // Meetings Category
                 CategoryData(
                     id: meetingsId,
                     name: "Meetings",
@@ -226,9 +234,10 @@ struct SPCategoryList: View {
                     isVisible: true,
                     displayOrder: 0,
                     parentId: workId,
-                    isExpanded: false,
-                    childIds: [weeklyId]
+                    isExpanded: true,
+                    childIds: [weeklyId, monthlyId]
                 ),
+                // Weekly Meetings
                 CategoryData(
                     id: weeklyId,
                     name: "Weekly",
@@ -240,14 +249,111 @@ struct SPCategoryList: View {
                     isExpanded: false,
                     childIds: []
                 ),
+                // Monthly Meetings
                 CategoryData(
-                    id: UUID(),
+                    id: monthlyId,
+                    name: "Monthly",
+                    color: .mint,
+                    level: 2,
+                    isVisible: true,
+                    displayOrder: 1,
+                    parentId: meetingsId,
+                    isExpanded: false,
+                    childIds: []
+                ),
+                // Projects Category
+                CategoryData(
+                    id: projectsId,
+                    name: "Projects",
+                    color: .indigo,
+                    level: 1,
+                    isVisible: true,
+                    displayOrder: 1,
+                    parentId: workId,
+                    isExpanded: true,
+                    childIds: [projectAId, projectBId]
+                ),
+                // Project A
+                CategoryData(
+                    id: projectAId,
+                    name: "Project A",
+                    color: .cyan,
+                    level: 2,
+                    isVisible: true,
+                    displayOrder: 0,
+                    parentId: projectsId,
+                    isExpanded: false,
+                    childIds: []
+                ),
+                // Project B
+                CategoryData(
+                    id: projectBId,
+                    name: "Project B",
+                    color: .teal,
+                    level: 2,
+                    isVisible: true,
+                    displayOrder: 1,
+                    parentId: projectsId,
+                    isExpanded: false,
+                    childIds: []
+                ),
+                // Personal Category
+                CategoryData(
+                    id: personalId,
                     name: "Personal",
                     color: .orange,
                     level: 0,
                     isVisible: true,
                     displayOrder: 1,
                     parentId: nil,
+                    isExpanded: true,
+                    childIds: [fitnessId, studyId]
+                ),
+                // Fitness Category
+                CategoryData(
+                    id: fitnessId,
+                    name: "Fitness",
+                    color: .red,
+                    level: 1,
+                    isVisible: true,
+                    displayOrder: 0,
+                    parentId: personalId,
+                    isExpanded: true,
+                    childIds: [yogaId]
+                ),
+                // Yoga
+                CategoryData(
+                    id: yogaId,
+                    name: "Yoga",
+                    color: .pink,
+                    level: 2,
+                    isVisible: true,
+                    displayOrder: 0,
+                    parentId: fitnessId,
+                    isExpanded: false,
+                    childIds: []
+                ),
+                // Study Category
+                CategoryData(
+                    id: studyId,
+                    name: "Study",
+                    color: .brown,
+                    level: 1,
+                    isVisible: true,
+                    displayOrder: 1,
+                    parentId: personalId,
+                    isExpanded: true,
+                    childIds: [languageId]
+                ),
+                // Language Study
+                CategoryData(
+                    id: languageId,
+                    name: "Language",
+                    color: .yellow,
+                    level: 2,
+                    isVisible: true,
+                    displayOrder: 0,
+                    parentId: studyId,
                     isExpanded: false,
                     childIds: []
                 )
