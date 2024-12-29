@@ -253,7 +253,7 @@ struct SPCategoryItem: View {
             .onEnded { _ in
                 handleDragStart()
             }
-            .sequenced(before: DragGesture())
+            .sequenced(before: DragGesture(coordinateSpace: .global))
             .onChanged { value in
                 switch value {
                 case .first(true):

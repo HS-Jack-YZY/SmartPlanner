@@ -81,6 +81,18 @@ struct SPCategoryList: View {
         _expansionStates = State(initialValue: initialStates)
     }
     
+    // MARK: - Position Tracking
+    
+    private struct CategoryPositionPreferenceKey: PreferenceKey {
+        static var defaultValue: [UUID: CGRect] = [:]
+        
+        static func reduce(value: inout [UUID: CGRect], nextValue: () -> [UUID: CGRect]) {
+            value.merge(nextValue()) { current, _ in current }
+        }
+    }
+    
+    @State private var categoryPositions: [UUID: CGRect] = [:]
+    
     // MARK: - Private Methods
     
     /// Toggle category expansion state
@@ -153,19 +165,12 @@ struct SPCategoryList: View {
     private func handleDragChange(_ categoryId: UUID, _ position: CGPoint) {
         currentDragPosition = position
         
-        // Find overlapped category
+        // Find overlapped category based on actual positions
         if let draggedCategory = categories.first(where: { $0.id == categoryId }) {
-            // Check for overlap with other categories
-            for category in visibleCategories {
-                if category.id != categoryId {
-                    // Calculate vertical distance
-                    let categoryY = CGFloat(visibleCategories.firstIndex(where: { $0.id == category.id }) ?? 0) * Layout.itemHeight
-                    let distance = abs(position.y - categoryY)
-                    
-                    if distance < Layout.itemHeight {
-                        overlappedCategoryId = category.id
-                        return
-                    }
+            for (id, frame) in categoryPositions {
+                if id != categoryId && frame.contains(position) {
+                    overlappedCategoryId = id
+                    return
                 }
             }
         }
@@ -243,8 +248,19 @@ struct SPCategoryList: View {
                                     handleDragEnd(id, location)
                                 }
                             )
+                            .background(
+                                GeometryReader { geometry in
+                                    Color.clear.preference(
+                                        key: CategoryPositionPreferenceKey.self,
+                                        value: [category.id: geometry.frame(in: .global)]
+                                    )
+                                }
+                            )
                         }
                     }
+                }
+                .onPreferenceChange(CategoryPositionPreferenceKey.self) { positions in
+                    categoryPositions = positions
                 }
             }
         }
