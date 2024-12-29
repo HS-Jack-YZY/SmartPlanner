@@ -58,6 +58,56 @@ struct SPCategoryItem: View {
         static let dragShadowRadius: CGFloat = 10
         static let dragShadowOpacity: Double = 0.2
         static let dragAnimationDuration: Double = 0.2
+        static let dragZIndex: Double = 100
+    }
+    
+    // MARK: - Dragging View
+    
+    /// View displayed while dragging a category
+    private struct DraggingCategoryView: View {
+        // MARK: - Environment
+        
+        @EnvironmentObject private var themeManager: ThemeManager
+        
+        // MARK: - Properties
+        
+        let name: String
+        let color: Color
+        let childCount: Int
+        
+        // MARK: - Body
+        
+        var body: some View {
+            HStack(spacing: Layout.spacing) {
+                // Color indicator
+                Circle()
+                    .fill(color)
+                    .frame(width: Layout.colorIndicatorSize, height: Layout.colorIndicatorSize)
+                
+                // Category name
+                Text(name)
+                    .font(Layout.nameFont)
+                    .foregroundColor(themeManager.getThemeColor(.primaryText))
+                
+                Spacer(minLength: Layout.spacing)
+                
+                // Child count
+                if childCount > 0 {
+                    Text("\(childCount)")
+                        .font(Layout.countFont)
+                        .foregroundColor(themeManager.getThemeColor(.secondaryText))
+                        .frame(minWidth: 20)
+                }
+            }
+            .frame(height: Layout.itemHeight)
+            .padding(.horizontal, Layout.horizontalPadding)
+            .background(themeManager.getThemeColor(.background))
+            .scaleEffect(Layout.dragScale)
+            .shadow(
+                color: Color.black.opacity(Layout.dragShadowOpacity),
+                radius: Layout.dragShadowRadius
+            )
+        }
     }
     
     // MARK: - Initialization
@@ -169,6 +219,20 @@ struct SPCategoryItem: View {
         }
     }
     
+    // MARK: - Private Methods
+    
+    /// Handle drag start
+    private func handleDragStart() {
+        withAnimation(.easeInOut(duration: Layout.dragAnimationDuration)) {
+            self.isDragging = true
+            // Collapse if has children
+            if childCount > 0 && isExpanded {
+                onToggleExpand?()
+            }
+            self.onDragStarted?(self.id)
+        }
+    }
+    
     // MARK: - Gesture Handlers
     
     /// Combined gesture for long press and drag
@@ -182,10 +246,7 @@ struct SPCategoryItem: View {
                 }
             }
             .onEnded { _ in
-                withAnimation(.easeInOut(duration: Layout.dragAnimationDuration)) {
-                    self.isDragging = true
-                    self.onDragStarted?(self.id)
-                }
+                handleDragStart()
             }
             .sequenced(before: DragGesture())
             .onChanged { value in
@@ -224,37 +285,43 @@ struct SPCategoryItem: View {
     // MARK: - Body
     
     var body: some View {
-        HStack(spacing: Layout.spacing) {
-            // Level indent space
-            if level > 0 {
-                Spacer()
-                    .frame(width: CGFloat(level) * Layout.levelIndent)
-                    .accessibilityHidden(true)
+        Group {
+            if isDragging {
+                DraggingCategoryView(
+                    name: name,
+                    color: color,
+                    childCount: childCount
+                )
+                .offset(dragOffset)
+                .zIndex(Layout.dragZIndex)
+            } else {
+                HStack(spacing: Layout.spacing) {
+                    // Level indent space
+                    if level > 0 {
+                        Spacer()
+                            .frame(width: CGFloat(level) * Layout.levelIndent)
+                            .accessibilityHidden(true)
+                    }
+                    
+                    // Color indicator
+                    colorIndicator
+                    
+                    // Category name
+                    nameLabel
+                    
+                    Spacer(minLength: Layout.spacing)
+                    
+                    // Subcategory count
+                    childCountLabel
+                    
+                    // Arrow icon
+                    arrowIcon
+                }
+                .frame(height: Layout.itemHeight)
+                .padding(.horizontal, Layout.horizontalPadding)
+                .background(themeManager.getThemeColor(.background))
             }
-            
-            // Color indicator
-            colorIndicator
-            
-            // Category name
-            nameLabel
-            
-            Spacer(minLength: Layout.spacing)
-            
-            // Subcategory count
-            childCountLabel
-            
-            // Arrow icon
-            arrowIcon
         }
-        .frame(height: Layout.itemHeight)
-        .padding(.horizontal, Layout.horizontalPadding)
-        .background(themeManager.getThemeColor(.background))
-        .offset(dragOffset)
-        .scaleEffect(isDragging ? Layout.dragScale : 1.0)
-        .shadow(
-            color: isDragging ? Color.black.opacity(Layout.dragShadowOpacity) : .clear,
-            radius: Layout.dragShadowRadius
-        )
         .gesture(dragGesture)
         .contentShape(Rectangle())
         .onTapGesture {
