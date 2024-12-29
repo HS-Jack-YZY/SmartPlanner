@@ -1,7 +1,8 @@
 import SwiftUI
 
-/// 计划类别项
-/// 显示单个类别的信息，包括颜色标识、名称、子类别数量等
+/// Category item component
+/// Displays category information including color indicator, name, and subcategory count
+/// Supports drag and drop for category reordering and parent changes
 struct SPCategoryItem: View {
     // MARK: - Environment
     
@@ -9,23 +10,31 @@ struct SPCategoryItem: View {
     
     // MARK: - Properties
     
-    // 数据属性
-    let id: UUID                 // 类别唯一标识
-    let name: String            // 类别名称
-    let color: Color            // 类别颜色
-    let level: Int16            // 层级深度（0-5）
-    let isVisible: Bool         // 是否可见
-    let displayOrder: Int16     // 显示顺序（同级别内排序，值越小越靠前）
-    let parentId: UUID?         // 父类别ID（可选，level=0时为nil）
+    // Data properties
+    let id: UUID
+    let name: String
+    let color: Color
+    let level: Int16
+    let isVisible: Bool
+    let displayOrder: Int16
+    let parentId: UUID?
     
-    // UI 状态
-    let isExpanded: Bool        // 是否展开子列表
-    let showArrow: Bool         // 是否显示箭头
-    let childCount: Int         // 子类别数量
+    // UI states
+    let isExpanded: Bool
+    let showArrow: Bool
+    let childCount: Int
     
-    // 回调函数
-    let onToggleExpand: (() -> Void)?  // 展开/折叠回调
-    let onSelect: (() -> Void)?        // 选中回调
+    // Drag and drop states
+    @State private var isDragging: Bool = false
+    @State private var dragOffset: CGSize = .zero
+    @GestureState private var isLongPressed: Bool = false
+    
+    // Callbacks
+    let onToggleExpand: (() -> Void)?
+    let onSelect: (() -> Void)?
+    let onDragStarted: ((UUID) -> Void)?
+    let onDragChanged: ((UUID, CGPoint) -> Void)?
+    let onDragEnded: ((UUID, CGPoint) -> Void)?
     
     // MARK: - Layout Constants
     
@@ -43,24 +52,33 @@ struct SPCategoryItem: View {
         
         static let activeOpacity: Double = 1.0
         static let inactiveOpacity: Double = 0.5
+        
+        // Animation constants
+        static let dragScale: CGFloat = 1.05
+        static let dragShadowRadius: CGFloat = 10
+        static let dragShadowOpacity: Double = 0.2
+        static let dragAnimationDuration: Double = 0.2
     }
     
     // MARK: - Initialization
     
-    /// 初始化类别项
+    /// Initialize category item
     /// - Parameters:
-    ///   - id: 类别唯一标识
-    ///   - name: 类别名称
-    ///   - color: 类别颜色
-    ///   - level: 层级深度（0-5），0表示根类别
-    ///   - isVisible: 是否可见
-    ///   - displayOrder: 显示顺序（在同一层级内，值越小越靠前）
-    ///   - parentId: 父类别ID（level=0时为nil）
-    ///   - isExpanded: 是否展开子列表
-    ///   - showArrow: 是否显示箭头
-    ///   - childCount: 子类别数量
-    ///   - onToggleExpand: 展开/折叠回调
-    ///   - onSelect: 选中回调
+    ///   - id: Category unique identifier
+    ///   - name: Category name
+    ///   - color: Category color
+    ///   - level: Hierarchy depth (0-5), 0 means root category
+    ///   - isVisible: Whether the category is visible
+    ///   - displayOrder: Display order (within same level, smaller value comes first)
+    ///   - parentId: Parent category ID (nil for level 0)
+    ///   - isExpanded: Whether subcategories are expanded
+    ///   - showArrow: Whether to show expand/collapse arrow
+    ///   - childCount: Number of subcategories
+    ///   - onToggleExpand: Expand/collapse callback
+    ///   - onSelect: Selection callback
+    ///   - onDragStarted: Called when drag gesture starts
+    ///   - onDragChanged: Called when drag position changes
+    ///   - onDragEnded: Called when drag gesture ends
     init(
         id: UUID,
         name: String,
@@ -73,7 +91,10 @@ struct SPCategoryItem: View {
         showArrow: Bool = true,
         childCount: Int = 0,
         onToggleExpand: (() -> Void)? = nil,
-        onSelect: (() -> Void)? = nil
+        onSelect: (() -> Void)? = nil,
+        onDragStarted: ((UUID) -> Void)? = nil,
+        onDragChanged: ((UUID, CGPoint) -> Void)? = nil,
+        onDragEnded: ((UUID, CGPoint) -> Void)? = nil
     ) {
         self.id = id
         self.name = name
@@ -87,11 +108,14 @@ struct SPCategoryItem: View {
         self.childCount = childCount
         self.onToggleExpand = onToggleExpand
         self.onSelect = onSelect
+        self.onDragStarted = onDragStarted
+        self.onDragChanged = onDragChanged
+        self.onDragEnded = onDragEnded
     }
     
     // MARK: - Private Views
     
-    /// 颜色标识视图
+    /// Color indicator view
     private var colorIndicator: some View {
         Circle()
             .fill(color)
@@ -100,17 +124,17 @@ struct SPCategoryItem: View {
             .accessibilityHidden(true)
     }
     
-    /// 类别名称视图
+    /// Category name view
     private var nameLabel: some View {
         Text(name)
             .font(Layout.nameFont)
             .foregroundColor(themeManager.getThemeColor(.primaryText))
             .opacity(isVisible ? Layout.activeOpacity : Layout.inactiveOpacity)
-            .accessibilityLabel(Text("类别：\(name)"))
+            .accessibilityLabel(Text("Category: \(name)"))
             .accessibilityAddTraits(.isButton)
     }
     
-    /// 子类别数量视图
+    /// Subcategory count view
     private var childCountLabel: some View {
         Group {
             if childCount > 0 && !isExpanded {
@@ -119,12 +143,12 @@ struct SPCategoryItem: View {
                     .foregroundColor(themeManager.getThemeColor(.secondaryText))
                     .frame(minWidth: 20)
                     .opacity(isVisible ? Layout.activeOpacity : Layout.inactiveOpacity)
-                    .accessibilityLabel(Text("包含\(childCount)个子类别"))
+                    .accessibilityLabel(Text("Contains \(childCount) subcategories"))
             }
         }
     }
     
-    /// 箭头图标视图
+    /// Arrow icon view
     private var arrowIcon: some View {
         Group {
             if showArrow && childCount > 0 {
@@ -135,122 +159,189 @@ struct SPCategoryItem: View {
                     .frame(width: Layout.arrowTapArea, height: Layout.arrowTapArea)
                     .contentShape(Rectangle())
                     .onTapGesture {
-                        withAnimation(.easeInOut(duration: 0.2)) {
+                        withAnimation(.easeInOut(duration: Layout.dragAnimationDuration)) {
                             onToggleExpand?()
                         }
                     }
-                    .accessibilityLabel(Text(isExpanded ? "折叠" : "展开"))
+                    .accessibilityLabel(Text(isExpanded ? "Collapse" : "Expand"))
                     .accessibilityAddTraits(.isButton)
             }
         }
+    }
+    
+    // MARK: - Gesture Handlers
+    
+    /// Combined gesture for long press and drag
+    private var dragGesture: some Gesture {
+        LongPressGesture(minimumDuration: 0.5)
+            .updating($isLongPressed) { value, state, _ in
+                state = value
+                if value {
+                    let impact = UIImpactFeedbackGenerator(style: .medium)
+                    impact.impactOccurred()
+                }
+            }
+            .onEnded { _ in
+                withAnimation(.easeInOut(duration: Layout.dragAnimationDuration)) {
+                    self.isDragging = true
+                    self.onDragStarted?(self.id)
+                }
+            }
+            .sequenced(before: DragGesture())
+            .onChanged { value in
+                switch value {
+                case .first(true):
+                    // Long press is active
+                    break
+                case .second(true, let drag):
+                    self.dragOffset = drag?.translation ?? .zero
+                    if let location = drag?.location {
+                        self.onDragChanged?(self.id, location)
+                    }
+                default:
+                    break
+                }
+            }
+            .onEnded { value in
+                switch value {
+                case .second(true, let drag):
+                    withAnimation(.easeInOut(duration: Layout.dragAnimationDuration)) {
+                        self.isDragging = false
+                        self.dragOffset = .zero
+                        if let location = drag?.location {
+                            self.onDragEnded?(self.id, location)
+                        }
+                    }
+                default:
+                    withAnimation(.easeInOut(duration: Layout.dragAnimationDuration)) {
+                        self.isDragging = false
+                        self.dragOffset = .zero
+                    }
+                }
+            }
     }
     
     // MARK: - Body
     
     var body: some View {
         HStack(spacing: Layout.spacing) {
-            // 缩进空间
+            // Level indent space
             if level > 0 {
                 Spacer()
                     .frame(width: CGFloat(level) * Layout.levelIndent)
                     .accessibilityHidden(true)
             }
             
-            // 颜色标识
+            // Color indicator
             colorIndicator
             
-            // 类别名称
+            // Category name
             nameLabel
             
             Spacer(minLength: Layout.spacing)
             
-            // 子类别数量
+            // Subcategory count
             childCountLabel
             
-            // 箭头图标
+            // Arrow icon
             arrowIcon
         }
         .frame(height: Layout.itemHeight)
         .padding(.horizontal, Layout.horizontalPadding)
-        .contentShape(Rectangle())
         .background(themeManager.getThemeColor(.background))
+        .offset(dragOffset)
+        .scaleEffect(isDragging ? Layout.dragScale : 1.0)
+        .shadow(
+            color: isDragging ? Color.black.opacity(Layout.dragShadowOpacity) : .clear,
+            radius: Layout.dragShadowRadius
+        )
+        .gesture(dragGesture)
+        .contentShape(Rectangle())
         .onTapGesture {
             onSelect?()
         }
+        .animation(.easeInOut(duration: Layout.dragAnimationDuration), value: isDragging)
     }
 }
 
 // MARK: - Preview Provider
 
-#Preview("默认状态") {
-    // 默认状态预览
+#Preview("Default State") {
     VStack(spacing: 0) {
         SPCategoryItem(
             id: UUID(),
-            name: "工作",
+            name: "Work",
             color: .blue,
             isExpanded: true,
             childCount: 3,
             onToggleExpand: {
-                print("Toggle 工作")
+                print("Toggle Work")
             },
             onSelect: {
-                print("Select 工作")
+                print("Select Work")
+            },
+            onDragStarted: { id in
+                print("Start dragging \(id)")
+            },
+            onDragChanged: { id, location in
+                print("Dragging \(id) at \(location)")
+            },
+            onDragEnded: { id, location in
+                print("End dragging \(id) at \(location)")
             }
         )
         
         SPCategoryItem(
             id: UUID(),
-            name: "会议",
+            name: "Meetings",
             color: .purple,
             level: 1,
             displayOrder: 1,
             childCount: 2,
             onToggleExpand: {
-                print("Toggle 会议")
+                print("Toggle Meetings")
             },
             onSelect: {
-                print("Select 会议")
+                print("Select Meetings")
             }
         )
         
         SPCategoryItem(
             id: UUID(),
-            name: "周会",
+            name: "Weekly",
             color: .green,
             level: 2,
             displayOrder: 2,
             onSelect: {
-                print("Select 周会")
+                print("Select Weekly")
             }
         )
         
         SPCategoryItem(
             id: UUID(),
-            name: "休息",
+            name: "Break",
             color: .orange,
             isVisible: false,
             showArrow: false,
             onSelect: {
-                print("Select 休息")
+                print("Select Break")
             }
         )
     }
     .environmentObject(ThemeManager.shared)
 }
 
-#Preview("深色模式") {
-    // 深色模式预览
+#Preview("Dark Mode") {
     SPCategoryItem(
         id: UUID(),
-        name: "工作",
+        name: "Work",
         color: .blue,
         childCount: 3,
         onToggleExpand: {
-            print("Toggle 工作")
+            print("Toggle Work")
         },
         onSelect: {
-            print("Select 工作")
+            print("Select Work")
         }
     )
     .environmentObject(ThemeManager.shared)
