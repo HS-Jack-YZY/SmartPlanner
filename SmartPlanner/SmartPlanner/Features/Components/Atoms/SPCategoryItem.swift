@@ -23,6 +23,7 @@ struct SPCategoryItem: View {
     let isExpanded: Bool
     let showArrow: Bool
     let childCount: Int
+    let isOverlapped: Bool
     
     // Drag and drop states
     @State private var isDragging: Bool = false
@@ -52,6 +53,7 @@ struct SPCategoryItem: View {
         
         static let activeOpacity: Double = 1.0
         static let inactiveOpacity: Double = 0.5
+        static let overlapBackgroundOpacity: Double = 0.1
         
         // Animation constants
         static let dragScale: CGFloat = 1.05
@@ -124,6 +126,7 @@ struct SPCategoryItem: View {
     ///   - isExpanded: Whether subcategories are expanded
     ///   - showArrow: Whether to show expand/collapse arrow
     ///   - childCount: Number of subcategories
+    ///   - isOverlapped: Whether the category is overlapped
     ///   - onToggleExpand: Expand/collapse callback
     ///   - onSelect: Selection callback
     ///   - onDragStarted: Called when drag gesture starts
@@ -140,6 +143,7 @@ struct SPCategoryItem: View {
         isExpanded: Bool = false,
         showArrow: Bool = true,
         childCount: Int = 0,
+        isOverlapped: Bool = false,
         onToggleExpand: (() -> Void)? = nil,
         onSelect: (() -> Void)? = nil,
         onDragStarted: ((UUID) -> Void)? = nil,
@@ -156,6 +160,7 @@ struct SPCategoryItem: View {
         self.isExpanded = isExpanded
         self.showArrow = showArrow
         self.childCount = childCount
+        self.isOverlapped = isOverlapped
         self.onToggleExpand = onToggleExpand
         self.onSelect = onSelect
         self.onDragStarted = onDragStarted
@@ -319,7 +324,15 @@ struct SPCategoryItem: View {
                 }
                 .frame(height: Layout.itemHeight)
                 .padding(.horizontal, Layout.horizontalPadding)
-                .background(themeManager.getThemeColor(.background))
+                .background(
+                    Group {
+                        if isOverlapped {
+                            color.opacity(Layout.overlapBackgroundOpacity)
+                        } else {
+                            themeManager.getThemeColor(.background)
+                        }
+                    }
+                )
             }
         }
         .gesture(dragGesture)
@@ -328,6 +341,7 @@ struct SPCategoryItem: View {
             onSelect?()
         }
         .animation(.easeInOut(duration: Layout.dragAnimationDuration), value: isDragging)
+        .animation(.easeInOut(duration: Layout.dragAnimationDuration), value: isOverlapped)
     }
 }
 

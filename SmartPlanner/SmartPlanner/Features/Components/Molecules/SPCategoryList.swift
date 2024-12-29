@@ -37,6 +37,15 @@ struct SPCategoryList: View {
     /// Category expansion states cache
     @State private var expansionStates: [UUID: Bool] = [:]
     
+    /// Currently dragged category ID
+    @State private var draggingCategoryId: UUID?
+    
+    /// Current drag position
+    @State private var currentDragPosition: CGPoint?
+    
+    /// Overlapped category ID
+    @State private var overlappedCategoryId: UUID?
+    
     /// Category selection callback
     private let onSelectCategory: ((CategoryData) -> Void)?
     
@@ -50,6 +59,7 @@ struct SPCategoryList: View {
         static let emptyStateSpacing: CGFloat = 8
         static let emptyStateImageSize: CGFloat = 60
         static let emptyStatePadding: CGFloat = 20
+        static let itemHeight: CGFloat = 40
     }
     
     // MARK: - Initialization
@@ -133,6 +143,44 @@ struct SPCategoryList: View {
         return result
     }
     
+    /// Handle drag start
+    private func handleDragStart(_ categoryId: UUID) {
+        draggingCategoryId = categoryId
+        overlappedCategoryId = nil
+    }
+    
+    /// Handle drag position change
+    private func handleDragChange(_ categoryId: UUID, _ position: CGPoint) {
+        currentDragPosition = position
+        
+        // Find overlapped category
+        if let draggedCategory = categories.first(where: { $0.id == categoryId }) {
+            // Check for overlap with other categories
+            for category in visibleCategories {
+                if category.id != categoryId {
+                    // Calculate vertical distance
+                    let categoryY = CGFloat(visibleCategories.firstIndex(where: { $0.id == category.id }) ?? 0) * Layout.itemHeight
+                    let distance = abs(position.y - categoryY)
+                    
+                    if distance < Layout.itemHeight {
+                        overlappedCategoryId = category.id
+                        return
+                    }
+                }
+            }
+        }
+        
+        // No overlap found
+        overlappedCategoryId = nil
+    }
+    
+    /// Handle drag end
+    private func handleDragEnd(_ categoryId: UUID, _ position: CGPoint) {
+        draggingCategoryId = nil
+        currentDragPosition = nil
+        overlappedCategoryId = nil
+    }
+    
     // MARK: - Private Views
     
     /// Empty state view
@@ -176,6 +224,7 @@ struct SPCategoryList: View {
                                 isExpanded: expansionStates[category.id] ?? false,
                                 showArrow: !category.childIds.isEmpty,
                                 childCount: category.childIds.count,
+                                isOverlapped: category.id == overlappedCategoryId,
                                 onToggleExpand: {
                                     withAnimation(.easeInOut(duration: 0.2)) {
                                         toggleCategory(category)
@@ -183,6 +232,15 @@ struct SPCategoryList: View {
                                 },
                                 onSelect: {
                                     onSelectCategory?(category)
+                                },
+                                onDragStarted: { id in
+                                    handleDragStart(id)
+                                },
+                                onDragChanged: { id, location in
+                                    handleDragChange(id, location)
+                                },
+                                onDragEnded: { id, location in
+                                    handleDragEnd(id, location)
                                 }
                             )
                         }
