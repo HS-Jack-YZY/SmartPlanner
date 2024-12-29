@@ -139,9 +139,9 @@ SmartPlannerProject/                # 项目根目录
 │   │   └── project.pbxproj       # 项目配置文件
 │   │
 │   ├── SmartPlanner/            # 主项目目录
-│   │   ├── App/                 # 应用程序入口
+│   │   ├── Application/                 # 应用程序入口
 │   │   │   ├── SmartPlannerApp.swift
-│   │   │   └── AppDelegate.swift
+│   │   │   └── ContentView.swift
 │   │   │
 │   │   ├── Features/           # 功能模块（按业务划分）
 │   │   │   ├── Calendar/       # 日历功能模块

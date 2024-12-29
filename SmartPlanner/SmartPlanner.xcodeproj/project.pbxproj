@@ -52,39 +52,9 @@
 		4A36D3702D1196940083245C /* PlanTemplate+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "PlanTemplate+CoreDataProperties.swift"; path = "SmartPlanner/Models/CoreDataModels/PlanTemplate+CoreDataProperties.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
-/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		4A36D2BD2D09CB4E0083245C /* Exceptions for "SmartPlanner" folder in "SmartPlannerTests" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				Models/SmartPlanner.xcdatamodeld,
-			);
-			target = 4A36D1342D0442C40083245C /* SmartPlannerTests */;
-		};
-		4A36D38F2D11A2850083245C /* Exceptions for "SmartPlanner" folder in "SmartPlanner" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				"Models/CoreDataModels/PlanBlockInstance+CoreDataClass.swift",
-				"Models/CoreDataModels/PlanBlockInstance+CoreDataProperties.swift",
-				"Models/CoreDataModels/PlanBlockTemplate+CoreDataClass.swift",
-				"Models/CoreDataModels/PlanBlockTemplate+CoreDataProperties.swift",
-				"Models/CoreDataModels/PlanCategory+CoreDataClass.swift",
-				"Models/CoreDataModels/PlanCategory+CoreDataProperties.swift",
-				"Models/CoreDataModels/PlanInstance+CoreDataClass.swift",
-				"Models/CoreDataModels/PlanInstance+CoreDataProperties.swift",
-				"Models/CoreDataModels/PlanTemplate+CoreDataClass.swift",
-				"Models/CoreDataModels/PlanTemplate+CoreDataProperties.swift",
-			);
-			target = 4A36D1242D0442C30083245C /* SmartPlanner */;
-		};
-/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
-
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		4A36D1272D0442C30083245C /* SmartPlanner */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				4A36D38F2D11A2850083245C /* Exceptions for "SmartPlanner" folder in "SmartPlanner" target */,
-				4A36D2BD2D09CB4E0083245C /* Exceptions for "SmartPlanner" folder in "SmartPlannerTests" target */,
-			);
 			path = SmartPlanner;
 			sourceTree = "<group>";
 		};
