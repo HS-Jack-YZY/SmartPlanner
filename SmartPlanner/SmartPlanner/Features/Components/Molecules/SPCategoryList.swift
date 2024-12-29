@@ -22,8 +22,8 @@ struct CategoryData: Identifiable, Equatable {
     }
 }
 
-/// 类别列表管理组件
-/// 负责管理和显示类别项的列表，处理层级关系和展开/折叠状态
+/// Category list management component
+/// Manages and displays category items, handles hierarchy relationships and expansion states
 struct SPCategoryList: View {
     // MARK: - Environment
     
@@ -37,11 +37,20 @@ struct SPCategoryList: View {
     /// Category expansion states cache
     @State private var expansionStates: [UUID: Bool] = [:]
     
+    /// Currently dragging category ID
+    @State private var draggingCategoryId: UUID?
+    
+    /// Potential parent category ID during drag
+    @State private var potentialParentId: UUID?
+    
     /// Category selection callback
     private let onSelectCategory: ((CategoryData) -> Void)?
     
     /// Category expansion state callback
     private let onToggleExpand: ((CategoryData) -> Void)?
+    
+    /// Category hierarchy update callback
+    private let onUpdateHierarchy: ((UUID, UUID?) -> Void)?
     
     // MARK: - Layout Constants
     
@@ -50,6 +59,7 @@ struct SPCategoryList: View {
         static let emptyStateSpacing: CGFloat = 8
         static let emptyStateImageSize: CGFloat = 60
         static let emptyStatePadding: CGFloat = 20
+        static let dragHitTestArea: CGFloat = 44
     }
     
     // MARK: - Initialization
@@ -57,11 +67,13 @@ struct SPCategoryList: View {
     init(
         categories: [CategoryData],
         onSelectCategory: ((CategoryData) -> Void)? = nil,
-        onToggleExpand: ((CategoryData) -> Void)? = nil
+        onToggleExpand: ((CategoryData) -> Void)? = nil,
+        onUpdateHierarchy: ((UUID, UUID?) -> Void)? = nil
     ) {
         _categories = State(initialValue: categories)
         self.onSelectCategory = onSelectCategory
         self.onToggleExpand = onToggleExpand
+        self.onUpdateHierarchy = onUpdateHierarchy
         
         // Initialize expansion states
         var initialStates: [UUID: Bool] = [:]
@@ -133,6 +145,76 @@ struct SPCategoryList: View {
         return result
     }
     
+    /// Check if a category can be a valid parent
+    private func canBeParent(_ categoryId: UUID, for draggingId: UUID) -> Bool {
+        guard let category = categories.first(where: { $0.id == categoryId }),
+              let draggingCategory = categories.first(where: { $0.id == draggingId })
+        else { return false }
+        
+        // Cannot be its own parent
+        if categoryId == draggingId { return false }
+        
+        // Cannot be a child of its own children
+        if isDescendant(categoryId, of: draggingId) { return false }
+        
+        // Level check (max level is 5)
+        let newLevel = category.level + 1
+        if newLevel > 5 { return false }
+        
+        return true
+    }
+    
+    /// Check if categoryId is a descendant of ancestorId
+    private func isDescendant(_ categoryId: UUID, of ancestorId: UUID) -> Bool {
+        guard let category = categories.first(where: { $0.id == categoryId }) else { return false }
+        
+        if category.parentId == ancestorId { return true }
+        
+        if let parentId = category.parentId {
+            return isDescendant(parentId, of: ancestorId)
+        }
+        
+        return false
+    }
+    
+    /// Handle drag started
+    private func handleDragStarted(_ categoryId: UUID) {
+        draggingCategoryId = categoryId
+    }
+    
+    /// Handle drag position changed
+    private func handleDragChanged(_ categoryId: UUID, _ location: CGPoint) {
+        // Find potential parent based on location
+        if let hitTestId = findCategoryAt(location),
+           canBeParent(hitTestId, for: categoryId) {
+            potentialParentId = hitTestId
+        } else {
+            potentialParentId = nil
+        }
+    }
+    
+    /// Handle drag ended
+    private func handleDragEnded(_ categoryId: UUID, _ location: CGPoint) {
+        defer {
+            draggingCategoryId = nil
+            potentialParentId = nil
+        }
+        
+        // Update hierarchy if needed
+        if let newParentId = potentialParentId {
+            onUpdateHierarchy?(categoryId, newParentId)
+        }
+    }
+    
+    /// Find category at point
+    private func findCategoryAt(_ point: CGPoint) -> UUID? {
+        // This is a placeholder. In a real implementation, you would:
+        // 1. Convert point to view coordinates
+        // 2. Hit test against category item frames
+        // 3. Return the hit category's ID
+        return nil
+    }
+    
     // MARK: - Private Views
     
     /// Empty state view
@@ -183,7 +265,23 @@ struct SPCategoryList: View {
                                 },
                                 onSelect: {
                                     onSelectCategory?(category)
+                                },
+                                onDragStarted: { id in
+                                    handleDragStarted(id)
+                                },
+                                onDragChanged: { id, location in
+                                    handleDragChanged(id, location)
+                                },
+                                onDragEnded: { id, location in
+                                    handleDragEnded(id, location)
                                 }
+                            )
+                            .overlay(
+                                potentialParentId == category.id ?
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .stroke(themeManager.getThemeColor(.primary), lineWidth: 2)
+                                        .padding(.horizontal, -4)
+                                    : nil
                             )
                         }
                     }
@@ -358,7 +456,10 @@ struct SPCategoryList: View {
                     childIds: []
                 )
             ]
-        }()
+        }(),
+        onUpdateHierarchy: { categoryId, newParentId in
+            print("Update hierarchy: move \(categoryId) to parent \(String(describing: newParentId))")
+        }
     )
     .environmentObject(ThemeManager.shared)
 }
