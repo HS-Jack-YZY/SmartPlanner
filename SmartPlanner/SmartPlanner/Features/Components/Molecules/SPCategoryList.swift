@@ -180,6 +180,18 @@ struct SPCategoryList: View {
     /// Handle drag started
     private func handleDragStarted(_ categoryId: UUID) {
         draggingCategoryId = categoryId
+        
+        // Collapse the category if it has children
+        if let category = categories.first(where: { $0.id == categoryId }),
+           !category.childIds.isEmpty {
+            expansionStates[categoryId] = false
+            if let index = categories.firstIndex(where: { $0.id == categoryId }) {
+                var updatedCategory = categories[index]
+                updatedCategory.isExpanded = false
+                categories[index] = updatedCategory
+                onToggleExpand?(updatedCategory)
+            }
+        }
     }
     
     /// Handle drag position changed
@@ -283,6 +295,7 @@ struct SPCategoryList: View {
                                         .padding(.horizontal, -4)
                                     : nil
                             )
+                            .zIndex(draggingCategoryId == category.id ? 100 : 0)
                         }
                     }
                 }
