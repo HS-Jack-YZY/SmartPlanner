@@ -122,109 +122,130 @@ SmartPlannerProject/                # 项目根目录
 │   ├── Smartplanner.md           # 项目概述
 │   ├── GitCommitPrinciple.md     # Git提交规范
 │   ├── CodingPrinciples.md       # 编码规范
+│   ├── UI/                       # UI设计文档
+│   │   ├── CategoryListItemLayout.md
+│   │   ├── CategoryQuickPanelDesign.md
+│   │   └── CategoryUIDesign.md
 │   └── iteration_v1/             # 第一轮迭代文档
-│       ├── DevelopmentGuideV1.md        # 开发指南
-│       ├── DatabaseDesignV1.md          # 数据库设计文档
-│       ├── DataValidationImplementationPlan.md  # 数据验证实现计划
-│       ├── ValidationRulesRecord.md     # 验证规则记录
-│       ├── prdV1.md                     # 产品需求文档
-│       └── tddV1.md                     # 技术设计文档
+│       ├── DevelopmentGuideV1.md
+│       ├── DatabaseDesignV1.md
+│       ├── DataValidationImplementationPlan.md
+│       ├── ValidationRulesRecord.md
+│       ├── prdV1.md
+│       └── tddV1.md
 │
 ├── SmartPlanner/                 # Xcode项目目录
-│   ├── SmartPlanner.xcodeproj/  # Xcode项目配置
-│   │   └── project.pbxproj      # 项目配置文件
+│   ├── SmartPlanner.xcodeproj/   # Xcode项目配置
+│   │   └── project.pbxproj       # 项目配置文件
 │   │
 │   ├── SmartPlanner/            # 主项目目录
-│   │   ├── Application/        # 应用程序入口
-│   │   │   ├── SmartPlannerApp.swift  # 应用程序入口点
-│   │   │   └── ContentView.swift      # 主内容视图
+│   │   ├── App/                 # 应用程序入口
+│   │   │   ├── SmartPlannerApp.swift
+│   │   │   └── AppDelegate.swift
 │   │   │
-│   │   ├── Features/           # 功能模块
-│   │   │   ├── Components/     # UI组件
-│   │   │   │   ├── Atoms/     # 原子组件
+│   │   ├── Features/           # 功能模块（按业务划分）
+│   │   │   ├── Calendar/       # 日历功能模块
+│   │   │   │   ├── Views/     # 视图
+│   │   │   │   │   ├── CalendarView.swift
+│   │   │   │   │   ├── DayTimelineView.swift
+│   │   │   │   │   └── MonthCalendarView.swift
+│   │   │   │   ├── ViewModels/ # 视图模型
+│   │   │   │   │   ├── CalendarViewModel.swift
+│   │   │   │   │   ├── DayTimelineViewModel.swift
+│   │   │   │   │   └── MonthCalendarViewModel.swift
+│   │   │   │   └── Models/    # 模型
+│   │   │   │       └── CalendarData.swift
+│   │   │   │
+│   │   │   ├── Category/      # 分类功能模块
+│   │   │   │   ├── Views/
+│   │   │   │   │   ├── CategoryListView.swift
+│   │   │   │   │   └── CategoryDetailView.swift
+│   │   │   │   ├── ViewModels/
+│   │   │   │   │   ├── CategoryListViewModel.swift
+│   │   │   │   │   └── CategoryDetailViewModel.swift
+│   │   │   │   └── Models/
+│   │   │   │       └── CategoryModels.swift
+│   │   │   │
+│   │   │   └── Planning/      # 计划功能模块
+│   │   │       ├── Views/
+│   │   │       │   ├── PlanListView.swift
+│   │   │       │   └── PlanDetailView.swift
+│   │   │       ├── ViewModels/
+│   │   │       │   ├── PlanListViewModel.swift
+│   │   │       │   └── PlanDetailViewModel.swift
+│   │   │       └── Models/
+│   │   │           └── PlanModels.swift
+│   │   │
+│   │   ├── Core/              # 核心功能
+│   │   │   ├── Models/        # 核心数据模型
+│   │   │   │   ├── CoreDataModels/  # Core Data实体
+│   │   │   │   │   [保持现有Core Data模型结构...]
+│   │   │   │   └── Validation/     # 数据验证
+│   │   │   │       [保持现有验证结构...]
+│   │   │   │
+│   │   │   ├── Services/      # 核心服务
+│   │   │   │   ├── DataService/    # 数据服务
+│   │   │   │   │   ├── CoreDataStack.swift
+│   │   │   │   │   ├── DataManager.swift
+│   │   │   │   │   └── DataManagerError.swift
+│   │   │   │   ├── ValidationService/  # 验证服务
+│   │   │   │   │   [保持现有验证服务结构...]
+│   │   │   │   └── LocalizationService/  # 本地化服务
+│   │   │   │       └── LanguageManager.swift
+│   │   │   │
+│   │   │   └── Protocols/     # 核心协议
+│   │   │       ├── ViewModelProtocol.swift
+│   │   │       └── ServiceProtocol.swift
+│   │   │
+│   │   ├── UI/               # UI组件库
+│   │   │   ├── Components/   # 可重用组件
+│   │   │   │   ├── Atoms/   # 原子组件
+│   │   │   │   │   ├── SPButton.swift
+│   │   │   │   │   └── SPTextField.swift
 │   │   │   │   ├── Molecules/ # 分子组件
-│   │   │   │   │   ├── SPTimelineHeaderView.swift  # 时间线头部视图
-│   │   │   │   │   ├── SPBottomToolbar.swift      # 底部工具栏
-│   │   │   │   │   └── SPNavigationBar.swift      # 导航栏
+│   │   │   │   │   ├── SPToolbar.swift
+│   │   │   │   │   └── SPNavigationBar.swift
 │   │   │   │   └── Organisms/ # 有机体组件
-│   │   │   │       ├── SPCalendarView.swift       # 日历视图
-│   │   │   │       ├── SPDayTimelineView.swift    # 日视图
-│   │   │   │       ├── SPMonthCalendarView.swift  # 月视图
-│   │   │   │       └── SPTimelineContentView.swift # 时间线内容视图
-│   │   │   └── Theme/         # 主题系统
-│   │   │       ├── FontTheme.swift    # 字体主题
-│   │   │       ├── ThemeManager.swift # 主题管理
-│   │   │       └── ThemePreview.swift # 主题预览
+│   │   │   │       └── SPNavigationView.swift
+│   │   │   │
+│   │   │   ├── Theme/       # 主题系统
+│   │   │   │   ├── ThemeManager.swift
+│   │   │   │   ├── ColorTheme.swift
+│   │   │   │   └── FontTheme.swift
+│   │   │   │
+│   │   │   └── Modifiers/   # 自定义修饰器
+│   │   │       └── ViewModifiers.swift
 │   │   │
-│   │   ├── Models/            # 数据模型
-│   │   │   ├── CoreDataModels/  # Core Data实体
-│   │   │   │   ├── PlanCategory+CoreDataClass.swift
-│   │   │   │   ├── PlanCategory+CoreDataProperties.swift
-│   │   │   │   ├── PlanTemplate+CoreDataClass.swift
-│   │   │   │   ├── PlanTemplate+CoreDataProperties.swift
-│   │   │   │   ├── PlanInstance+CoreDataClass.swift
-│   │   │   │   ├── PlanInstance+CoreDataProperties.swift
-│   │   │   │   ├── PlanBlockTemplate+CoreDataClass.swift
-│   │   │   │   ├── PlanBlockTemplate+CoreDataProperties.swift
-│   │   │   │   ├── PlanBlockInstance+CoreDataClass.swift
-│   │   │   │   └── PlanBlockInstance+CoreDataProperties.swift
-│   │   │   ├── Validation/     # 数据验证
-│   │   │   │   ├── PlanCategory+Validation.swift
-│   │   │   │   ├── PlanTemplate+Validation.swift
-│   │   │   │   ├── PlanInstance+Validation.swift
-│   │   │   │   ├── PlanBlockTemplate+Validation.swift
-│   │   │   │   └── PlanBlockInstance+Validation.swift
-│   │   │   └── SmartPlanner.xcdatamodeld/  # Core Data模型文件
+│   │   ├── Common/           # 通用功能
+│   │   │   ├── Extensions/   # 扩展
+│   │   │   │   ├── Foundation/
+│   │   │   │   │   └── Date+Extensions.swift
+│   │   │   │   └── SwiftUI/
+│   │   │   │       └── View+Extensions.swift
+│   │   │   │
+│   │   │   └── Utilities/    # 工具类
+│   │   │       ├── Logger/
+│   │   │       │   └── SPLogger.swift
+│   │   │       └── Helpers/
+│   │   │           └── DateHelper.swift
 │   │   │
-│   │   ├── Resources/         # 资源文件
-│   │   │   ├── Assets.xcassets/  # 资源目录
-│   │   │   │   ├── AppIcon.appiconset/      # 应用图标
-│   │   │   │   ├── AccentColor.colorset/    # 强调色
-│   │   │   │   └── Colors/                  # 颜色资源
-│   │   │   │       ├── AppPrimaryColor.colorset
-│   │   │   │       ├── AppSecondaryColor.colorset
-│   │   │   │       ├── BackgroundColor.colorset
-│   │   │   │       ├── SecondaryBackgroundColor.colorset
-│   │   │   │       ├── PrimaryTextColor.colorset
-│   │   │   │       ├── SecondaryTextColor.colorset
-│   │   │   │       ├── WorkBlockColor.colorset
-│   │   │   │       ├── PersonalBlockColor.colorset
-│   │   │   │       ├── CalendarOutOfMonthTextColor.colorset
-│   │   │   │       ├── CalendarSelectedBackgroundColor.colorset
-│   │   │   │       ├── CalendarTodayTextColor.colorset
-│   │   │   │       ├── CalendarToolbarTintColor.colorset
-│   │   │   │       ├── CalendarWeekendTextColor.colorset
-│   │   │   │       ├── SuccessColor.colorset
-│   │   │   │       ├── WarningColor.colorset
-│   │   │   │       └── ErrorColor.colorset
-│   │   │   ├── Localizations/  # 本地化资源
-│   │   │   │   ├── en.lproj/
-│   │   │   │   └── zh-Hans.lproj/
-│   │   │   └── Preview Content/  # 预览资源
-│   │   │       └── Preview Assets.xcassets
-│   │   │
-│   │   ├── Services/          # 服务层
-│   │   │   ├── DataManager/   # 数据管理服务
-│   │   │   │   ├── CoreDataStack.swift   # Core Data基础设施
-│   │   │   │   ├── DataManager.swift     # 数据管理器
-│   │   │   │   ├── DataManagerError.swift # 错误类型定义
-│   │   │   │   └── Validation/           # 验证服务
-│   │   │   │       ├── ValidationError.swift    # 验证错误
-│   │   │   │       ├── ValidationProtocols.swift # 验证协议
-│   │   │   │       └── ValidationRules.swift    # 验证规则
-│   │   │   └── Localization/  # 本地化服务
-│   │   │       └── LanguageManager.swift  # 语言管��器
-│   │   │
-│   │   └── Utilities/         # 工具类
-│   │       ├── Date/          # 日期工具
-│   │       │   └── DateHelper.swift  # 日期辅助工具
-│   │       └── Logger/        # 日志工具
-│   │           └── SPLogger.swift  # 日志管理器
+│   │   └── Resources/        # 资源文件
+│   │       [保持现有资源结构...]
 │   │
-│   ├── SmartPlannerTests/     # 单元测试
-│   └── SmartPlannerUITests/   # UI测试
-│       ├── SmartPlannerUITests.swift
-│       └── SmartPlannerUITestsLaunchTests.swift
+│   ├── SmartPlannerTests/    # 单元测试
+│   │   ├── Features/        # 功能测试
+│   │   │   ├── Calendar/
+│   │   │   ├── Category/
+│   │   │   └── Planning/
+│   │   ├── Core/           # 核心功能测试
+│   │   │   ├── Models/
+│   │   │   └── Services/
+│   │   └── UI/            # UI组件测试
+│   │       └── Components/
+│   │
+│   └── SmartPlannerUITests/  # UI测试
+│       ├── Features/
+│       └── Scenarios/
 ```
 
 ## 依赖关系
@@ -274,7 +295,7 @@ SmartPlannerProject/                # 项目根目录
 - **CoreDataModels**
   - 直接依赖：Foundation, CoreData
   - 被引用：DataManager, ValidationService
-  - 关键功���：数据结构定义
+  - 关键功能：数据结构定义
   - 修改风险：高
 
 - **Validation**
@@ -450,7 +471,7 @@ graph TD
 
 #### ValidationProtocols
 - **直接依赖**
-  - 框���：Foundation, CoreData
+  - 框架：Foundation, CoreData
 - **被引用**
   - ValidationService
   - ValidationRules
