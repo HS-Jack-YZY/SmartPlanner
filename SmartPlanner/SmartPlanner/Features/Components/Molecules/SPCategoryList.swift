@@ -34,6 +34,18 @@ struct SPCategoryList: View {
     /// Category data model
     @State private var categories: [CategoryData]
     
+    /// Category expansion states cache
+    @State private var expansionStates: [UUID: Bool] = [:]
+    
+    /// Currently dragged category ID
+    @State private var draggingCategoryId: UUID?
+    
+    /// Current drag position
+    @State private var currentDragPosition: CGPoint?
+    
+    /// Overlapped category ID
+    @State private var overlappedCategoryId: UUID?
+    
     /// Category selection callback
     private let onSelectCategory: ((CategoryData) -> Void)?
     
@@ -47,6 +59,7 @@ struct SPCategoryList: View {
         static let emptyStateSpacing: CGFloat = 8
         static let emptyStateImageSize: CGFloat = 60
         static let emptyStatePadding: CGFloat = 20
+        static let itemHeight: CGFloat = 40
     }
     
     // MARK: - Initialization
@@ -59,41 +72,47 @@ struct SPCategoryList: View {
         _categories = State(initialValue: categories)
         self.onSelectCategory = onSelectCategory
         self.onToggleExpand = onToggleExpand
+        
+        // Initialize expansion states
+        var initialStates: [UUID: Bool] = [:]
+        for category in categories {
+            initialStates[category.id] = category.isExpanded
+        }
+        _expansionStates = State(initialValue: initialStates)
     }
+    
+    // MARK: - Position Tracking
+    
+    private struct CategoryPositionPreferenceKey: PreferenceKey {
+        static var defaultValue: [UUID: CGRect] = [:]
+        
+        static func reduce(value: inout [UUID: CGRect], nextValue: () -> [UUID: CGRect]) {
+            value.merge(nextValue()) { current, _ in current }
+        }
+    }
+    
+    @State private var categoryPositions: [UUID: CGRect] = [:]
     
     // MARK: - Private Methods
     
     /// Toggle category expansion state
     private func toggleCategory(_ targetCategory: CategoryData) {
-        categories = updateCategoryExpansion(in: categories, targetId: targetCategory.id)
-        if let updatedCategory = findCategory(id: targetCategory.id, in: categories) {
+        // Update expansion state
+        expansionStates[targetCategory.id] = !(expansionStates[targetCategory.id] ?? false)
+        
+        // Update category
+        if let index = categories.firstIndex(where: { $0.id == targetCategory.id }) {
+            var updatedCategory = categories[index]
+            updatedCategory.isExpanded = expansionStates[targetCategory.id] ?? false
+            categories[index] = updatedCategory
             onToggleExpand?(updatedCategory)
         }
-    }
-    
-    /// Update category expansion state recursively
-    private func updateCategoryExpansion(in categories: [CategoryData], targetId: UUID) -> [CategoryData] {
-        var updatedCategories = categories
-        
-        for index in updatedCategories.indices {
-            if updatedCategories[index].id == targetId {
-                updatedCategories[index].toggleExpansion()
-                return updatedCategories
-            }
-        }
-        
-        return updatedCategories
-    }
-    
-    /// Find category by id
-    private func findCategory(id: UUID, in categories: [CategoryData]) -> CategoryData? {
-        categories.first { $0.id == id }
     }
     
     /// Get children for a category
     private func getChildren(for category: CategoryData) -> [CategoryData] {
         category.childIds.compactMap { childId in
-            findCategory(id: childId, in: categories)
+            categories.first { $0.id == childId }
         }.sorted { $0.displayOrder < $1.displayOrder }
     }
     
@@ -110,7 +129,7 @@ struct SPCategoryList: View {
             result.append(category)
             
             // Add visible children if expanded
-            if category.isExpanded {
+            if expansionStates[category.id] ?? false {
                 result.append(contentsOf: getVisibleChildren(category))
             }
         }
@@ -128,12 +147,43 @@ struct SPCategoryList: View {
             result.append(child)
             
             // Recursively add children if expanded
-            if child.isExpanded {
+            if expansionStates[child.id] ?? false {
                 result.append(contentsOf: getVisibleChildren(child))
             }
         }
         
         return result
+    }
+    
+    /// Handle drag start
+    private func handleDragStart(_ categoryId: UUID) {
+        draggingCategoryId = categoryId
+        overlappedCategoryId = nil
+    }
+    
+    /// Handle drag position change
+    private func handleDragChange(_ categoryId: UUID, _ position: CGPoint) {
+        currentDragPosition = position
+        
+        // Find overlapped category based on actual positions
+        if let draggedCategory = categories.first(where: { $0.id == categoryId }) {
+            for (id, frame) in categoryPositions {
+                if id != categoryId && frame.contains(position) {
+                    overlappedCategoryId = id
+                    return
+                }
+            }
+        }
+        
+        // No overlap found
+        overlappedCategoryId = nil
+    }
+    
+    /// Handle drag end
+    private func handleDragEnd(_ categoryId: UUID, _ position: CGPoint) {
+        draggingCategoryId = nil
+        currentDragPosition = nil
+        overlappedCategoryId = nil
     }
     
     // MARK: - Private Views
@@ -176,9 +226,10 @@ struct SPCategoryList: View {
                                 isVisible: category.isVisible,
                                 displayOrder: category.displayOrder,
                                 parentId: category.parentId,
-                                isExpanded: category.isExpanded,
+                                isExpanded: expansionStates[category.id] ?? false,
                                 showArrow: !category.childIds.isEmpty,
                                 childCount: category.childIds.count,
+                                isOverlapped: category.id == overlappedCategoryId,
                                 onToggleExpand: {
                                     withAnimation(.easeInOut(duration: 0.2)) {
                                         toggleCategory(category)
@@ -186,10 +237,30 @@ struct SPCategoryList: View {
                                 },
                                 onSelect: {
                                     onSelectCategory?(category)
+                                },
+                                onDragStarted: { id in
+                                    handleDragStart(id)
+                                },
+                                onDragChanged: { id, location in
+                                    handleDragChange(id, location)
+                                },
+                                onDragEnded: { id, location in
+                                    handleDragEnd(id, location)
+                                }
+                            )
+                            .background(
+                                GeometryReader { geometry in
+                                    Color.clear.preference(
+                                        key: CategoryPositionPreferenceKey.self,
+                                        value: [category.id: geometry.frame(in: .global)]
+                                    )
                                 }
                             )
                         }
                     }
+                }
+                .onPreferenceChange(CategoryPositionPreferenceKey.self) { positions in
+                    categoryPositions = positions
                 }
             }
         }
@@ -198,92 +269,197 @@ struct SPCategoryList: View {
 
 // MARK: - Preview Provider
 
-struct SPCategoryList_Previews: PreviewProvider {
-    static var previews: some View {
-        Group {
-            // With data
-            SPCategoryList(
-                categories: {
-                    let weeklyId = UUID()
-                    let meetingsId = UUID()
-                    let workId = UUID()
-                    
-                    return [
-                        CategoryData(
-                            id: workId,
-                            name: "Work",
-                            color: .blue,
-                            level: 0,
-                            isVisible: true,
-                            displayOrder: 0,
-                            parentId: nil,
-                            isExpanded: true,
-                            childIds: [meetingsId]
-                        ),
-                        CategoryData(
-                            id: meetingsId,
-                            name: "Meetings",
-                            color: .purple,
-                            level: 1,
-                            isVisible: true,
-                            displayOrder: 0,
-                            parentId: workId,
-                            isExpanded: false,
-                            childIds: [weeklyId]
-                        ),
-                        CategoryData(
-                            id: weeklyId,
-                            name: "Weekly",
-                            color: .green,
-                            level: 2,
-                            isVisible: true,
-                            displayOrder: 0,
-                            parentId: meetingsId,
-                            isExpanded: false,
-                            childIds: []
-                        ),
-                        CategoryData(
-                            id: UUID(),
-                            name: "Personal",
-                            color: .orange,
-                            level: 0,
-                            isVisible: true,
-                            displayOrder: 1,
-                            parentId: nil,
-                            isExpanded: false,
-                            childIds: []
-                        )
-                    ]
-                }()
-            )
-            .environmentObject(ThemeManager.shared)
-            .previewDisplayName("With Data")
+#Preview("With Data", traits: .sizeThatFitsLayout) {
+    // With data
+    SPCategoryList(
+        categories: {
+            let workId = UUID()
+            let meetingsId = UUID()
+            let weeklyId = UUID()
+            let monthlyId = UUID()
+            let projectsId = UUID()
+            let projectAId = UUID()
+            let projectBId = UUID()
+            let personalId = UUID()
+            let fitnessId = UUID()
+            let yogaId = UUID()
+            let studyId = UUID()
+            let languageId = UUID()
             
-            // Empty state
-            SPCategoryList(categories: [])
-                .environmentObject(ThemeManager.shared)
-                .previewDisplayName("Empty State")
-            
-            // Dark mode
-            SPCategoryList(
-                categories: [
-                    CategoryData(
-                        id: UUID(),
-                        name: "Work",
-                        color: .blue,
-                        level: 0,
-                        isVisible: true,
-                        displayOrder: 0,
-                        parentId: nil,
-                        isExpanded: false,
-                        childIds: []
-                    )
-                ]
+            return [
+                // Work Category
+                CategoryData(
+                    id: workId,
+                    name: "Work",
+                    color: .blue,
+                    level: 0,
+                    isVisible: true,
+                    displayOrder: 0,
+                    parentId: nil,
+                    isExpanded: true,
+                    childIds: [meetingsId, projectsId]
+                ),
+                // Meetings Category
+                CategoryData(
+                    id: meetingsId,
+                    name: "Meetings",
+                    color: .purple,
+                    level: 1,
+                    isVisible: true,
+                    displayOrder: 0,
+                    parentId: workId,
+                    isExpanded: true,
+                    childIds: [weeklyId, monthlyId]
+                ),
+                // Weekly Meetings
+                CategoryData(
+                    id: weeklyId,
+                    name: "Weekly",
+                    color: .green,
+                    level: 2,
+                    isVisible: true,
+                    displayOrder: 0,
+                    parentId: meetingsId,
+                    isExpanded: false,
+                    childIds: []
+                ),
+                // Monthly Meetings
+                CategoryData(
+                    id: monthlyId,
+                    name: "Monthly",
+                    color: .mint,
+                    level: 2,
+                    isVisible: true,
+                    displayOrder: 1,
+                    parentId: meetingsId,
+                    isExpanded: false,
+                    childIds: []
+                ),
+                // Projects Category
+                CategoryData(
+                    id: projectsId,
+                    name: "Projects",
+                    color: .indigo,
+                    level: 1,
+                    isVisible: true,
+                    displayOrder: 1,
+                    parentId: workId,
+                    isExpanded: true,
+                    childIds: [projectAId, projectBId]
+                ),
+                // Project A
+                CategoryData(
+                    id: projectAId,
+                    name: "Project A",
+                    color: .cyan,
+                    level: 2,
+                    isVisible: true,
+                    displayOrder: 0,
+                    parentId: projectsId,
+                    isExpanded: false,
+                    childIds: []
+                ),
+                // Project B
+                CategoryData(
+                    id: projectBId,
+                    name: "Project B",
+                    color: .teal,
+                    level: 2,
+                    isVisible: true,
+                    displayOrder: 1,
+                    parentId: projectsId,
+                    isExpanded: false,
+                    childIds: []
+                ),
+                // Personal Category
+                CategoryData(
+                    id: personalId,
+                    name: "Personal",
+                    color: .orange,
+                    level: 0,
+                    isVisible: true,
+                    displayOrder: 1,
+                    parentId: nil,
+                    isExpanded: true,
+                    childIds: [fitnessId, studyId]
+                ),
+                // Fitness Category
+                CategoryData(
+                    id: fitnessId,
+                    name: "Fitness",
+                    color: .red,
+                    level: 1,
+                    isVisible: true,
+                    displayOrder: 0,
+                    parentId: personalId,
+                    isExpanded: true,
+                    childIds: [yogaId]
+                ),
+                // Yoga
+                CategoryData(
+                    id: yogaId,
+                    name: "Yoga",
+                    color: .pink,
+                    level: 2,
+                    isVisible: true,
+                    displayOrder: 0,
+                    parentId: fitnessId,
+                    isExpanded: false,
+                    childIds: []
+                ),
+                // Study Category
+                CategoryData(
+                    id: studyId,
+                    name: "Study",
+                    color: .brown,
+                    level: 1,
+                    isVisible: true,
+                    displayOrder: 1,
+                    parentId: personalId,
+                    isExpanded: true,
+                    childIds: [languageId]
+                ),
+                // Language Study
+                CategoryData(
+                    id: languageId,
+                    name: "Language",
+                    color: .yellow,
+                    level: 2,
+                    isVisible: true,
+                    displayOrder: 0,
+                    parentId: studyId,
+                    isExpanded: false,
+                    childIds: []
+                )
+            ]
+        }()
+    )
+    .environmentObject(ThemeManager.shared)
+}
+
+#Preview("Empty State", traits: .sizeThatFitsLayout) {
+    // Empty state
+    SPCategoryList(categories: [])
+        .environmentObject(ThemeManager.shared)
+}
+
+#Preview("Dark Mode", traits: .sizeThatFitsLayout) {
+    // Dark mode
+    SPCategoryList(
+        categories: [
+            CategoryData(
+                id: UUID(),
+                name: "Work",
+                color: .blue,
+                level: 0,
+                isVisible: true,
+                displayOrder: 0,
+                parentId: nil,
+                isExpanded: false,
+                childIds: []
             )
-            .environmentObject(ThemeManager.shared)
-            .preferredColorScheme(.dark)
-            .previewDisplayName("Dark Mode")
-        }
-        .previewLayout(.sizeThatFits)
-    }
+        ]
+    )
+    .environmentObject(ThemeManager.shared)
+    .preferredColorScheme(.dark)
 } 
